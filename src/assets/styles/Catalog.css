@@ -1,0 +1,124 @@
+.input-busqueda {
+  border: 2px solid #6e3b3b;
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  transition: all 0.3s ease;
+}
+.input-busqueda:focus {
+  border-color: #6e3b3b;
+  box-shadow: 0 0 5px #6e3b3b;
+  outline: none;
+  padding-bottom: 0;
+  margin-bottom: 0;
+  border-top-right-radius: 0;
+}
+.btn-buscar {
+  background: linear-gradient(135deg, #6e3b3b, #8b5e3c);
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1.2rem;
+  transition: all 0.3s ease;
+}
+
+.btn-buscar:hover {
+  background: linear-gradient(135deg, #8b5e3c, #6e3b3b);
+  transform: scale(1.05);
+}
+
+.input-busqueda:focus ~ .btn-buscar {
+  position: absolute;
+  z-index: -1;
+}
+
+.btn-paginacion {
+  color: #6e3b3b;
+  border: 2px solid #6e3b3b;
+  background: transparent;
+  padding: 0.4rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.btn-paginacion:hover {
+  background: #6e3b3b;
+  border: #fff;
+  color: #fff;
+}
+
+.btn-paginacion:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.btn-paginacion:disabled {
+  background: #cccccc;
+  color: #666666;
+  cursor: not-allowed;
+  transform: none;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.text-paginacion {
+  font-weight: 500;
+  color: #333333;
+}
+
+.input-busqueda:focus + #historial-busquedas,
+#historial-busquedas.show {
+  display: block !important;
+  border: 2px solid #6e3b3b;
+  border-radius: 0 0 20px 20px;
+  max-height: none;
+  overflow-y: none;
+}
+
+.input-busqueda:focus {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  border-bottom: none;
+  box-shadow: none;
+}
+
+#historial-busquedas .list-group-item {
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
+}
+
+#historial-busquedas .list-group-item:last-child {
+  border-radius: 0 0 20px 20px;
+}
+/* Contenedor del historial */
+#historial-busquedas {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+  margin: 0;
+  padding: 0;
+  border: 2px solid #6e3b3b;
+  border-radius: 0 0 20px 20px;
+  border-top: none !important;
+}
+
+#historial-busquedas .list-group-item {
+  margin: 0 !important;
+  padding: 0.4rem 0.8rem;
+  border-left: none;
+  border-right: none;
+  border-radius: 0;
+  line-height: 1.4;
+}
+
+#historial-busquedas .list-group-item:hover {
+  background-color: #f8f9fa;
+  cursor: pointer;
+  border-top: 1px solid #eee;
+}
+
+#historial-busquedas .list-group-item:last-child {
+  border-radius: 0 0 20px 20px;
+}
