@@ -1,7 +1,7 @@
 import { useState } from "react";
 import "../assets/styles/Catalog.css";
 import { useLocalStorage } from "../hooks/useLocalStorage";
-import { useBooks } from "../services/useBooks";
+import { useBooks } from "../hooks/useBooks";
 import { useBookshelf } from "../hooks/useBookshelf";
 import SearchBar from "../components/ui/SearchBar";
 import BookCard from "../components/ui/BookCard";
