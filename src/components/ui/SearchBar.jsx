@@ -1,7 +1,30 @@
-import { useRef } from "react";
+import { useRef, useState } from "react";
 
 export default function SearchBar({ onSearch, history }) {
   const searchBarRef = useRef(null);
+  const [showHistory, setShowHistory] = useState(false);
+
+  // Normaliza history a array de forma segura
+  const historyArray = (() => {
+    if (Array.isArray(history)) return history;
+    if (!history) return [];
+    if (typeof history === "string") {
+      try {
+        const parsed = JSON.parse(history);
+        return Array.isArray(parsed) ? parsed : [history];
+      } catch {
+        // si no es JSON, intenta separar por coma, si aplica
+        return (
+          history
+            .split?.(",")
+            .map((s) => s.trim())
+            .filter(Boolean) || [history]
+        );
+      }
+    }
+    // si viene otro tipo (objeto/valor), lo envuelve en array
+    return [history];
+  })();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -19,37 +42,39 @@ export default function SearchBar({ onSearch, history }) {
           ref={searchBarRef}
           aria-label="Buscar libros"
           onFocus={() => {
-            if (history.length > 0) {
-              document.getElementById("historial-busquedas").style.display =
-                "block";
-            }
+            if (historyArray.length > 0) setShowHistory(true);
           }}
           onBlur={() => {
-            setTimeout(() => {
-              document.getElementById("historial-busquedas").style.display =
-                "none";
-            }, 200);
+            // pequeño delay para permitir que onMouseDown del botón se ejecute
+            setTimeout(() => setShowHistory(false), 150);
           }}
         />
-        <div
-          id="historial-busquedas"
-          className="list-group position-absolute w-100 shadow-sm"
-          style={{ zIndex: 1000, display: "none" }}
-        >
-          {history
-            .slice()
-            .reverse()
-            .map((q, i) => (
-              <button
-                key={i}
-                type="button"
-                className="list-group-item list-group-item-action"
-                onClick={() => onSearch(q)}
-              >
-                {q}
-              </button>
-            ))}
-        </div>
+
+        {showHistory && historyArray.length > 0 && (
+          <div
+            id="historial-busquedas"
+            className="list-group position-absolute w-100 shadow-sm"
+            style={{ zIndex: 1000 }}
+          >
+            {historyArray
+              .slice()
+              .reverse()
+              .map((q, i) => (
+                <button
+                  key={i}
+                  type="button"
+                  className="list-group-item list-group-item-action"
+                  onMouseDown={(e) => {
+                    e.preventDefault();
+                    onSearch(q);
+                  }}
+                >
+                  {q}
+                </button>
+              ))}
+          </div>
+        )}
+
         <button className="btn btn-buscar" type="submit">
           Buscar
         </button>

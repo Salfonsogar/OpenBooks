@@ -1,11 +1,11 @@
 import BookCard from "../components/ui/BookCard";
 import Pagination from "../components/ui/Pagination";
-import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useBookshelf } from "../hooks/useBookshelf";
 import NotificationModal from "../components/ui/NotificationModal";
 import { useState } from "react";
 
 export default function Biblioteca() {
-  const [estanteria, setEstanteria] = useLocalStorage("estanteria", []);
+  const { estanteria, handleRemoveBook } = useBookshelf();
   const [page, setPage] = useState(1);
   const pageSize = 20;
   const startIndex = (page - 1) * pageSize;
@@ -13,14 +13,15 @@ export default function Biblioteca() {
   const librosPagina = estanteria.slice(startIndex, endIndex);
   const totalPages = Math.ceil(estanteria.length / pageSize);
 
-  const [message, setMessage] = useState("");
-  const [open, setOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
 
-  const handleRemoveBook = (titulo) => {
-    const updated = estanteria.filter((libro) => libro.titulo !== titulo);
-    setEstanteria(updated);
-    setMessage("Libro eliminado de la estantería 🗑️");
-    setOpen(true);
+  const onRemove = (libro) => {
+    const result = handleRemoveBook(libro);
+    if (result) showNotification(result.message);
+  };
+
+  const showNotification = (msg) => {
+    setNotifications((prev) => [...prev, msg]);
   };
 
   return (
@@ -42,7 +43,7 @@ export default function Biblioteca() {
               <BookCard
                 key={i}
                 libro={libro}
-                onRemove={() => handleRemoveBook(libro.titulo)}
+                onRemove={() => onRemove(libro)}
                 isInLibrary={true}
               />
             ))
@@ -57,11 +58,18 @@ export default function Biblioteca() {
           />
         )}
 
-        <NotificationModal
-          message={message}
-          isOpen={open}
-          onClose={() => setOpen(false)}
-        />
+        <div className="toast-container">
+          {notifications.map((msg, i) => (
+            <NotificationModal
+              key={i}
+              message={msg}
+              isOpen={true}
+              onClose={() =>
+                setNotifications((prev) => prev.filter((_, idx) => idx !== i))
+              }
+            />
+          ))}
+        </div>
       </section>
     </main>
   );

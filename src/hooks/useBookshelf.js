@@ -1,7 +1,8 @@
-import { useLocalStorage } from "./useLocalStorage";
+import { useLocalStorageValue } from "./useLocalStorage";
+import { updateLocalStorage } from "../utils/updateLocalStorage";
 
 export function useBookshelf() {
-  const [estanteria, setEstanteria] = useLocalStorage("estanteria", []);
+  const estanteria = useLocalStorageValue("estanteria", []);
 
   const handleAddBook = (libro) => {
     if (
@@ -9,7 +10,7 @@ export function useBookshelf() {
         (l) => l.titulo === libro.titulo && l.autor === libro.autor
       )
     ) {
-      setEstanteria([...estanteria, libro]);
+      updateLocalStorage("estanteria", [...estanteria, libro]);
       return { success: true, message: "Libro agregado a la estantería 📚" };
     }
     return { success: false, message: "Ese libro ya está en tu estantería ⚠️" };
@@ -19,7 +20,7 @@ export function useBookshelf() {
     const updated = estanteria.filter(
       (l) => !(l.titulo === libro.titulo && l.autor === libro.autor)
     );
-    setEstanteria(updated);
+    updateLocalStorage("estanteria", updated);
     return { success: true, message: "Libro eliminado de la estantería 🗑️" };
   };
 

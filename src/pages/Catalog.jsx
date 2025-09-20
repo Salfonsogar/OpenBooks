@@ -1,12 +1,13 @@
 import { useState } from "react";
 import "../assets/styles/Catalog.css";
-import { useLocalStorage } from "../hooks/useLocalStorage";
+import { useLocalStorageValue } from "../hooks/useLocalStorage";
 import { useBooks } from "../hooks/useBooks";
 import { useBookshelf } from "../hooks/useBookshelf";
 import SearchBar from "../components/ui/SearchBar";
 import BookCard from "../components/ui/BookCard";
 import Pagination from "../components/ui/Pagination";
 import NotificationModal from "../components/ui/NotificationModal";
+import { updateLocalStorage } from "../utils/updateLocalStorage";
 
 export default function Catalog() {
   const [query, setQuery] = useState("");
@@ -14,7 +15,7 @@ export default function Catalog() {
   const pageSize = 20;
 
   const { estanteria, handleAddBook, handleRemoveBook } = useBookshelf();
-  const [history, setHistory] = useLocalStorage("historial", []);
+  const history = useLocalStorageValue("historial", []);
   const { books, totalPages, loading } = useBooks(query, page, pageSize);
 
   const [notifications, setNotifications] = useState([]);
@@ -23,8 +24,13 @@ export default function Catalog() {
     setQuery(newQuery);
     setPage(1);
     const normalized = newQuery.trim().toLowerCase();
-    if (!history.map((h) => h.toLowerCase()).includes(normalized)) {
-      setHistory([...history, newQuery].slice(-5));
+    const normalizedHistory = Array.isArray(history) ? history : [];
+
+    if (!normalizedHistory.map((h) => h.toLowerCase()).includes(normalized)) {
+      updateLocalStorage(
+        "historial",
+        [...normalizedHistory, newQuery].slice(-5)
+      );
     }
   };
 
