@@ -1,6 +1,12 @@
 import "../../assets/styles/BookCard.css";
 
-export default function BookCard({ libro, onAdd, onRemove, isInLibrary }) {
+export default function BookCard({
+  libro,
+  onAdd,
+  onRemove,
+  isInLibrary,
+  onRead,
+}) {
   return (
     <div className="col">
       <div className="card h-100 shadow-sm">
@@ -21,9 +27,12 @@ export default function BookCard({ libro, onAdd, onRemove, isInLibrary }) {
               className="btn btn-sm btn-leer"
               onClick={() => onAdd(libro)}
             >
-              Leer
+              Agregar
             </button>
           )}
+          <button className="btn btn-sm btn-leer" onClick={() => onRead(libro)}>
+            Leer en línea
+          </button>
         </div>
       </div>
     </div>

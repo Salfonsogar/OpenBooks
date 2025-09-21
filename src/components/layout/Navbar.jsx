@@ -1,6 +1,17 @@
 import { Link } from "react-router-dom";
+import { useState } from "react";
+import AuthModal from "../ui/AuthModal";
+import "../../assets/styles/Navbar.css";
+import user from "../../assets/icons/user.svg";
+import shieldUser from "../../assets/icons/shield-user.svg";
+import circleUser from "../../assets/icons/circle-user.svg";
+import library from "../../assets/icons/library.svg";
+import bookUser from "../../assets/icons/book-user.svg";
 
 export default function Navbar() {
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [showAccount, setShowAccount] = useState(false);
+
   return (
     <nav className="navbar navbar-expand-lg custom-navbar">
       <div className="container-fluid">
@@ -12,7 +23,7 @@ export default function Navbar() {
             height="24"
             className="d-inline-block align-text-top me-2"
           />
-          OpeenBooks
+          OpenBooks
         </Link>
 
         <button
@@ -31,22 +42,56 @@ export default function Navbar() {
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
             <li className="nav-item">
               <Link className="nav-link text-white" to="/Catalog">
+                <img src={library} alt="catalog icon" />
                 Catálogo
               </Link>
             </li>
-            <li className="nav-item">
-              <Link className="nav-link text-white" to="/Profile">
-                Perfil
-              </Link>
-            </li>
+
             <li className="nav-item">
               <Link className="nav-link text-white" to="/Library">
+                <img src={bookUser} alt="library icon" />
                 Mi Biblioteca
               </Link>
             </li>
+            <li className="nav-item">
+              <span
+                className="nav-item nav-link text-white"
+                style={{ cursor: "pointer" }}
+                onClick={() => setShowAccount(!showAccount)}
+              >
+                <img src={user} alt="user icon" />
+                Cuentas{" "}
+                <i
+                  className={`fa fa-angle-${showAccount ? "up" : "down"} ms-1`}
+                  aria-hidden="true"
+                ></i>
+              </span>
+            </li>
+            {showAccount && (
+              <>
+                <li className="nav-item">
+                  <Link className="nav-link text-white" to="/Profile">
+                    <img src={shieldUser} alt="profile icon" />
+                    Mi perfil
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <span
+                    className="nav-item nav-link text-white"
+                    style={{ cursor: "pointer" }}
+                    onClick={() => setShowAuthModal(true)}
+                  >
+                    <img src={circleUser} alt="login icon" />
+                    Login/Register
+                  </span>
+                </li>
+              </>
+            )}
           </ul>
         </div>
       </div>
+
+      {showAuthModal && <AuthModal onClose={() => setShowAuthModal(false)} />}
     </nav>
   );
 }

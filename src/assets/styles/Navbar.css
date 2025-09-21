@@ -1,0 +1,35 @@
+body {
+  overflow-x: hidden;
+}
+
+.dropdown-menu {
+  position: static !important;
+  float: none !important;
+  display: none !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.dropdown-menu.show {
+  display: inline-flex !important;
+  gap: 1rem;
+}
+
+.dropdown-menu .dropdown-item {
+  color: #fff;
+  border-radius: 4px;
+  padding: 8px 16px;
+}
+
+.nav-item span {
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s, color 0.2s;
+  border-radius: 4px;
+  padding-left: 16px;
+}
+
+.nav-item span:hover {
+  background: #c9a66b;
+  color: #fff;
+}

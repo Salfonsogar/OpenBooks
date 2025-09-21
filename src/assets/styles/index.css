@@ -9,6 +9,12 @@ body {
   height: 100%;
 }
 
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
 body {
   font-family: "Segoe UI", Arial, sans-serif;
   background-color: #f3e9e0;
@@ -101,6 +107,7 @@ a:hover {
   background: linear-gradient(90deg, #4b2626 60%, #8b5e3c 100%);
   padding: 0.5rem 0;
   box-shadow: 0 2px 8px rgba(26, 41, 71, 0.05);
+  width: 100%;
 }
 
 .navbar ul {

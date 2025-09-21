@@ -8,6 +8,7 @@ import BookCard from "../components/ui/BookCard";
 import Pagination from "../components/ui/Pagination";
 import NotificationModal from "../components/ui/NotificationModal";
 import { updateLocalStorage } from "../utils/updateLocalStorage";
+import ReaderApp from "./ReaderApp";
 
 export default function Catalog() {
   const [query, setQuery] = useState("");
@@ -19,10 +20,12 @@ export default function Catalog() {
   const { books, totalPages, loading } = useBooks(query, page, pageSize);
 
   const [notifications, setNotifications] = useState([]);
+  const [selectedBook, setSelectedBook] = useState(null);
 
   const handleSearch = (newQuery) => {
     setQuery(newQuery);
     setPage(1);
+
     const normalized = newQuery.trim().toLowerCase();
     const normalizedHistory = Array.isArray(history) ? history : [];
 
@@ -53,53 +56,69 @@ export default function Catalog() {
       <div className="card shadow rounded-3 p-4">
         <h2 className="mb-4 text-center">Buscar Libros</h2>
 
-        <SearchBar onSearch={handleSearch} history={history} />
+        {selectedBook ? (
+          <ReaderApp
+            fileUrl={selectedBook.url}
+            onClose={() => setSelectedBook(null)}
+          />
+        ) : (
+          <>
+            <SearchBar onSearch={handleSearch} history={history} />
 
-        <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-1">
-          {loading ? (
-            <div
-              className="d-flex justify-content-center align-items-center w-100"
-              style={{ minHeight: 200 }}
-            >
-              <div className="spinner-border" role="status">
-                <span className="visually-hidden">Loading...</span>
-              </div>
+            <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-1">
+              {loading ? (
+                <div
+                  className="d-flex justify-content-center align-items-center w-100"
+                  style={{ minHeight: 200 }}
+                >
+                  <div className="spinner-border" role="status">
+                    <span className="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              ) : (
+                books.map((libro, i) => (
+                  <BookCard
+                    key={i}
+                    libro={libro}
+                    isInLibrary={estanteria.some(
+                      (l) =>
+                        l.titulo === libro.titulo && l.autor === libro.autor
+                    )}
+                    onAdd={onAdd}
+                    onRemove={onRemove}
+                    onRead={(libro) => {
+                      console.log("📖 Libro seleccionado:", libro);
+                      setSelectedBook(libro);
+                    }}
+                  />
+                ))
+              )}
+
+              {totalPages > 1 && (
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  onPageChange={setPage}
+                />
+              )}
             </div>
-          ) : (
-            books.map((libro, i) => (
-              <BookCard
-                key={i}
-                libro={libro}
-                isInLibrary={estanteria.some(
-                  (l) => l.titulo === libro.titulo && l.autor === libro.autor
-                )}
-                onAdd={onAdd}
-                onRemove={onRemove}
-              />
-            ))
-          )}
-        </div>
 
-        {totalPages > 1 && (
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            onPageChange={setPage}
-          />
+            <div className="toast-container">
+              {notifications.map((msg, i) => (
+                <NotificationModal
+                  key={i}
+                  message={msg}
+                  isOpen={true}
+                  onClose={() =>
+                    setNotifications((prev) =>
+                      prev.filter((_, idx) => idx !== i)
+                    )
+                  }
+                />
+              ))}
+            </div>
+          </>
         )}
-      </div>
-
-      <div className="toast-container">
-        {notifications.map((msg, i) => (
-          <NotificationModal
-            key={i}
-            message={msg}
-            isOpen={true}
-            onClose={() =>
-              setNotifications((prev) => prev.filter((_, idx) => idx !== i))
-            }
-          />
-        ))}
       </div>
     </div>
   );

@@ -13,6 +13,7 @@
     "bootstrap": "^5.3.8",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+    "react-reader": "^2.0.13",
     "react-router-dom": "^7.9.1"
   },
   "devDependencies": {
@@ -27,7 +28,7 @@
     "standard": "^17.1.2",
     "vite": "^7.1.2"
   },
-  "eslintConfig":{
-    "extends" : "./node_modules/standard/eslintrc.json"
+  "eslintConfig": {
+    "extends": "./node_modules/standard/eslintrc.json"
   }
 }
