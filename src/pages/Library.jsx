@@ -61,20 +61,15 @@ export default function Biblioteca() {
               {librosPagina.length === 0 ? (
                 <p className="text-muted">Aún no has agregado libros.</p>
               ) : (
-                librosPagina.map(
-                  (libro, i) => (
-                    console.log("📚 Renderizando libro:", libro),
-                    (
-                      <BookCard
-                        key={i}
-                        libro={libro}
-                        onRemove={() => onRemove(libro)}
-                        isInLibrary={true}
-                        onRead={(libro) => setSelectedBook(libro)}
-                      />
-                    )
-                  )
-                )
+                librosPagina.map((libro, i) => (
+                  <BookCard
+                    key={i}
+                    libro={libro}
+                    onRemove={() => onRemove(libro)}
+                    isInLibrary={true}
+                    onRead={(libro) => setSelectedBook(libro)}
+                  />
+                ))
               )}
             </div>
 

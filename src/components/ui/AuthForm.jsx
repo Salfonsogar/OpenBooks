@@ -4,13 +4,14 @@ export default function AuthForm({
   children,
   buttonText,
 }) {
-  const type = title.toLowerCase().replace(" ", ""); // "login" o "signup"
+  const type = title.toLowerCase().replace(" ", "");
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+  };
 
   return (
-    <form
-      className={`auth-form auth-form-${type}`}
-      onSubmit={(e) => e.preventDefault()}
-    >
+    <form className={`auth-form auth-form-${type}`} onSubmit={handleSubmit}>
       <label className={`form-title ${type}-title`} onClick={onClickTitle}>
         {title}
       </label>
