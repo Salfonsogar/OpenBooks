@@ -1,46 +1,72 @@
-import { useState } from "react";
-import { ReactReader } from "react-reader";
+import { useRef, useEffect } from "react";
+import "../assets/styles/ReaderApp.css";
+import useReader from "../hooks/useReader";
+import ReaderSidebar from "../components/reader/ReaderSidebar";
+import ReaderMain from "../components/reader/ReaderMain";
 
 export default function ReaderApp({ fileUrl, onClose }) {
-  const [location, setLocation] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const {
+    location,
+    bookmarks,
+    searchTerm,
+    searchResults,
+    totalMatches,
+    isSidebarOpen,
+    setIsSidebarOpen,
+    setSearchTerm,
+    setBook,
+    setRendition,
+    searchBook,
+    onLocationChanged,
+    addBookmark,
+    goToBookmark,
+    goToSearchResult,
+  } = useReader(fileUrl);
+
+  const renditionRef = useRef(null);
+  const bookRef = useRef(null);
+
+useEffect(() => {
+  if (renditionRef.current) {
+    setRendition(renditionRef.current);
+    setBook(bookRef.current);
+  }
+}, []);
+
+
 
   return (
-    <div style={{ height: "100vh", position: "relative" }}>
-      {loading && (
-        <div className="spinner-border" role="status">
-          <span className="visually-hidden">Loading...</span>
-        </div>
-      )}
+    <div className="reader-wrapper">
+      <button
+        className="btn btn-outline-secondary btn-toggle-sidebar"
+        onClick={() => setIsSidebarOpen((prev) => !prev)}
+      >
+        <i className="bi bi-list"></i>
+      </button>
 
-      <ReactReader
-        url={fileUrl}
+      <ReaderMain
+        fileUrl={fileUrl}
         location={location}
-        locationChanged={(epubcfi) => {
-          setLocation(epubcfi);
-          setLoading(false);
+        onLocationChanged={onLocationChanged}
+        getRendition={(rend)=>{
+          setRendition(rend);
         }}
-        showToc={true}
       />
 
-      <button
-        onClick={() => {
-          onClose();
-        }}
-        style={{
-          position: "absolute",
-          top: "10px",
-          left: "10px",
-          padding: "8px 12px",
-          background: "red",
-          color: "white",
-          border: "none",
-          borderRadius: "6px",
-          cursor: "pointer",
-        }}
-      >
-        Cerrar
-      </button>
+      <ReaderSidebar
+        isOpen={isSidebarOpen}
+        bookmarks={bookmarks}
+        searchTerm={searchTerm}
+        searchResults={searchResults}
+        totalMatches={totalMatches}
+        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+        onAddBookmark={addBookmark}
+        onGoToBookmark={goToBookmark}
+        onSearch={searchBook}
+        onChangeSearch={setSearchTerm}
+        onGoToSearchResult={goToSearchResult}
+        onClose={onClose}
+      />
     </div>
   );
 }

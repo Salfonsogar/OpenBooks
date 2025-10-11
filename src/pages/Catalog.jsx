@@ -53,7 +53,6 @@ export default function Catalog() {
 
   return (
     <div className="container my-5">
-      <div className="card shadow rounded-3 p-4">
         <h2 className="mb-4 text-center">Buscar Libros</h2>
 
         {selectedBook ? (
@@ -120,6 +119,5 @@ export default function Catalog() {
           </>
         )}
       </div>
-    </div>
   );
 }
