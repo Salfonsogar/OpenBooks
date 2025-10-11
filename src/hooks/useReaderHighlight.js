@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 export default function useReaderHighlight(rendition, fileUrl) {
   const [highlights, setHighlights] = useState([]);
@@ -55,25 +55,29 @@ export default function useReaderHighlight(rendition, fileUrl) {
     highlights.forEach(renderHighlight);
   }, [rendition, highlights, renderHighlight]);
 
-  useEffect(() => {
-  if (!rendition) return;
+const listenerRef = useRef();
+
+useEffect(() => {
+  if (!rendition || listenerRef.current) return;
 
   const handleSelected = (cfiRange, contents) => {
-    try {
-      const selectedText = contents.window.getSelection().toString().trim();
-      if (!cfiRange || !selectedText || selectedText.length === 0) return;
+    const selectedText = contents.window.getSelection().toString().trim();
+    if (!cfiRange || !selectedText) return;
 
-      renderHighlight(cfiRange);
-      addHighlight(cfiRange);
-      contents.window.getSelection().removeAllRanges();
-    } catch (e) {
-      console.warn("Error al resaltar:", e);
-    }
+    addHighlight(cfiRange);
+    contents.window.getSelection().removeAllRanges();
   };
 
   rendition.on("selected", handleSelected);
-  return () => rendition.off("selected", handleSelected);
-}, [rendition, addHighlight, renderHighlight]);
+  listenerRef.current = handleSelected;
+
+  return () => {
+    if (rendition && listenerRef.current) {
+      rendition.off("selected", listenerRef.current);
+      listenerRef.current = null;
+    }
+  };
+}, [rendition, addHighlight]);
 
 
   return { highlights, addHighlight, clearHighlights };
