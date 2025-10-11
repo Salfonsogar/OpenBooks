@@ -1,30 +1,44 @@
 import { useState, useEffect, useCallback } from "react";
 
-export default function useReaderHighlight(rendition) {
+export default function useReaderHighlight(rendition, fileUrl) {
   const [highlights, setHighlights] = useState([]);
 
-  useEffect(() => {
-    const saved = localStorage.getItem("highlights");
-    if (saved) setHighlights(JSON.parse(saved));
-  }, []);
+  // 🔑 Genera una clave única por libro
+  const storageKey = `highlights_${fileUrl}`;
 
+  // 🧩 Cargar los highlights guardados del libro actual
+  useEffect(() => {
+    if (!fileUrl) return;
+    const saved = localStorage.getItem(storageKey);
+    if (saved) {
+      try {
+        setHighlights(JSON.parse(saved));
+      } catch {
+        console.warn("Error al leer highlights del almacenamiento");
+      }
+    }
+  }, [fileUrl]);
+
+  // ✨ Agregar un nuevo highlight
   const addHighlight = useCallback(
     (cfiRange) => {
       setHighlights((prev) => {
         const updated = [...prev, cfiRange];
-        localStorage.setItem("highlights", JSON.stringify(updated));
+        localStorage.setItem(storageKey, JSON.stringify(updated));
         return updated;
       });
     },
-    []
+    [storageKey]
   );
 
+  // 🧹 Limpiar todos los highlights del libro actual
   const clearHighlights = useCallback(() => {
     setHighlights([]);
-    localStorage.removeItem("highlights");
+    localStorage.removeItem(storageKey);
     if (rendition) rendition.annotations.removeAll("highlight");
-  }, [rendition]);
+  }, [rendition, storageKey]);
 
+  // 🖌️ Aplicar los highlights guardados al cargar el libro
   useEffect(() => {
     if (!rendition) return;
 
@@ -39,8 +53,9 @@ export default function useReaderHighlight(rendition) {
         console.warn("Error aplicando highlight:", e);
       }
     });
-  }, [rendition, highlights]); 
+  }, [rendition, highlights]);
 
+  // 🎯 Escuchar selección de texto del usuario
   useEffect(() => {
     if (!rendition) return;
 

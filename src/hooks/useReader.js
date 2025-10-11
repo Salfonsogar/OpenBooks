@@ -25,8 +25,7 @@ export default function useReader(fileUrl) {
     goToSearchResult,
   } = useReaderSearch(book, rendition);
 
-  const { highlights, clearHighlights } = useReaderHighlight(rendition);
-
+  const { highlights, clearHighlights, addHighlight } = useReaderHighlight(rendition, fileUrl);
 
   return {
     location,
@@ -46,6 +45,7 @@ export default function useReader(fileUrl) {
     searchBook,
     goToSearchResult,
     highlights,
-    clearHighlights
+    clearHighlights,
+    addHighlight
   };
 }

@@ -1,4 +1,3 @@
-import { useRef, useEffect } from "react";
 import "../assets/styles/ReaderApp.css";
 import useReader from "../hooks/useReader";
 import ReaderSidebar from "../components/reader/ReaderSidebar";
@@ -14,7 +13,6 @@ export default function ReaderApp({ fileUrl, onClose }) {
     isSidebarOpen,
     setIsSidebarOpen,
     setSearchTerm,
-    setBook,
     setRendition,
     searchBook,
     onLocationChanged,
@@ -22,18 +20,6 @@ export default function ReaderApp({ fileUrl, onClose }) {
     goToBookmark,
     goToSearchResult,
   } = useReader(fileUrl);
-
-  const renditionRef = useRef(null);
-  const bookRef = useRef(null);
-
-useEffect(() => {
-  if (renditionRef.current) {
-    setRendition(renditionRef.current);
-    setBook(bookRef.current);
-  }
-}, []);
-
-
 
   return (
     <div className="reader-wrapper">
