@@ -1,23 +1,19 @@
-// generateLibrosData.js
 import fs from "fs";
 import path from "path";
 
-// Rutas base
 const librosDir = path.resolve("public/libros");
 const portadasDir = path.resolve("public/portadas");
 const outputFile = path.resolve("src/data/libros.json");
 
-// Función utilitaria para limpiar nombres
 function limpiarTitulo(nombre) {
-  const base = nombre.replace(/\.[^/.]+$/, ""); // quita extensión
+  const base = nombre.replace(/\.[^/.]+$/, "");
   return base
     .replace(/-/g, " ")
-    .replace(/\b\w/g, (l) => l.toUpperCase()) // mayúsculas iniciales
+    .replace(/\b\w/g, (l) => l.toUpperCase()) 
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, ""); // quita tildes para coincidencia
+    .replace(/[\u0300-\u036f]/g, ""); 
 }
 
-// Mapeo de autores conocidos (opcional, puedes ampliarlo)
 const autoresPorTitulo = {
   "asi hablo zaratustra": "Friedrich Nietzsche",
   "el extranjero": "Albert Camus",
@@ -42,7 +38,6 @@ function generarLibrosJSON() {
     const tituloLimpio = limpiarTitulo(nombreSinExt);
     const autor = obtenerAutor(tituloLimpio);
 
-    // Buscar portada con el mismo nombre (distinta extensión)
     const portada = fs
       .readdirSync(portadasDir)
       .find((p) => p.toLowerCase().startsWith(nombreSinExt.toLowerCase()));
@@ -59,5 +54,4 @@ function generarLibrosJSON() {
   console.log(`✅ Archivo generado: ${outputFile}`);
 }
 
-// Ejecutar
 generarLibrosJSON();
