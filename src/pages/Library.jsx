@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
-import BookCard from "../components/ui/BookCard";
-import Pagination from "../components/ui/Pagination";
-import { useBookshelf } from "../hooks/useBookshelf";
-import NotificationModal from "../components/ui/NotificationModal";
-import ReaderApp from "./ReaderApp";
-import { getBooks } from "../services/bookProvider"; 
-import "../assets/styles/library.css";
+import { useEffect, useState } from 'react';
+import BookCard from '../components/ui/BookCard';
+import Pagination from '../components/ui/Pagination';
+import { useBookshelf } from '../hooks/useBookshelf';
+import NotificationModal from '../components/ui/NotificationModal';
+import ReaderApp from './ReaderApp';
+// import { getBooks } from '../services/bookProvider';
+import { getBooksFromJSON } from '../services/localBookService';
+import '../assets/styles/library.css';
 
 export default function Biblioteca() {
   const { estanteria, handleRemoveBook, handleAddBook } = useBookshelf();
@@ -16,7 +17,7 @@ export default function Biblioteca() {
 
   useEffect(() => {
     async function cargarLibros() {
-      const libros = await getBooks(); 
+      const libros = await getBooksFromJSON();
       libros.forEach((libro) => {
         if (!estanteria.some((l) => l.titulo === libro.titulo)) {
           handleAddBook(libro);
@@ -87,7 +88,7 @@ export default function Biblioteca() {
                   isOpen={true}
                   onClose={() =>
                     setNotifications((prev) =>
-                      prev.filter((_, idx) => idx !== i)
+                      prev.filter((_, idx) => idx !== i),
                     )
                   }
                 />
