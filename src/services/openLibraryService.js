@@ -12,6 +12,7 @@ function mapBook(doc) {
     imagen: doc.cover_i
       ? `${OPEN_LIBRARY_COVERS}/${doc.cover_i}-M.jpg`
       : PLACEHOLDER_IMG,
+    source: "OpenLibrary"
   };
 }
 
@@ -25,7 +26,8 @@ export async function fetchBooks(query, page, pageSize) {
   const data = await res.json();
 
   return {
+    data: data.docs.map(mapBook),
     totalPages: Math.ceil(data.numFound / pageSize),
-    books: data.docs.map(mapBook),
+    source: "OpenLibrary",
   };
 }

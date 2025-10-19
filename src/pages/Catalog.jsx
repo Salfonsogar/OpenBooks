@@ -1,7 +1,6 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import "../assets/styles/Catalog.css";
 import { useLocalStorageValue } from "../hooks/useLocalStorage";
-import { useBooks } from "../hooks/useBooks";
 import { useBookshelf } from "../hooks/useBookshelf";
 import SearchBar from "../components/ui/SearchBar";
 import BookCard from "../components/ui/BookCard";
@@ -9,18 +8,40 @@ import Pagination from "../components/ui/Pagination";
 import NotificationModal from "../components/ui/NotificationModal";
 import { updateLocalStorage } from "../utils/updateLocalStorage";
 import ReaderApp from "./ReaderApp";
+import { getBooks } from "../services/bookProvider"; 
 
 export default function Catalog() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
   const pageSize = 20;
 
+  const [books, setBooks] = useState([]);
+  const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
+
   const { estanteria, handleAddBook, handleRemoveBook } = useBookshelf();
   const history = useLocalStorageValue("historial", []);
-  const { books, totalPages, loading } = useBooks(query, page, pageSize);
 
   const [notifications, setNotifications] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
+
+  useEffect(() => {
+  const fetchData = async () => {
+    setLoading(true);
+    try {
+      const { data, totalPages } = await getBooks("openLibrary", query, page, pageSize);
+      setBooks(data);
+      setTotalPages(totalPages);
+    } catch (error) {
+      console.error("Error al obtener libros:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchData();
+}, [query, page]);
+
 
   const handleSearch = (newQuery) => {
     setQuery(newQuery);
@@ -53,71 +74,71 @@ export default function Catalog() {
 
   return (
     <div className="container my-5">
-        <h2 className="mb-4 text-center">Buscar Libros</h2>
+      <h2 className="mb-4 text-center">Buscar Libros</h2>
 
-        {selectedBook ? (
-          <ReaderApp
-            fileUrl={selectedBook.url}
-            onClose={() => setSelectedBook(null)}
-          />
-        ) : (
-          <>
-            <SearchBar onSearch={handleSearch} history={history} />
+      {selectedBook ? (
+        <ReaderApp
+          fileUrl={selectedBook.url}
+          onClose={() => setSelectedBook(null)}
+        />
+      ) : (
+        <>
+          <SearchBar onSearch={handleSearch} history={history} />
 
-            <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-1">
-              {loading ? (
-                <div
-                  className="d-flex justify-content-center align-items-center w-100"
-                  style={{ minHeight: 200 }}
-                >
-                  <div className="spinner-border" role="status">
-                    <span className="visually-hidden">Loading...</span>
-                  </div>
+          <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-1">
+            {loading ? (
+              <div
+                className="d-flex justify-content-center align-items-center w-100"
+                style={{ minHeight: 200 }}
+              >
+                <div className="spinner-border" role="status">
+                  <span className="visually-hidden">Loading...</span>
                 </div>
-              ) : (
-                books.map((libro, i) => (
-                  <BookCard
-                    key={i}
-                    libro={libro}
-                    isInLibrary={estanteria.some(
-                      (l) =>
-                        l.titulo === libro.titulo && l.autor === libro.autor
-                    )}
-                    onAdd={onAdd}
-                    onRemove={onRemove}
-                    onRead={(libro) => {
-                      console.log("📖 Libro seleccionado:", libro);
-                      setSelectedBook(libro);
-                    }}
-                  />
-                ))
-              )}
-
-              {totalPages > 1 && (
-                <Pagination
-                  page={page}
-                  totalPages={totalPages}
-                  onPageChange={setPage}
-                />
-              )}
-            </div>
-
-            <div className="toast-container">
-              {notifications.map((msg, i) => (
-                <NotificationModal
+              </div>
+            ) : (
+              books.map((libro, i) => (
+                <BookCard
                   key={i}
-                  message={msg}
-                  isOpen={true}
-                  onClose={() =>
-                    setNotifications((prev) =>
-                      prev.filter((_, idx) => idx !== i)
-                    )
-                  }
+                  libro={libro}
+                  isInLibrary={estanteria.some(
+                    (l) =>
+                      l.titulo === libro.titulo && l.autor === libro.autor
+                  )}
+                  onAdd={onAdd}
+                  onRemove={onRemove}
+                  onRead={(libro) => {
+                    console.log("📖 Libro seleccionado:", libro);
+                    setSelectedBook(libro);
+                  }}
                 />
-              ))}
-            </div>
-          </>
-        )}
-      </div>
+              ))
+            )}
+
+            {totalPages > 1 && (
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+              />
+            )}
+          </div>
+
+          <div className="toast-container">
+            {notifications.map((msg, i) => (
+              <NotificationModal
+                key={i}
+                message={msg}
+                isOpen={true}
+                onClose={() =>
+                  setNotifications((prev) =>
+                    prev.filter((_, idx) => idx !== i)
+                  )
+                }
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
   );
 }

@@ -1,15 +1,21 @@
 import { getBooksFromSupabase } from "./bookService";
 import { getBooksFromJSON } from "./localBookService";
+import { fetchBooks } from "./openLibraryService";
+import { DEFAULT_SOURCE } from "../constants/api";
 
-const SOURCE = "supabase"; 
-
-export async function getBooks() {
-  if (SOURCE === "json") {
-    return await getBooksFromJSON();
-  } else if (SOURCE === "supabase") {
-    return await getBooksFromSupabase();
-  } else {
-    console.error("Fuente de datos no válida:", SOURCE);
-    return [];
+export async function getBooks(SOURCE, query = "", page = 1, pageSize = 10) {
+  if (!SOURCE) {
+    SOURCE = DEFAULT_SOURCE;
+  }
+  switch (SOURCE) {
+    case "json":
+      return await getBooksFromJSON(query, page, pageSize);
+    case "supabase":
+      return await getBooksFromSupabase(query, page, pageSize);
+    case "openLibrary":
+      return await fetchBooks(query, page, pageSize);
+    default:
+      console.error("Fuente de datos no válida:", SOURCE);
+      return { data: [], totalPages: 0, total: 0, page, pageSize };
   }
 }
