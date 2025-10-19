@@ -17,20 +17,20 @@ export default function BookCard({
 
           {isInLibrary ? (
             <button
-              className="btn btn-sm btn-eliminar"
+              className="btn-eliminar"
               onClick={() => onRemove(libro)}
             >
               Eliminar
             </button>
           ) : (
             <button
-              className="btn btn-sm btn-leer"
+              className="btn-leer"
               onClick={() => onAdd(libro)}
             >
               Agregar
             </button>
           )}
-          <button className="btn btn-sm btn-leer" onClick={() => onRead(libro)}>
+          <button className=" btn-leer" onClick={() => onRead(libro)}>
             Leer en línea
           </button>
         </div>

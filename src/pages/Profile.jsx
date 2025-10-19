@@ -27,8 +27,10 @@ export default function ProfilePage() {
                 />
                 <h4 className="fw-bold mb-1">María García</h4>
                 <p className="text-muted mb-3">maria@ejemplo.com</p>
-                <span className="badge bg-primary mb-3">Administrador</span>
-                <button className="btn btn-outline-primary w-100">
+                <span className="badge mb-3"style={{backgroundColor: '#6e3b3b',color: '#fff',}}>
+                    Administrador
+                  </span>
+                <button className="btn-add-bookmark">
                   Cambiar Foto
                 </button>
               </div>
@@ -42,7 +44,7 @@ export default function ProfilePage() {
                 <ul className="nav nav-tabs card-header-tabs">
                   <li className="nav-item">
                     <button
-                      className={`nav-link ${
+                      className={`nav-link text-dark ${
                         activeTab === 'datos' ? 'active' : ''
                       }`}
                       onClick={() => setActiveTab('datos')}
@@ -52,7 +54,7 @@ export default function ProfilePage() {
                   </li>
                   <li className="nav-item">
                     <button
-                      className={`nav-link ${
+                      className={`nav-link text-dark ${
                         activeTab === 'seguridad' ? 'active' : ''
                       }`}
                       onClick={() => setActiveTab('seguridad')}
@@ -62,7 +64,7 @@ export default function ProfilePage() {
                   </li>
                   <li className="nav-item">
                     <button
-                      className={`nav-link ${
+                      className={`nav-link text-dark ${
                         activeTab === 'actividad' ? 'active' : ''
                       }`}
                       onClick={() => setActiveTab('actividad')}
@@ -121,10 +123,10 @@ export default function ProfilePage() {
                       />
                     </div>
                     <div className="d-flex justify-content-end gap-2">
-                      <button type="button" className="btn btn-secondary">
+                      <button type="button" className="button">
                         Cancelar
                       </button>
-                      <button type="submit" className="btn btn-primary">
+                      <button type="submit" className="btn-buscar">
                         Guardar Cambios
                       </button>
                     </div>
@@ -165,10 +167,10 @@ export default function ProfilePage() {
                       />
                     </div>
                     <div className="d-flex justify-content-end gap-2">
-                      <button type="button" className="btn btn-secondary">
+                      <button type="button" className="button">
                         Cancelar
                       </button>
-                      <button type="submit" className="btn btn-primary">
+                      <button type="submit" className="btn-buscar">
                         Cambiar Contraseña
                       </button>
                     </div>
@@ -185,15 +187,15 @@ export default function ProfilePage() {
                         </h6>
                         <div className="row text-center">
                           <div className="col-4">
-                            <h3 className="fw-bold text-primary">24</h3>
+                            <h3 className="fw-bold text-dark">24</h3>
                             <small className="text-muted">Libros Leídos</small>
                           </div>
                           <div className="col-4">
-                            <h3 className="fw-bold text-primary">8</h3>
+                            <h3 className="fw-bold text-dark">8</h3>
                             <small className="text-muted">En Progreso</small>
                           </div>
                           <div className="col-4">
-                            <h3 className="fw-bold text-primary">156</h3>
+                            <h3 className="fw-bold text-dark">156</h3>
                             <small className="text-muted">Horas Totales</small>
                           </div>
                         </div>

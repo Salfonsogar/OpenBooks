@@ -7,7 +7,7 @@ export default function FeatureCard({ title, text, to, buttonText }) {
         <div className="card-body">
           <h5 className="card-title text-main">{title}</h5>
           <p className="card-text text-secondary">{text}</p>
-          <Link to={to} className="btn btn-outline-main text-decoration-none">
+          <Link to={to} className="button">
             {buttonText}
           </Link>
         </div>
