@@ -1,4 +1,52 @@
+import React, { useState } from 'react';
+
 export default function UploadBooksPage() {
+  const [titulo, setTitulo] = useState('');
+  const [autor, setAutor] = useState('');
+  const [descripcion, setDescripcion] = useState('');
+  const [portada, setPortada] = useState(null);
+  const [archivo, setArchivo] = useState(null);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!portada || !archivo) {
+      alert('Por favor, seleccione la portada y el archivo del libro');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('Titulo', titulo);
+    formData.append('Autor', autor);
+    formData.append('Descripcion', descripcion);
+    formData.append('Portada', portada);
+    formData.append('Archivo', archivo);
+
+    try {
+      const response = await fetch('/api/libros/upload', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (response.ok) {
+        alert('Libro subido correctamente');
+        // Opcional: limpiar formulario o redirigir al listado
+        setTitulo('');
+        setAutor('');
+        setDescripcion('');
+        setPortada(null);
+        setArchivo(null);
+        document.getElementById('portada').value = null;
+        document.getElementById('archivo').value = null;
+      } else {
+        const errorData = await response.json();
+        alert('Error al subir libro: ' + (errorData.error || 'Desconocido'));
+      }
+    } catch (error) {
+      alert('Error en la conexión con el servidor: ' + error.message);
+    }
+  };
+
   return (
     <div className="min-vh-100 bg-light py-4">
       <div className="container" style={{ maxWidth: '900px' }}>
@@ -35,7 +83,7 @@ export default function UploadBooksPage() {
             <h5 className="card-title mb-0">Información del Libro</h5>
           </div>
           <div className="card-body">
-            <form>
+            <form onSubmit={handleSubmit}>
               <div className="row g-3 mb-3">
                 <div className="col-md-6">
                   <label htmlFor="titulo" className="form-label">
@@ -47,6 +95,8 @@ export default function UploadBooksPage() {
                     id="titulo"
                     placeholder="Ej: Cien Años de Soledad"
                     required
+                    value={titulo}
+                    onChange={(e) => setTitulo(e.target.value)}
                   />
                 </div>
                 <div className="col-md-6">
@@ -59,91 +109,10 @@ export default function UploadBooksPage() {
                     id="autor"
                     placeholder="Ej: Gabriel García Márquez"
                     required
+                    value={autor}
+                    onChange={(e) => setAutor(e.target.value)}
                   />
                 </div>
-              </div>
-
-              <div className="row g-3 mb-3">
-                <div className="col-md-6">
-                  <label htmlFor="isbn" className="form-label">
-                    ISBN
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="isbn"
-                    placeholder="Ej: 978-3-16-148410-0"
-                  />
-                </div>
-                <div className="col-md-6">
-                  <label htmlFor="editorial" className="form-label">
-                    Editorial
-                  </label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="editorial"
-                    placeholder="Ej: Editorial Sudamericana"
-                  />
-                </div>
-              </div>
-
-              <div className="row g-3 mb-3">
-                <div className="col-md-4">
-                  <label htmlFor="año" className="form-label">
-                    Año de Publicación
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="año"
-                    placeholder="Ej: 1967"
-                  />
-                </div>
-                <div className="col-md-4">
-                  <label htmlFor="paginas" className="form-label">
-                    Páginas
-                  </label>
-                  <input
-                    type="number"
-                    className="form-control"
-                    id="paginas"
-                    placeholder="Ej: 432"
-                  />
-                </div>
-                <div className="col-md-4">
-                  <label htmlFor="idioma" className="form-label">
-                    Idioma *
-                  </label>
-                  <select className="form-select" id="idioma" required>
-                    <option value="">Selecciona</option>
-                    <option value="es">Español</option>
-                    <option value="en">Inglés</option>
-                    <option value="fr">Francés</option>
-                    <option value="de">Alemán</option>
-                    <option value="pt">Portugués</option>
-                    <option value="it">Italiano</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="categoria" className="form-label">
-                  Categoría *
-                </label>
-                <select className="form-select" id="categoria" required>
-                  <option value="">Selecciona una categoría</option>
-                  <option value="ficcion">Ficción</option>
-                  <option value="no-ficcion">No Ficción</option>
-                  <option value="ciencia">Ciencia</option>
-                  <option value="historia">Historia</option>
-                  <option value="biografia">Biografía</option>
-                  <option value="poesia">Poesía</option>
-                  <option value="filosofia">Filosofía</option>
-                  <option value="tecnologia">Tecnología</option>
-                  <option value="arte">Arte</option>
-                  <option value="infantil">Infantil</option>
-                </select>
               </div>
 
               <div className="mb-3">
@@ -156,110 +125,53 @@ export default function UploadBooksPage() {
                   rows="4"
                   placeholder="Escribe una breve descripción del libro..."
                   required
+                  value={descripcion}
+                  onChange={(e) => setDescripcion(e.target.value)}
                 ></textarea>
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="etiquetas" className="form-label">
-                  Etiquetas
-                </label>
-                <input
-                  type="text"
-                  className="form-control"
-                  id="etiquetas"
-                  placeholder="Ej: realismo mágico, literatura latinoamericana, clásico"
-                />
-                <small className="form-text text-muted">
-                  Separa las etiquetas con comas
-                </small>
               </div>
 
               <div className="row g-3 mb-4">
                 <div className="col-md-6">
                   <label className="form-label">Portada del Libro</label>
-                  <div className="file-upload-zone">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="48"
-                      height="48"
-                      fill="currentColor"
-                      className="text-muted mb-2"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M6.002 5.5a1.5 1.5 0 1 1-3 0 1.5 1.5 0 0 1 3 0z" />
-                      <path d="M2.002 1a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2h-12zm12 1a1 1 0 0 1 1 1v6.5l-3.777-1.947a.5.5 0 0 0-.577.093l-3.71 3.71-2.66-1.772a.5.5 0 0 0-.63.062L1.002 12V3a1 1 0 0 1 1-1h12z" />
-                    </svg>
-                    <p className="text-muted mb-2">
-                      Arrastra una imagen o haz clic
-                    </p>
-                    <input
-                      type="file"
-                      className="d-none"
-                      id="portada"
-                      accept="image/*"
-                    />
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-outline-primary"
-                      onClick={() => document.getElementById('portada').click()}
-                    >
-                      Seleccionar Imagen
-                    </button>
-                  </div>
+                  <input
+                    type="file"
+                    className="form-control"
+                    id="portada"
+                    accept="image/*"
+                    required
+                    onChange={(e) => setPortada(e.target.files[0])}
+                  />
                 </div>
                 <div className="col-md-6">
                   <label className="form-label">Archivo del Libro *</label>
-                  <div className="file-upload-zone">
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="48"
-                      height="48"
-                      fill="currentColor"
-                      className="text-muted mb-2"
-                      viewBox="0 0 16 16"
-                    >
-                      <path d="M5 4a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm-.5 2.5A.5.5 0 0 1 5 6h6a.5.5 0 0 1 0 1H5a.5.5 0 0 1-.5-.5zM5 8a.5.5 0 0 0 0 1h6a.5.5 0 0 0 0-1H5zm0 2a.5.5 0 0 0 0 1h3a.5.5 0 0 0 0-1H5z" />
-                      <path d="M2 2a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V2zm10-1H4a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1z" />
-                    </svg>
-                    <p className="text-muted mb-2">
-                      Arrastra un archivo o haz clic
-                    </p>
-                    <input
-                      type="file"
-                      className="d-none"
-                      id="archivo"
-                      accept=".pdf,.epub,.mobi"
-                    />
-                    <button
-                      type="button"
-                      className="btn btn-sm btn-outline-primary"
-                      onClick={() => document.getElementById('archivo').click()}
-                    >
-                      Seleccionar Archivo
-                    </button>
-                    <small className="d-block text-muted mt-2">
-                      PDF, EPUB o MOBI
-                    </small>
-                  </div>
+                  <input
+                    type="file"
+                    className="form-control"
+                    id="archivo"
+                    accept=".pdf,.epub,.mobi"
+                    required
+                    onChange={(e) => setArchivo(e.target.files[0])}
+                  />
                 </div>
               </div>
 
               <div className="d-flex gap-2">
                 <button type="submit" className="btn btn-primary flex-fill">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    width="16"
-                    height="16"
-                    fill="currentColor"
-                    className="me-2"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z" />
-                    <path d="M7.646 1.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1-.708.708L8.5 2.707V11.5a.5.5 0 0 1-1 0V2.707L5.354 4.854a.5.5 0 1 1-.708-.708l3-3z" />
-                  </svg>
                   Subir Libro
                 </button>
-                <button type="button" className="btn btn-secondary flex-fill">
+                <button
+                  type="button"
+                  className="btn btn-secondary flex-fill"
+                  onClick={() => {
+                    setTitulo('');
+                    setAutor('');
+                    setDescripcion('');
+                    setPortada(null);
+                    setArchivo(null);
+                    document.getElementById('portada').value = null;
+                    document.getElementById('archivo').value = null;
+                  }}
+                >
                   Cancelar
                 </button>
               </div>
