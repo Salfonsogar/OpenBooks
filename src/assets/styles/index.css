@@ -85,6 +85,24 @@ button:hover {
   color: #fff;
 }
 
+.button {
+ color: #5c2e2e; 
+  border: 2px solid #5c2e2e; 
+  background-color: white; 
+  text-decoration: none;
+  padding: 8px 16px; 
+  border-radius: 6px; 
+  display: inline-block; 
+  transition: all 0.3s ease; 
+}
+
+.button:hover {
+  background-color: #5c2e2e; 
+  color: white; 
+  text-decoration: none; 
+}
+
+
 .alert {
   padding: 12px 20px;
   margin-bottom: 20px;
