@@ -7,9 +7,15 @@ import "bootstrap/dist/js/bootstrap.bundle.min.js";
 
 import { BrowserRouter } from "react-router-dom";
 createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
     <BrowserRouter>
       <App />
     </BrowserRouter>
-  </React.StrictMode>
 );
+
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('/sw-local-epubs.js').then(() => {
+    console.log('sw-local-epubs registrado');
+  }).catch((err) => {
+    console.warn('no se pudo registrar sw-local-epubs:', err);
+  });
+}

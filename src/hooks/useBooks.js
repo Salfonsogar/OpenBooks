@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { fetchBooks } from "../services/openLibraryService";
+import { fetchBooks } from "../services/bookProvider";
 
 export function useBooks(query, page, pageSize) {
   const [books, setBooks] = useState([]);

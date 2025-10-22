@@ -21,6 +21,8 @@ export default function ReaderApp({ fileUrl, onClose }) {
     goToSearchResult,
   } = useReader(fileUrl);
 
+  // debug: ver cuando llega fileUrl al ReaderApp
+  console.log("[ReaderApp] fileUrl recibido:", fileUrl);
   return (
     <div className="reader-wrapper">
       <button
@@ -30,29 +32,36 @@ export default function ReaderApp({ fileUrl, onClose }) {
         <i className="bi bi-list"></i>
       </button>
 
-      <ReaderMain
-        fileUrl={fileUrl}
-        location={location}
-        onLocationChanged={onLocationChanged}
-        getRendition={(rend)=>{
-          setRendition(rend);
-        }}
-      />
+      {!fileUrl ? (
+          console.log('[ReaderApp] esperamdo fileUrl...')
+      ) : (
+        <>
+          <ReaderMain
+            fileUrl={fileUrl}
+            location={location}
+            onLocationChanged={onLocationChanged}
+            getRendition={(rend)=>{
+              console.log("getRenditionn:", rend);
+              setRendition(rend);
+            }}
+          />
 
-      <ReaderSidebar
-        isOpen={isSidebarOpen}
-        bookmarks={bookmarks}
-        searchTerm={searchTerm}
-        searchResults={searchResults}
-        totalMatches={totalMatches}
-        onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
-        onAddBookmark={addBookmark}
-        onGoToBookmark={goToBookmark}
-        onSearch={searchBook}
-        onChangeSearch={setSearchTerm}
-        onGoToSearchResult={goToSearchResult}
-        onClose={onClose}
-      />
+          <ReaderSidebar
+            isOpen={isSidebarOpen}
+            bookmarks={bookmarks}
+            searchTerm={searchTerm}
+            searchResults={searchResults}
+            totalMatches={totalMatches}
+            onToggleSidebar={() => setIsSidebarOpen(!isSidebarOpen)}
+            onAddBookmark={addBookmark}
+            onGoToBookmark={goToBookmark}
+            onSearch={searchBook}
+            onChangeSearch={setSearchTerm}
+            onGoToSearchResult={goToSearchResult}
+            onClose={onClose}
+          />
+        </>
+      )}
     </div>
   );
 }

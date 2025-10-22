@@ -23,7 +23,7 @@ export default function UploadBooksPage() {
     formData.append('Archivo', archivo);
 
     try {
-      const response = await fetch('/api/libros/upload', {
+      const response = await fetch('https://localhost:7080/api/libros/upload', {
         method: 'POST',
         body: formData,
       });

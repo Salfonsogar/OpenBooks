@@ -5,22 +5,48 @@ import NotificationModal from "../components/ui/NotificationModal";
 import ReaderApp from "./ReaderApp";
 import { getBooks } from "../services/bookProvider";
 import "../assets/styles/library.css";
+import useBookFromBase64 from "../hooks/useBookFromBase64";
+import normalizeBook from "../utils/normalizeBook";
 
 export default function Biblioteca() {
-  const [books, setBooks] = useState([]);        
-  const [loading, setLoading] = useState(false); 
+  const [books, setBooks] = useState([]);
+  const [loading, setLoading] = useState(false);
   const [page, setPage] = useState(1);
   const pageSize = 20;
 
-  const [notifications, setNotifications] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
+  const [notifications, setNotifications] = useState([]);
   const [totalPages, setTotalPages] = useState(1);
+
+  const normalized = normalizeBook(selectedBook);
+  // derive candidate from normalized fields to cover all variants
+  const candidate = normalized
+    ? normalized.ArchivoBase64 ?? normalized.archivo ?? normalized.archivoUrl ?? normalized.url ?? null
+    : null;
+
+  const preview = typeof candidate === "string" ? candidate.slice(0, 120) + (candidate.length > 120 ? "..." : "") : candidate;
+
+  const fileUrl = useBookFromBase64(candidate);
+
+  useEffect(() => {
+    console.log("selectedBook:", selectedBook);
+    console.log("candidate(preview):", preview);
+  }, [selectedBook, preview]);
+
+  useEffect(() => {
+    if (!selectedBook) return;
+    console.groupCollapsed("selectedBook debug:", selectedBook.titulo || selectedBook);
+    console.log("original:", selectedBook);
+    console.log("normalized:", normalized);
+    console.log("fileUrl:", fileUrl);
+    console.groupEnd();
+  }, [selectedBook, normalized, fileUrl]);
 
   useEffect(() => {
     const cargarLibros = async () => {
       setLoading(true);
       try {
-        const { data, totalPages } = await getBooks("json", "", page, pageSize);
+        const { data, totalPages } = await getBooks(null, "", page, pageSize);
         setBooks(data);
         setTotalPages(totalPages);
       } catch (error) {
@@ -43,7 +69,7 @@ export default function Biblioteca() {
 
       {selectedBook ? (
         <ReaderApp
-          fileUrl={selectedBook.url}
+          fileUrl={fileUrl}
           onClose={() => setSelectedBook(null)}
         />
       ) : (
@@ -67,10 +93,29 @@ export default function Biblioteca() {
               books.map((libro, i) => (
                 <BookCard
                   key={i}
-                  libro={libro}
+                  libro={libro} // pasamos todo el objeto
                   isInLibrary={true}
                   onRemove={() => showNotification(`${libro.titulo} eliminado`)}
-                  onRead={(libro) => setSelectedBook(libro)}
+                  onRead={(lb) => {
+                    console.log('[Library] onRead handler libro recibido:', lb);
+                    // calcular normalized y candidate inmediatamente para depuración
+                    try {
+                      const normalizedLocal = normalizeBook(lb);
+                      const candidateLocal =
+                        normalizedLocal?.ArchivoBase64 ??
+                        normalizedLocal?.archivoBase64 ??
+                        normalizedLocal?.archivo ??
+                        normalizedLocal?.archivoUrl ??
+                        normalizedLocal?.Url ??
+                        null;
+                      const previewLocal = typeof candidateLocal === "string" ? candidateLocal.slice(0, 120) + (candidateLocal.length > 120 ? "..." : "") : candidateLocal;
+                      console.log('[Library][onRead] candidate (preview):', previewLocal, ' fullLength:', candidateLocal ? candidateLocal.length : 0);
+                    } catch (err) {
+                      console.error('[Library][onRead] error al calcular candidate:', err);
+                    }
+
+                    setSelectedBook(lb);
+                  }}
                 />
               ))
             )}

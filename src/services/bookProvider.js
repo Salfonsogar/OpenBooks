@@ -1,4 +1,4 @@
-import { getBooksFromSupabase } from "./bookService";
+import { getBooksFromDataBase} from "./bookService.js";
 import { getBooksFromJSON } from "./localBookService";
 import { fetchBooks } from "./openLibraryService";
 import { DEFAULT_SOURCE } from "../constants/api";
@@ -10,8 +10,8 @@ export async function getBooks(SOURCE, query = "", page = 1, pageSize = 10) {
   switch (SOURCE) {
     case "json":
       return await getBooksFromJSON(query, page, pageSize);
-    case "supabase":
-      return await getBooksFromSupabase(query, page, pageSize);
+    case "dataBase":
+      return await getBooksFromDataBase(query, page, pageSize);
     case "openLibrary":
       return await fetchBooks(query, page, pageSize);
     default:

@@ -5,6 +5,6 @@ export const PLACEHOLDER_IMG =
 export const SOURCES = {
   OPEN_LIBRARY: "openLibrary",
   JSON: "json",
-  DATABASE: "supabase",
+  DATABASE: "dataBase",
 };
 export const DEFAULT_SOURCE = SOURCES.DATABASE;

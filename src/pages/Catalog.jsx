@@ -8,7 +8,8 @@ import Pagination from "../components/ui/Pagination";
 import NotificationModal from "../components/ui/NotificationModal";
 import { updateLocalStorage } from "../utils/updateLocalStorage";
 import ReaderApp from "./ReaderApp";
-import { getBooks } from "../services/bookProvider"; 
+import { getBooks } from "../services/bookProvider";
+import useBookFromBase64 from "../hooks/useBookFromBase64";
 
 export default function Catalog() {
   const [query, setQuery] = useState("");
@@ -25,23 +26,26 @@ export default function Catalog() {
   const [notifications, setNotifications] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
 
+  // Support both base64 stored in ArchivoBase64 and direct urls (data.url or url from local JSON)
+  const fileUrl = useBookFromBase64(
+    selectedBook?.ArchivoBase64 ?? selectedBook?.url ?? selectedBook?.Url
+  );
+
   useEffect(() => {
-  const fetchData = async () => {
-    setLoading(true);
-    try {
-      const { data, totalPages } = await getBooks("openLibrary", query, page, pageSize);
-      setBooks(data);
-      setTotalPages(totalPages);
-    } catch (error) {
-      console.error("Error al obtener libros:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  fetchData();
-}, [query, page]);
-
+    const fetchData = async () => {
+      setLoading(true);
+      try {
+        const { data, totalPages } = await getBooks(null, query, page, pageSize);
+        setBooks(data);
+        setTotalPages(totalPages);
+      } catch (error) {
+        console.error("Error al obtener libros:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
+  }, [query, page]);
 
   const handleSearch = (newQuery) => {
     setQuery(newQuery);
@@ -78,7 +82,7 @@ export default function Catalog() {
 
       {selectedBook ? (
         <ReaderApp
-          fileUrl={selectedBook.url}
+          fileUrl={fileUrl}
           onClose={() => setSelectedBook(null)}
         />
       ) : (
@@ -99,17 +103,19 @@ export default function Catalog() {
               books.map((libro, i) => (
                 <BookCard
                   key={i}
-                  libro={libro}
+                  libro={{
+                    ...libro,
+                    Portada: libro.PortadaBase64
+                      ? `data:image/png;base64,${libro.PortadaBase64}`
+                      : "/placeholder.png",
+                  }}
                   isInLibrary={estanteria.some(
                     (l) =>
                       l.titulo === libro.titulo && l.autor === libro.autor
                   )}
                   onAdd={onAdd}
                   onRemove={onRemove}
-                  onRead={(libro) => {
-                    console.log("📖 Libro seleccionado:", libro);
-                    setSelectedBook(libro);
-                  }}
+                  onRead={() => setSelectedBook(libro)}
                 />
               ))
             )}
