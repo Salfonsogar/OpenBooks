@@ -86,22 +86,21 @@ button:hover {
 }
 
 .button {
- color: #5c2e2e; 
-  border: 2px solid #5c2e2e; 
-  background-color: white; 
+  color: #5c2e2e;
+  border: 2px solid #5c2e2e;
+  background-color: white;
   text-decoration: none;
-  padding: 8px 16px; 
-  border-radius: 6px; 
-  display: inline-block; 
-  transition: all 0.3s ease; 
+  padding: 8px 16px;
+  border-radius: 6px;
+  display: inline-block;
+  transition: all 0.3s ease;
 }
 
 .button:hover {
-  background-color: #5c2e2e; 
-  color: white; 
-  text-decoration: none; 
+  background-color: #5c2e2e;
+  color: white;
+  text-decoration: none;
 }
-
 
 .alert {
   padding: 12px 20px;
@@ -193,15 +192,24 @@ a:hover {
   color: #5c5c5c !important;
 }
 
-.btn-main {
-  background: linear-gradient(135deg, #6e3b3b, #8b5e3c);
-  border: none;
-  color: #f3e9e0;
+/* FIX: Mayor especificidad para sobrescribir Bootstrap */
+.btn-main,
+.btn.btn-main,
+a.btn.btn-main,
+a.btn-main {
+  background: linear-gradient(135deg, #6e3b3b, #8b5e3c) !important;
+  border: none !important;
+  color: #f3e9e0 !important;
+  text-decoration: none !important;
 }
 
-.btn-main:hover {
-  background: linear-gradient(135deg, #8b5e3c, #c9a66b);
-  color: #fff;
+.btn-main:hover,
+.btn.btn-main:hover,
+a.btn.btn-main:hover,
+a.btn-main:hover {
+  background: linear-gradient(135deg, #8b5e3c, #c9a66b) !important;
+  color: #fff !important;
+  text-decoration: none !important;
 }
 
 .btn-outline-main {

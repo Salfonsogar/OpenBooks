@@ -1,25 +1,25 @@
-import Features from "../components/ui/Features";
-import ReaderApp from "../pages/ReaderApp";
-import { Link } from "react-router-dom";
+import Features from '../components/ui/Features';
+import ReaderApp from '../pages/ReaderApp';
+import { Link } from 'react-router-dom';
 export default function Home() {
   const featureItems = [
     {
-      title: "🔍 Buscar Libros",
-      text: "Encuentra tus libros favoritos con filtros por autor, género o palabra clave.",
-      to: "/catalog",
-      buttonText: "Explorar",
+      title: '🔍 Buscar Libros',
+      text: 'Encuentra tus libros favoritos con filtros por autor, género o palabra clave.',
+      to: '/catalog',
+      buttonText: 'Explorar',
     },
     {
-      title: "📚 Publicar Libros",
-      text: "Comparte tus propios libros con la comunidad y gestiona tus publicaciones.",
-      to: "/profile",
-      buttonText: "Publicar",
+      title: '📚 Publicar Libros',
+      text: 'Comparte tus propios libros con la comunidad y gestiona tus publicaciones.',
+      to: '/upload',
+      buttonText: 'Publicar',
     },
     {
-      title: "📖 Leer Online",
-      text: "Accede a libros digitales desde cualquier dispositivo, en cualquier momento.",
-      to: "/library",
-      buttonText: "Leer Ahora",
+      title: '📖 Leer Online',
+      text: 'Accede a libros digitales desde cualquier dispositivo, en cualquier momento.',
+      to: '/library',
+      buttonText: 'Leer Ahora',
     },
   ];
 

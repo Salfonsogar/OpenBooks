@@ -57,7 +57,7 @@ export default function UploadBooksPage() {
           </p>
         </div>
 
-        <div
+        {/* <div
           className="alert alert-info d-flex align-items-center mb-4"
           role="alert"
         >
@@ -76,7 +76,7 @@ export default function UploadBooksPage() {
             Asegúrate de tener los derechos necesarios para subir este contenido
             a la biblioteca.
           </div>
-        </div>
+        </div> */}
 
         <div className="card shadow-sm mb-4">
           <div className="card-header bg-white">
@@ -156,7 +156,7 @@ export default function UploadBooksPage() {
               </div>
 
               <div className="d-flex gap-2">
-                <button type="submit" className="btn btn-primary flex-fill">
+                <button type="submit" className="btn btn-main flex-fill">
                   Subir Libro
                 </button>
                 <button

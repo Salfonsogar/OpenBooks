@@ -1,28 +1,27 @@
-import { useRef, useState } from "react";
+import { useRef, useState } from 'react';
 
 export default function SearchBar({ onSearch, history }) {
   const searchBarRef = useRef(null);
+  const containerRef = useRef(null); // Nueva ref para el contenedor
   const [showHistory, setShowHistory] = useState(false);
 
   // Normaliza history a array de forma segura
   const historyArray = (() => {
     if (Array.isArray(history)) return history;
     if (!history) return [];
-    if (typeof history === "string") {
+    if (typeof history === 'string') {
       try {
         const parsed = JSON.parse(history);
         return Array.isArray(parsed) ? parsed : [history];
       } catch {
-        // si no es JSON, intenta separar por coma, si aplica
         return (
           history
-            .split?.(",")
+            .split?.(',')
             .map((s) => s.trim())
             .filter(Boolean) || [history]
         );
       }
     }
-    // si viene otro tipo (objeto/valor), lo envuelve en array
     return [history];
   })();
 
@@ -33,29 +32,29 @@ export default function SearchBar({ onSearch, history }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div className="input-group mb-3 position-relative">
-        <input
-          type="text"
-          className="form-control input-busqueda"
-          placeholder="Buscar por título, autor o categoría..."
-          ref={searchBarRef}
-          aria-label="Buscar libros"
-          onFocus={() => {
-            if (historyArray.length > 0) setShowHistory(true);
-          }}
-          onBlur={() => {
-            // pequeño delay para permitir que onMouseDown del botón se ejecute
-            setTimeout(() => setShowHistory(false), 150);
-          }}
-        />
+    <div className="search-wrapper mb-4" ref={containerRef}>
+      <form onSubmit={handleSubmit}>
+        <div className="input-group">
+          <input
+            type="text"
+            className="input-busqueda"
+            placeholder="Buscar por título, autor o categoría..."
+            ref={searchBarRef}
+            aria-label="Buscar libros"
+            onFocus={() => {
+              if (historyArray.length > 0) setShowHistory(true);
+            }}
+            onBlur={() => {
+              setTimeout(() => setShowHistory(false), 150);
+            }}
+          />
+          <button className="btn btn-buscar" type="submit">
+            Buscar
+          </button>
+        </div>
 
         {showHistory && historyArray.length > 0 && (
-          <div
-            id="historial-busquedas"
-            className="list-group position-absolute w-100 shadow-sm"
-            style={{ zIndex: 1000 }}
-          >
+          <div id="historial-busquedas" className="list-group">
             {historyArray
               .slice()
               .reverse()
@@ -74,11 +73,7 @@ export default function SearchBar({ onSearch, history }) {
               ))}
           </div>
         )}
-
-        <button className="btn btn-buscar" type="submit">
-          Buscar
-        </button>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 }
