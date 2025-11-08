@@ -22,6 +22,10 @@ function App() {
           <Route path="/Upload" element={<UploadBooksPage />} />
           <Route path="/Profile" element={<ProfilePage />} />
           <Route path="/Admin" element={<AdminPage />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/verify-code" element={<VerifyCode />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/account-settings" element={<AccountSettings />} />
         </Routes>
       </main>
       <Footer />

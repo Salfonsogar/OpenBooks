@@ -1,5 +1,5 @@
 import { useState } from "react";
-import "../../assets/styles/AuthModal.css"; // cambiamos el nombre del CSS también
+import "../../assets/styles/AuthModal.css"; 
 import LoginForm from "./LoginForm";
 import SignupForm from "./SignupForm";
 
@@ -14,7 +14,8 @@ export default function AuthModal({ onClose }) {
         </div>
 
         <div className={`auth-login ${isLogin ? "active" : ""}`}>
-          <LoginForm onClickTitle={() => setIsLogin(true)} />
+          <LoginForm onClickTitle={() => setIsLogin(true)}
+          onForgotPassword={onClose} />
         </div>
 
         <button className="auth-close-btn" onClick={onClose}>

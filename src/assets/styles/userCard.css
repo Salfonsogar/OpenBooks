@@ -1,0 +1,9 @@
+.account-settings-btn{
+    transition: all 0.3s ease;
+}
+.account-settings-btn:hover{
+    color: #fff;
+}
+.btn-add-bookmark:hover{
+    transform: scale(1.05);
+}

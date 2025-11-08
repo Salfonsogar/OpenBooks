@@ -1,0 +1,11 @@
+.privacity-settings-button{
+ font-family: inherit;
+ font-size: 1rem;
+ margin-bottom: 12px;
+ padding: 8px 16px;
+ border-radius: 4px;
+ background-color: #6e3b3b !important;
+ border: none;
+ transition: background 0.2s;
+ width: 100%;
+}
