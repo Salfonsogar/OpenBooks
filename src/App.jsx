@@ -8,6 +8,11 @@ import AuthModal from './components/ui/AuthModal';
 import UploadBooksPage from './pages/UploadBooks';
 import ProfilePage from './pages/Profile';
 import AdminPage from './pages/Admin';
+import ForgotPassword from './pages/ForgotPassword';
+import VerifyCode from './pages/VerifyCode';
+import ResetPassword from './pages/ResetPassword';
+import AccountSettings from './pages/AccountSettings';
+import ProfileForm from './components/ui/ProfileForm.jsx';
 
 function App() {
   return (
@@ -26,6 +31,7 @@ function App() {
           <Route path="/verify-code" element={<VerifyCode />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/account-settings" element={<AccountSettings />} />
+          <Route path="/profile-form" element={<ProfileForm/>} />
         </Routes>
       </main>
       <Footer />

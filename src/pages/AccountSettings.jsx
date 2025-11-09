@@ -50,14 +50,14 @@ export default function AccountSettings() {
                     <i className="bi bi-chevron-right"></i>
                   </Link>
 
-                  <button className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                  <Link to="/profile-form" className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                     <div>
                       <i className="bi bi-shield-check me-2"></i>
                       <strong>Editar perfil</strong>
                       <p className="text-muted mb-0 small">Cambia tu información personal</p>
                     </div>
                     <i className="bi bi-chevron-right"></i>
-                  </button>
+                  </Link>
 
                   <button className="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
                     <div>
@@ -82,23 +82,6 @@ export default function AccountSettings() {
                 <div className="alert alert-warning">
                   <i className="bi bi-info-circle me-2"></i>
                   <strong>Advertencia:</strong> Las siguientes acciones son permanentes y no se pueden deshacer fácilmente.
-                </div>
-
-                <div className="mb-3 p-3 border rounded">
-                  <div className="d-flex justify-content-between align-items-center">
-                    <div>
-                      <h6 className="mb-1">
-                        <i className="bi bi-pause-circle me-2"></i>
-                        Desactivar cuenta
-                      </h6>
-                      <p className="text-muted small mb-0">
-                        Tu cuenta será ocultada temporalmente
-                      </p>
-                    </div>
-                    <button className="button">
-                      Desactivar
-                    </button>
-                  </div>
                 </div>
 
                 <div className="p-3 border border-danger rounded">
