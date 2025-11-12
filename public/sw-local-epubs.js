@@ -8,7 +8,6 @@ self.addEventListener('message', (ev) => {
       const { id, arrayBuffer, mime } = data;
       if (id && arrayBuffer) {
         epubs.set(id, { arrayBuffer, mime: mime || 'application/epub+zip' });
-        // opcional: confirmar al cliente
         ev.source && ev.source.postMessage && ev.source.postMessage({ type: 'STORED', id });
       }
     } else if (data.type === 'UNSTORE_EPUB') {

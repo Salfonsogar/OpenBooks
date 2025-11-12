@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "../../assets/styles/userCard.css";
 
 export default function UserCard({ 
@@ -17,7 +18,7 @@ export default function UserCard({
 
   return (
     <div className="card shadow-sm h-100">
-      <div className="card-body text-center space-between d-flex flex-column">
+      <div className="card-body text-center d-flex flex-column justify-content-between">
         <img
           src={imgSrc}
           alt={name}
@@ -43,10 +44,13 @@ export default function UserCard({
             Cambiar foto
           </button>
           {showSettingsButton && (
-            <a href="/account-settings" className="btn-add-bookmark w-100 text-decoration-none account-settings-btn">
+            <Link 
+              to="/profile-settings"
+              className="btn-add-bookmark w-100 text-decoration-none account-settings-btn d-inline-flex align-items-center justify-content-center"
+            >
               <i className="bi bi-gear me-2"></i>
               Ajustes y privacidad
-            </a>
+            </Link>
           )}
         </div>
       </div>

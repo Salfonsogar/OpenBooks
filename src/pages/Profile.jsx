@@ -1,5 +1,8 @@
 import { useState } from 'react';
 import UserCard from '../components/ui/UserCard';
+import ActivityTab from "../components/profile/ActivityTab";
+import SuggestionsTab from "../components/profile/SuggestionsTab";
+import PenaltiesTab from "../components/profile/PenaltiesTab";
 
 const mockUserData = {
   nombre: "María García",
@@ -19,20 +22,16 @@ const mockPenalties = [
 ];
 
 export default function ProfilePage() {
-  const [activeTab, setActiveTab] = useState('actividad');
-
-  const activePenaltiesCount = mockPenalties.filter(p => p.estado === 'Activa').length;
+  const [activeTab, setActiveTab] = useState("actividad");
 
   return (
     <div className="min-vh-100 bg-light py-4">
       <div className="container">
-        
         <div className="mb-4">
           <h1 className="display-5 fw-bold mb-2">Mi Perfil</h1>
         </div>
 
         <div className="row g-4">
-          
           <div className="col-lg-4">
             <UserCard
               imgSrc={mockUserData.avatar}
@@ -45,13 +44,12 @@ export default function ProfilePage() {
 
           <div className="col-lg-8">
             <div className="card shadow-sm">
-              
               <div className="card-header bg-white">
                 <ul className="nav nav-tabs card-header-tabs">
                   <li className="nav-item">
                     <button
-                      className={`nav-link ${activeTab === 'actividad' ? 'active' : ''}`}
-                      onClick={() => setActiveTab('actividad')}
+                      className={`nav-link ${activeTab === "actividad" ? "active" : ""}`}
+                      onClick={() => setActiveTab("actividad")}
                     >
                       <i className="bi bi-bar-chart me-2"></i>
                       Actividad
@@ -59,8 +57,8 @@ export default function ProfilePage() {
                   </li>
                   <li className="nav-item">
                     <button
-                      className={`nav-link ${activeTab === 'sugerencias' ? 'active' : ''}`}
-                      onClick={() => setActiveTab('sugerencias')}
+                      className={`nav-link ${activeTab === "sugerencias" ? "active" : ""}`}
+                      onClick={() => setActiveTab("sugerencias")}
                     >
                       <i className="bi bi-lightbulb-fill me-2"></i>
                       Sugerencias
@@ -68,175 +66,20 @@ export default function ProfilePage() {
                   </li>
                   <li className="nav-item">
                     <button
-                      className={`nav-link ${activeTab === 'penalizaciones' ? 'active' : ''}`}
-                      onClick={() => setActiveTab('penalizaciones')}
+                      className={`nav-link ${activeTab === "penalizaciones" ? "active" : ""}`}
+                      onClick={() => setActiveTab("penalizaciones")}
                     >
                       <i className="bi bi-exclamation-triangle me-2"></i>
                       Penalizaciones
-                      {activePenaltiesCount > 0 && (
-                        <span className="badge bg-danger ms-2">{activePenaltiesCount}</span>
-                      )}
                     </button>
                   </li>
                 </ul>
               </div>
-              
+
               <div className="card-body">
-                {activeTab === 'actividad' && (
-                  <div className="card bg-light border-0">
-                    <div className="card-body">
-                      <h6 className="card-title mb-4">
-                        <i className="bi bi-bar-chart me-2"></i>
-                        Estadísticas de Lectura
-                      </h6>
-                      <div className="row text-center">
-                        <div className="col-4">
-                          <i className="bi bi-book-fill text-primary display-4 mb-2"></i>
-                          <h3 className="fw-bold text-dark">{mockUserData.librosLeidos}</h3>
-                          <small className="text-muted">Libros Leídos</small>
-                        </div>
-                        <div className="col-4">
-                          <i className="bi bi-bookmark-fill text-warning display-4 mb-2"></i>
-                          <h3 className="fw-bold text-dark">{mockUserData.enProgreso}</h3>
-                          <small className="text-muted">En Progreso</small>
-                        </div>
-                        <div className="col-4">
-                          <i className="bi bi-clock-fill text-success display-4 mb-2"></i>
-                          <h3 className="fw-bold text-dark">{mockUserData.horasTotales}</h3>
-                          <small className="text-muted">Horas Totales</small>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {activeTab === 'sugerencias' && (
-                  <div className="card-body">
-                    <h6 className="mb-3">
-                      <i className="bi bi-lightbulb-fill me-2"></i>
-                      Sugerencias de mejoras
-                    </h6>
-                    <p className="text-muted">
-                      ¿Tienes alguna idea para mejorar nuestra plataforma? ¡Nos encantaría escucharla!
-                    </p>
-                    <form>
-                      <div className="mb-3">
-                        <label htmlFor="suggestion" className="form-label">
-                          Tu Sugerencia
-                        </label>
-                        <textarea
-                          className="form-control"
-                          id="suggestion" 
-                          rows="4"
-                          placeholder="Comparte tus ideas para mejorar..."
-                        ></textarea>
-                      </div>
-                      <button type="submit" className="btn-buscar">
-                        <i className="bi bi-send me-2"></i>
-                        Enviar Sugerencia
-                      </button>
-                    </form>
-                  </div>
-                )}
-
-                {activeTab === 'penalizaciones' && (
-                  <div>
-                    <h6 className="mb-3">
-                      <i className="bi bi-exclamation-triangle me-2"></i>
-                      Historial de Penalizaciones
-                    </h6>
-                    
-                    {mockPenalties.length === 0 ? (
-                      <div className="text-center py-5">
-                        <i className="bi bi-check-circle text-success" style={{ fontSize: '3rem' }}></i>
-                        <h5 className="mt-3">No tienes penalizaciones</h5>
-                        <p className="text-muted">¡Sigue así!</p>
-                      </div>
-                    ) : (
-                      <>
-                        <div className="table-responsive">
-                          <table className="table table-hover">
-                            <thead>
-                              <tr>
-                                <th>Motivo</th>
-                                <th>Fecha</th>
-                                <th>Estado</th>
-                                <th className="text-center">Acción</th>
-                              </tr>
-                            </thead>
-                            <tbody>
-                              {mockPenalties.map((penalty) => (
-                                <tr key={penalty.id}>
-                                  <td>
-                                    <i className="bi bi-exclamation-circle text-danger me-2"></i>
-                                    {penalty.motivo}
-                                  </td>
-                                  <td>
-                                    <small className="text-muted">
-                                      {new Date(penalty.fecha).toLocaleDateString('es-ES', {
-                                        year: 'numeric',
-                                        month: 'long',
-                                        day: 'numeric'
-                                      })}
-                                    </small>
-                                  </td>
-                                  <td>
-                                    <span
-                                      className={`badge ${
-                                        penalty.estado === "Activa" 
-                                          ? "bg-danger" 
-                                          : "bg-secondary"
-                                      }`}
-                                    >
-                                      {penalty.estado}
-                                    </span>
-                                  </td>
-                                  <td className="text-center">
-                                    {penalty.estado === "Activa" ? (
-                                      <button className="btn btn-outline-dark btn-sm">
-                                        <i className="bi bi-envelope me-1"></i>
-                                        Apelar
-                                      </button>
-                                    ) : (
-                                      <span className="text-muted">—</span>
-                                    )}
-                                  </td>
-                                </tr>
-                              ))}
-                            </tbody>
-                          </table>
-                        </div>
-
-                        {activePenaltiesCount > 0 && (
-                          <div className="mt-4 p-3 bg-light rounded">
-                            <h6 className="mb-3">
-                              <i className="bi bi-chat-left-text me-2"></i>
-                              Enviar Apelación
-                            </h6>
-                            <form>
-                              <div className="mb-3">
-                                <label htmlFor="penaltyReason" className="form-label">
-                                  Explica por qué consideras injusta la penalización
-                                </label>
-                                <textarea
-                                  className="form-control"
-                                  id="penaltyReason"
-                                  rows="4"
-                                  placeholder="Proporciona detalles sobre tu situación..."
-                                ></textarea>
-                              </div>
-                              <button type="submit" className="btn-buscar">
-                                <i className="bi bi-send me-2"></i>
-                                Enviar Apelación
-                              </button>
-                            </form>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </div>
-                )}
-
+                {activeTab === "actividad" && <ActivityTab user={mockUserData} />}
+                {activeTab === "sugerencias" && <SuggestionsTab />}
+                {activeTab === "penalizaciones" && <PenaltiesTab penalties={mockPenalties} />}
               </div>
             </div>
           </div>

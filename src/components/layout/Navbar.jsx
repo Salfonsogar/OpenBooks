@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import AuthModal from "../ui/AuthModal";
+import AuthModal from "../auth/AuthModal";
 import "../../assets/styles/Navbar.css";
 import user from "../../assets/icons/user.svg";
 import shieldUser from "../../assets/icons/shield-user.svg";
