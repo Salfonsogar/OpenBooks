@@ -1,18 +1,21 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from 'react-redux';
 import ProfileDeleteModal from "../components/profile/ProfileDeleteModal.jsx";
 import ChangePassword from "../components/profile/ChangePassword.jsx";
 import ProfileForm from "../components/profile/ProfileForm.jsx";
 import ProfileSidebar from "../components/profile/ProfileSidebar.jsx";
 import ProfileMainView from "../components/profile/ProfileMainView.jsx";
+import { selectAuthUser } from '../store/authSlice';
 
 export default function ProfileSettings() {
   const [showModal, setShowModal] = useState(false);
   const [activeView, setActiveView] = useState("main");
   const navigate = useNavigate();
+  const user = useSelector(selectAuthUser);
 
   const handleDeleteAccount = () => {
-    console.log("Cuenta eliminada");
+    //API de deleteAccount
     alert("Cuenta eliminada correctamente");
     navigate("/login");
   };
@@ -44,14 +47,14 @@ export default function ProfileSettings() {
           </div>
 
           <div className="col-lg-9">
-              {activeView === "main" && <ProfileMainView/>}
+              {activeView === "main" && <ProfileMainView user={user} />}
               {activeView === "changePassword" && (
                 <div className="card-body">
-                  <ChangePassword />
+                  <ChangePassword user={user} />
                 </div>
               )}
               {activeView === "profile" && (
-                <ProfileForm />
+                <ProfileForm userData={user} />
               )}
           </div>
         </div>

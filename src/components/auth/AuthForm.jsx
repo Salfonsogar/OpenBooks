@@ -3,10 +3,12 @@ export default function AuthForm({
   onClickTitle,
   children,
   buttonText,
+  onSubmit,
 }) {
   const type = title.toLowerCase().replace(" ", "");
 
   const handleSubmit = (e) => {
+    if (onSubmit) return onSubmit(e);
     e.preventDefault();
   };
 

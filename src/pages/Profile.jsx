@@ -1,28 +1,19 @@
 import { useState } from 'react';
+import { useSelector } from 'react-redux';
 import UserCard from '../components/ui/UserCard';
 import ActivityTab from "../components/profile/ActivityTab";
 import SuggestionsTab from "../components/profile/SuggestionsTab";
 import PenaltiesTab from "../components/profile/PenaltiesTab";
-
-const mockUserData = {
-  nombre: "María García",
-  email: "maria@example.com",
-  role: "Usuario",
-  avatar: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-  bio: "Amante de la literatura clásica y moderna. Administradora de la biblioteca digital.",
-  intereses: "Literatura, Historia, Filosofía",
-  librosLeidos: 24,
-  enProgreso: 8,
-  horasTotales: 156
-};
-
-const mockPenalties = [
-  { id: 1, motivo: "Comentario ofencivo en foro grupal", fecha: "2025-09-20", estado: "Activa" },
-  { id: 2, motivo: "Homoxesualidad detectada, eres gei 🏳️‍🌈?", fecha: "2025-08-15", estado: "calajo" },
-];
+import { selectAuthUser } from '../store/authSlice';
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("actividad");
+  const user = useSelector(selectAuthUser);
+
+  // Falta penalizaciones en UsuarioResponseDTO y en tabla usuario
+  const penalties = user?.Sancionado
+    ? [{ id: 1, motivo: "Cuenta sancionada", fecha: user.FechaRegistro, estado: "Activa" }]
+    : [];
 
   return (
     <div className="min-vh-100 bg-light py-4">
@@ -34,10 +25,10 @@ export default function ProfilePage() {
         <div className="row g-4">
           <div className="col-lg-4">
             <UserCard
-              imgSrc={mockUserData.avatar}
-              name={mockUserData.nombre}
-              email={mockUserData.email}
-              role={mockUserData.role}
+              imgSrc={user?.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
+              name={user?.UserName || user?.Email || "Usuario"}
+              email={user?.Email}
+              role={user?.Roles?.[0] || "Usuario"}
               showSettingsButton={true}
             />
           </div>
@@ -77,9 +68,9 @@ export default function ProfilePage() {
               </div>
 
               <div className="card-body">
-                {activeTab === "actividad" && <ActivityTab user={mockUserData} />}
+                {activeTab === "actividad" && <ActivityTab user={user} />}
                 {activeTab === "sugerencias" && <SuggestionsTab />}
-                {activeTab === "penalizaciones" && <PenaltiesTab penalties={mockPenalties} />}
+                {activeTab === "penalizaciones" && <PenaltiesTab penalties={penalties} />}
               </div>
             </div>
           </div>

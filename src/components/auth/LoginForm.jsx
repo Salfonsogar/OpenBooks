@@ -1,10 +1,42 @@
 import AuthForm from "./AuthForm";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../../assets/styles/LoginForm.css";
+import { useDispatch, useSelector } from 'react-redux';
+import { loginAsync, selectAuthError, selectAuthStatus } from '../../store/authSlice';
 
-export default function LoginForm({ onClickTitle, onForgotPassword }) {
+export default function LoginForm({ onClickTitle, onForgotPassword, onClose }) {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const formData = new FormData(form);
+    const correo = formData.get('correo');
+    const contrasena = formData.get('contraseña');
+
+    try {
+      const res = await dispatch(loginAsync({ correo, contrasena }));
+      if (loginAsync.fulfilled.match(res)) {
+        const user = res.payload?.Usuario;
+        const roles = user?.Roles || [];
+        try { if (onClose) onClose(); } catch {
+          console.error('LoginForm onClose error');
+        }
+        if (roles.includes('Administrador')) navigate('/Admin');
+        else navigate('/Profile');
+      } 
+    } catch (err) {
+      console.error('LoginForm submit error', err);
+    }
+  };
+
+  const authError = useSelector(selectAuthError);
+  const authStatus = useSelector(selectAuthStatus);
+  
+
   return (
-    <AuthForm title="Iniciar sesión" buttonText="Entrar" onClickTitle={onClickTitle} className="login-form">
+    <AuthForm title="Iniciar sesión" buttonText="Entrar" onClickTitle={onClickTitle} onSubmit={handleSubmit} className="login-form">
       <input
         type="email"
         name="correo"
@@ -24,6 +56,8 @@ export default function LoginForm({ onClickTitle, onForgotPassword }) {
           He olvidado mi contraseña
         </Link>
       </p>
+      {authStatus === 'loading' && <div className="text-muted">Iniciando sesión...</div>}
+      {authError && <div className="text-danger">{authError}</div>}
     </AuthForm>
   );
 }

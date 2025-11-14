@@ -1,21 +1,13 @@
 import { useState } from "react";
 import UserCard from "../ui/UserCard";
 
-const mockUserData = {
-  nombre: "María García",
-  email: "maria@example.com",
-  role: "Usuario",
-  avatar: "https://cdn-icons-png.flaticon.com/512/149/149071.png",
-  bio: "Amante de la literatura clásica y moderna.",
-  intereses: "Literatura, Historia, Filosofía",
-};
-
-export default function ProfileForm({ userData = mockUserData, onSubmit, onCancel }) {
+export default function ProfileForm({ userData, onSubmit, onCancel }) {
   const [formData, setFormData] = useState({
-    nombre: userData.nombre || "",
-    email: userData.email || "",
-    bio: userData.bio || "",
-    intereses: userData.intereses || "",
+    nombre: userData?.UserName || "",
+    email: userData?.Email || "",
+    //No estan en UsuarioResponseDT ni en tabla usuario
+    bio: userData?.bio || "",
+    intereses: userData?.intereses || "",
   });
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState({ type: "", text: "" });
@@ -34,7 +26,7 @@ export default function ProfileForm({ userData = mockUserData, onSubmit, onCance
     setMessage({ type: "", text: "" });
 
     try {
-      // Aquí iría tu llamada a la API
+      // API de actualización de perfil
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       setMessage({ 
@@ -56,7 +48,6 @@ export default function ProfileForm({ userData = mockUserData, onSubmit, onCance
   return (
   <div className="container my-0 d-flex justify-content-center align-items-start ">
     <div className="col-lg-8 p-4 ">
-      {/* Encabezado */}
       <div className="mb-4 text-center">
         <h4 className="fw-bold mb-2">
           <i className="bi bi-person-lines-fill me-2 text-primary"></i>
@@ -67,7 +58,6 @@ export default function ProfileForm({ userData = mockUserData, onSubmit, onCance
         </p>
       </div>
 
-      {/* Mensaje de estado */}
       {message.text && (
         <div
           className={`alert alert-${message.type} alert-dismissible fade show`}
@@ -89,7 +79,6 @@ export default function ProfileForm({ userData = mockUserData, onSubmit, onCance
         </div>
       )}
 
-      {/* Formulario */}
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label htmlFor="nombre" className="form-label fw-bold">
@@ -167,7 +156,6 @@ export default function ProfileForm({ userData = mockUserData, onSubmit, onCance
           </small>
         </div>
 
-        {/* Botones */}
         <div className="d-flex justify-content-end gap-2 pt-3">
           <button
             type="button"

@@ -15,7 +15,7 @@ export default function AuthModal({ onClose }) {
 
         <div className={`auth-login ${isLogin ? "active" : ""}`}>
           <LoginForm onClickTitle={() => setIsLogin(true)}
-          onForgotPassword={onClose} />
+            onForgotPassword={onClose} onClose={onClose} />
         </div>
 
         <button className="auth-close-btn" onClick={onClose}>
