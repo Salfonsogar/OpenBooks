@@ -1,3 +1,32 @@
+// AsyncThunk para registro
+export const registerAsync = createAsyncThunk(
+  'auth/register',
+  async (payload, { rejectWithValue }) => {
+    try {
+      const res = await fetch('https://localhost:7080/api/Usuarios/Register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        if (data && data.errors && Array.isArray(data.errors)) {
+          return rejectWithValue(data.errors.join('. '));
+        } else if (data && data.Message) {
+          return rejectWithValue(data.Message);
+        } else {
+          return rejectWithValue('Error al registrar usuario');
+        }
+      }
+      try {
+        sessionStorage.setItem('auth', JSON.stringify({ user: data }));
+      } catch (e) { console.warn('authSlice sessionStorage set error', e); }
+      return data;
+    } catch (err) {
+      return rejectWithValue(err.message || 'Network error');
+    }
+  }
+);
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const loginAsync = createAsyncThunk(
@@ -65,6 +94,20 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Registro
+      .addCase(registerAsync.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(registerAsync.fulfilled, (state, action) => {
+        state.status = 'succeeded';
+        state.user = action.payload;
+        state.error = null;
+      })
+      .addCase(registerAsync.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload || action.error?.message || 'Error en registro';
+      })
       .addCase(loginAsync.pending, (state) => {
         state.status = 'loading';
         state.error = null;
