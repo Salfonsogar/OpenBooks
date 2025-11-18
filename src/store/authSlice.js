@@ -1,13 +1,17 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
 export const loginAsync = createAsyncThunk(
-  'https://localhost:7080/auth/login',
+  'auth/login',
   async (credentials, { rejectWithValue }) => {
     try {
       const body = {
-        Correo: credentials.correo,
-        Contrasena: credentials.contrasena,
+        correo: credentials.correo,
+        contrasena: credentials.contrasena,
       };
-      const res = await fetch('/api/Auth/login', {
+
+      console.log("BODY ENVIADO:", body);
+
+      const res = await fetch('https://localhost:7080/api/Usuarios/Login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
@@ -26,6 +30,7 @@ export const loginAsync = createAsyncThunk(
     }
   }
 );
+
 
 const initialState = {
   user: null,
