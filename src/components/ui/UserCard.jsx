@@ -1,7 +1,10 @@
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { selectAuthUser } from '../../store/authSlice';
 import "../../assets/styles/userCard.css";
 
-export default function UserCard({ user, showSettingsButton = false }) {
+export default function UserCard({ showSettingsButton = false }) {
+  const user = useSelector(selectAuthUser);
   const getRoleBadgeColor = (role) => {
     const colors = {
       'Administrador': '#6e3b3b',
@@ -11,9 +14,9 @@ export default function UserCard({ user, showSettingsButton = false }) {
   };
 
   const avatar = user?.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-  const name = user?.UserName || user?.Email || "Usuario";
-  const email = user?.Email || "";
-  const role = user?.Roles?.[0] || "Usuario";
+  const name = user?.userName || user?.email || "userExample";
+  const email = user?.email || "example@gmail.com";
+  const role = user?.roles?.[0] || "NA";
 
   return (
     <div className="card shadow-sm h-100">

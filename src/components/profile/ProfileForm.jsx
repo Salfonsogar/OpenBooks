@@ -5,7 +5,6 @@ export default function ProfileForm({ userData, onSubmit, onCancel }) {
   const [formData, setFormData] = useState({
     nombre: userData?.UserName || "",
     email: userData?.Email || "",
-    //No estan en UsuarioResponseDT ni en tabla usuario
     bio: userData?.bio || "",
     intereses: userData?.intereses || "",
   });
@@ -26,7 +25,6 @@ export default function ProfileForm({ userData, onSubmit, onCancel }) {
     setMessage({ type: "", text: "" });
 
     try {
-      // API de actualización de perfil
       await new Promise(resolve => setTimeout(resolve, 1000));
       
       setMessage({ 

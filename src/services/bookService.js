@@ -1,4 +1,4 @@
-export async function getBooksFromDataBase(query = "", page = 1, pageSize = 10) {
+export async function getBooksFromDataBase(query = "", page = 1, pageSize = 10, autor = "", categorias = []) {
   try {
     const baseUrl = "https://localhost:7080/api/Libros";
 
@@ -6,6 +6,10 @@ export async function getBooksFromDataBase(query = "", page = 1, pageSize = 10) 
     if (query) url.searchParams.append("query", query);
     url.searchParams.append("page", page);
     url.searchParams.append("pageSize", pageSize);
+    if (autor) url.searchParams.append("autor", autor);
+    if (categorias && categorias.length > 0) {
+      categorias.forEach(cat => url.searchParams.append("categorias", cat));
+    }
 
     const response = await fetch(url.toString());
     if (!response.ok) {

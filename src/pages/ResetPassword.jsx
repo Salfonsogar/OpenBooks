@@ -1,9 +1,14 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { resetPasswordAsync, selectAuthStatus, selectAuthError } from "../store/authSlice";
 
 export default function ResetPassword() {
   const navigate = useNavigate();
-  
+  const dispatch = useDispatch();
+  const status = useSelector(selectAuthStatus);
+  const error = useSelector(selectAuthError);
+
   const recoveryEmail = sessionStorage.getItem("recovery_email");
   const resetToken = sessionStorage.getItem("reset_token");
 
@@ -83,63 +88,24 @@ export default function ResetPassword() {
       return;
     }
 
-    setLoading(true);
-
     try {
-      const response = await fetch("/api/auth/reset-password", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${resetToken}`
-        },
-        body: JSON.stringify({
-          identifier: recoveryEmail,
-          newPassword: formData.newPassword,
-        }),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setMessage({ 
-          type: "success", 
-          text: "¡Contraseña cambiada exitosamente! Redirigiendo al inicio de sesión..." 
-        });
-
-        sessionStorage.removeItem("recovery_email");
-        sessionStorage.removeItem("reset_token");
-
-        setTimeout(() => {
-          navigate("/login");
-        }, 2000);
-        
-      } else {
-        if (data.error === "TOKEN_EXPIRED" || response.status === 401) {
-          setMessage({ 
-            type: "danger", 
-            text: "El token ha expirado. Por favor inicia el proceso nuevamente." 
-          });
-          
-          setTimeout(() => {
-            sessionStorage.clear();
-            navigate("/forgot-password");
-          }, 3000);
-        } else {
-          setMessage({ 
-            type: "danger", 
-            text: data.message || "Error al cambiar la contraseña. Intenta de nuevo." 
-          });
-        }
-      }
-
+      await dispatch(resetPasswordAsync({ token: resetToken, nuevaContraseña: formData.newPassword })).unwrap();
+      setMessage({ type: "success", text: "¡Contraseña cambiada exitosamente! Redirigiendo al inicio de sesión..." });
+      sessionStorage.removeItem("recovery_email");
+      sessionStorage.removeItem("reset_token");
+      setTimeout(() => {
+        navigate("/login");
+      }, 2000);
     } catch (error) {
-      console.error("Error al cambiar contraseña:", error);
-      setMessage({ 
-        type: "danger", 
-        text: "Error de conexión. Verifica tu internet e intenta de nuevo." 
-      });
-    } finally {
-      setLoading(false);
+      if (typeof error === 'string' && error.toLowerCase().includes("token")) {
+        setMessage({ type: "danger", text: "El token ha expirado. Por favor inicia el proceso nuevamente." });
+        setTimeout(() => {
+          sessionStorage.clear();
+          navigate("/forgot-password");
+        }, 3000);
+      } else {
+        setMessage({ type: "danger", text: error || "Error al cambiar la contraseña. Intenta de nuevo." });
+      }
     }
   };
 
@@ -251,13 +217,23 @@ export default function ResetPassword() {
               </div>
             </div>
           )}
+          {status === 'loading' && (
+            <div className="alert alert-info mt-2" role="alert">
+              Procesando solicitud...
+            </div>
+          )}
+          {error && status === 'failed' && !message.text && (
+            <div className="alert alert-danger mt-2" role="alert">
+              {error}
+            </div>
+          )}
 
           <button
             type="submit"
             className="btn-add-bookmark w-100"
-            disabled={loading || !isFormValid()}
+            disabled={status === 'loading' || !isFormValid()}
           >
-            {loading ? (
+            {status === 'loading' ? (
               <>
                 <span className="spinner-border spinner-border-sm me-2" />
                 Guardando...

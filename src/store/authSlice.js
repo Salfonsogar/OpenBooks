@@ -1,3 +1,30 @@
+// AsyncThunk para resetear contraseña
+export const resetPasswordAsync = createAsyncThunk(
+  'auth/resetPassword',
+  async ({ token, nuevaContraseña }, { rejectWithValue }) => {
+    try {
+      const res = await fetch('https://localhost:7080/api/Usuarios/ResetearContrasena', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token, nuevaContraseña }),
+      });
+
+      // Intentar parsear la respuesta JSON
+      const data = await res.json().catch(() => null);
+
+      if (!res.ok) {
+        // Manejar el formato de error del backend
+        const errorMessage = data?.message || data?.Message || 'Error al resetear contraseña';
+        return rejectWithValue(errorMessage);
+      }
+
+      return data;
+    } catch (err) {
+      // Manejar errores de red o de conexión
+      return rejectWithValue(err.message || 'Error de conexión con el servidor');
+    }
+  }
+);
 // AsyncThunk para registro
 export const registerAsync = createAsyncThunk(
   'auth/register',
@@ -94,14 +121,26 @@ const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+      // Resetear contraseña
+      .addCase(resetPasswordAsync.pending, (state) => {
+        state.status = 'loading';
+        state.error = null;
+      })
+      .addCase(resetPasswordAsync.fulfilled, (state) => {
+        state.status = 'succeeded';
+        state.error = null;
+      })
+      .addCase(resetPasswordAsync.rejected, (state, action) => {
+        state.status = 'failed';
+        state.error = action.payload || action.error?.message || 'Error al resetear contraseña';
+      })
       // Registro
       .addCase(registerAsync.pending, (state) => {
         state.status = 'loading';
         state.error = null;
       })
-      .addCase(registerAsync.fulfilled, (state, action) => {
+      .addCase(registerAsync.fulfilled, (state) => {
         state.status = 'succeeded';
-        state.user = action.payload;
         state.error = null;
       })
       .addCase(registerAsync.rejected, (state, action) => {
@@ -114,7 +153,7 @@ const authSlice = createSlice({
       })
       .addCase(loginAsync.fulfilled, (state, action) => {
         const payload = action.payload || {};
-        if (!payload.Usuario || !payload.Token) {
+        if (!payload.usuario || !payload.token) {
           state.status = 'failed';
           state.error = 'Respuesta inválida del servidor';
           state.user = null;
@@ -124,8 +163,8 @@ const authSlice = createSlice({
         }
 
         state.status = 'succeeded';
-        state.user = payload.Usuario;
-        state.token = payload.Token;
+        state.user = payload.usuario;
+        state.token = payload.token;
         state.error = null;
         try {
           sessionStorage.setItem('auth', JSON.stringify({ user: state.user, token: state.token }));

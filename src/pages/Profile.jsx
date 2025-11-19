@@ -9,9 +9,7 @@ import { selectAuthUser } from '../store/authSlice';
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("actividad");
   const user = useSelector(selectAuthUser);
-
-  // Falta penalizaciones en UsuarioResponseDTO y en tabla usuario
-  const penalties = user?.Sancionado
+  const penalties = user?.sancionado
     ? [{ id: 1, motivo: "Cuenta sancionada", fecha: user.FechaRegistro, estado: "Activa" }]
     : [];
 
@@ -24,13 +22,7 @@ export default function ProfilePage() {
 
         <div className="row g-4">
           <div className="col-lg-4">
-            <UserCard
-              imgSrc={user?.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}
-              name={user?.UserName || user?.Email || "Usuario"}
-              email={user?.Email}
-              role={user?.Roles?.[0] || "Usuario"}
-              showSettingsButton={true}
-            />
+            <UserCard showSettingsButton={true} />
           </div>
 
           <div className="col-lg-8">
