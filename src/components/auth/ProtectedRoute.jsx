@@ -10,8 +10,13 @@ export default function ProtectedRoute({ children, requiredRoles = [] }) {
   if (!isAuth) return <Navigate to="/Login" replace />;
 
   if (requiredRoles && requiredRoles.length > 0) {
-    const roles = (user && user.Roles) || [];
-    const ok = roles.some((r) => requiredRoles.includes(r));
+    // Asegura que roles sea un array y compara sin importar mayúsculas/minúsculas
+    const roles = (user && (user.roles || user.Roles)) || [];
+    const ok = roles.some((r) =>
+      requiredRoles.some((req) =>
+        String(r).toLowerCase().trim() === String(req).toLowerCase().trim()
+      )
+    );
     if (!ok) return <Navigate to="/" replace />;
   }
 
