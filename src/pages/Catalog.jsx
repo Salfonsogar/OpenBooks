@@ -13,6 +13,7 @@ import { getCategories } from "../services/categoryService";
 import useBookFromBase64 from "../hooks/useBookFromBase64";
 
 export default function Catalog() {
+  
   const [query, setQuery] = useState("");
   const [autor, setAutor] = useState("");
   const [categorias, setCategorias] = useState([]);
@@ -115,6 +116,7 @@ export default function Catalog() {
   };
 
   return (
+
     <div className="container my-5">
       <div className="mb-4">
         <h2 className="text-center mb-3">

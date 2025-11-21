@@ -18,14 +18,14 @@ export default function LoginForm({ onClickTitle, onForgotPassword, onClose }) {
     try {
       const res = await dispatch(loginAsync({ correo, contrasena }));
       if (loginAsync.fulfilled.match(res)) {
-        const user = res.payload?.Usuario;
-        const roles = user?.Roles || [];
+        const user = res.payload?.usuario || res.payload?.Usuario;
+        const roles = user?.roles || user?.Roles || [];
         try { if (onClose) onClose(); } catch {
           console.error('LoginForm onClose error');
         }
-        if (roles.includes('Administrador')) navigate('/Admin');
+        if (roles.some(r => String(r).toLowerCase() === 'administrador')) navigate('/Admin');
         else navigate('/Profile');
-      } 
+      }
     } catch (err) {
       console.error('LoginForm submit error', err);
     }

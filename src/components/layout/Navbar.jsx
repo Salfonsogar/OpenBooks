@@ -41,14 +41,14 @@ export default function Navbar() {
         <div className="collapse navbar-collapse" id="navbarContent">
           <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
             <li className="nav-item">
-              <Link className="nav-link text-white" to="/Catalog">
+              <Link className="nav-link text-white" to="/catalog">
                 <img src={library} alt="catalog icon" />
                 Catálogo
               </Link>
             </li>
 
             <li className="nav-item">
-              <Link className="nav-link text-white" to="/Library">
+              <Link className="nav-link text-white" to="/library">
                 <img src={bookUser} alt="library icon" />
                 Mi Biblioteca
               </Link>
@@ -70,7 +70,7 @@ export default function Navbar() {
             {showAccount && (
               <>
                 <li className="nav-item">
-                  <Link className="nav-link text-white" to="/Profile">
+                  <Link className="nav-link text-white" to="/profile">
                     <img src={shieldUser} alt="profile icon" />
                     Mi perfil
                   </Link>
@@ -84,6 +84,15 @@ export default function Navbar() {
                     <img src={circleUser} alt="login icon" />
                     Login/Register
                   </span>
+                </li>
+                <li className="nav-item">
+                  <Link 
+                    className="nav-link text-white" 
+                    to="/cerrar-sesion"
+                  >
+                    <i className="fas fa-sign-out-alt me-2"></i>
+                    Cerrar sesión
+                  </Link>
                 </li>
               </>
             )}

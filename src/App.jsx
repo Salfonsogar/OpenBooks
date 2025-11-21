@@ -2,6 +2,9 @@ import { Routes, Route, useNavigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Catalog from './pages/Catalog';
 import Navbar from './components/layout/Navbar';
+import NavbarAdmin from './components/layout/NavbarAdmin';
+import { useSelector } from 'react-redux';
+import { selectAuthUser } from './store/authSlice';
 import Footer from './components/layout/Footer';
 import Library from './pages/Library';
 import AuthModal from './components/auth/AuthModal.jsx';
@@ -15,17 +18,26 @@ import ProfileSettings from './pages/ProfileSettings.jsx';
 import ProfileForm from './components/profile/ProfileForm.jsx';
 import NotFoundPage from './pages/NotFoundPage';
 import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
+import PenalizacionesPage from './pages/PenalizacionesPage.jsx';
+import ReportesPage from './pages/ReportesPage.jsx';
+import DenunciasPage from './pages/DenunciasPage.jsx';
+import SugerenciasPage from './pages/SugerenciasPage.jsx';
+import MonitoreoLibrosPage from './pages/MonitoreoLibrosPage.jsx';
+import Users from './pages/Users.jsx';
+
 function App() {
   const navigate = useNavigate();
+  const user = useSelector(selectAuthUser);
+  const isAdmin = user && Array.isArray(user.roles) && user.roles.some(r => String(r).toLowerCase() === 'administrador');
   return (
     <>
-      <Navbar />
+      {isAdmin ? <NavbarAdmin /> : <Navbar />}
       <main>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={isAdmin ? <AdminPage /> :<Home/> }  />
           <Route path="*" element={<NotFoundPage />} />
-          <Route path="/Catalog" element={<Catalog />} />
-          <Route path="/Library" element={
+          <Route path="/catalog" element={<Catalog />} />
+          <Route path="/library" element={
             <ProtectedRoute>
               <Library />
             </ProtectedRoute>
@@ -36,14 +48,49 @@ function App() {
               <UploadBooksPage />
             </ProtectedRoute>
           } />
-          <Route path="/Profile" element={
+          <Route path="/profile" element={
             <ProtectedRoute>
               <ProfilePage />
             </ProtectedRoute>
           } />
           <Route path="/Admin" element={
-            <ProtectedRoute requiredRoles={['Administrador']}>
+            //<ProtectedRoute requiredRoles={['Administrador']}>
               <AdminPage />
+            //</ProtectedRoute>
+          } />
+          <Route path="/penalizacion-page" element={
+            <ProtectedRoute requiredRoles={['Administrador']}>
+              <PenalizacionesPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/reportes" element={
+            <ProtectedRoute requiredRoles={['Administrador']}>
+              <ReportesPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/denuncias" element={
+            <ProtectedRoute requiredRoles={['Administrador']}>
+              <DenunciasPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/sugerencias" element={
+            <ProtectedRoute requiredRoles={['Administrador']}>
+              <SugerenciasPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/monitoreo-libros" element={
+            <ProtectedRoute requiredRoles={['Administrador']}>
+              <MonitoreoLibrosPage />
+            </ProtectedRoute>
+          } />
+          <Route path="/usuarios" element={
+            <ProtectedRoute requiredRoles={['Administrador']}>
+              <Users />
+            </ProtectedRoute>
+          } />
+          <Route path="/books" element={
+            <ProtectedRoute requiredRoles={['Administrador']}>
+              <Users />
             </ProtectedRoute>
           } />
           <Route path="/forgot-password" element={<ForgotPassword />} />
