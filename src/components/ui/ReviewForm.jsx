@@ -1,14 +1,15 @@
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { addReview, selectAddReviewStatus } from "../../store/reviewsSlice";
 
 export default function ReviewForm({ bookId }) {
   const [comentario, setComentario] = useState("");
-
+  const [rating, setRating] = useState(5);
+  const dispatch = useDispatch();
   const user = useSelector((state) => state.auth.user);
-  const isLogged = !!user;
+  const addStatus = useSelector(selectAddReviewStatus);
 
-  // Si NO está logueado → no mostrar formulario
-  if (!isLogged) {
+  if (!user) {
     return (
       <p style={{ marginTop: "20px", color: "gray" }}>
         Debes iniciar sesión para escribir una reseña.
@@ -21,27 +22,37 @@ export default function ReviewForm({ bookId }) {
 
     if (!comentario.trim()) return;
 
-    try {
-      await fetch("http://localhost:5181/api/Resena", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          libroId: bookId,
-          usuarioId: user.id, // porque tienen roles y usuario en Redux
-          comentario
-        }),
-      });
-
+    dispatch(addReview({
+      bookId,
+      userId: user.id,
+      comment: comentario,
+      rating
+    })).then(() => {
       setComentario("");
+      setRating(5);
       alert("Reseña enviada");
-    } catch (err) {
-      console.error("Error enviando reseña:", err);
-    }
+      // Optionally dispatch fetchReviewsByBookId to refresh the list immediately if optimistic update isn't enough
+      // dispatch(fetchReviewsByBookId(bookId));
+    });
   };
 
   return (
     <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
       <h3>Agregar reseña</h3>
+
+      <div className="mb-3">
+        <label>Calificación:</label>
+        <select
+          value={rating}
+          onChange={(e) => setRating(Number(e.target.value))}
+          className="form-select"
+          style={{ width: 'auto', display: 'inline-block', marginLeft: '10px' }}
+        >
+          {[1, 2, 3, 4, 5].map(n => (
+            <option key={n} value={n}>{n} ★</option>
+          ))}
+        </select>
+      </div>
 
       <textarea
         value={comentario}
@@ -49,10 +60,14 @@ export default function ReviewForm({ bookId }) {
         placeholder="Escribe tu reseña..."
         rows={4}
         style={{ width: "100%", padding: "10px" }}
+        disabled={addStatus === 'loading'}
       />
 
-      <button style={{ marginTop: "10px", padding: "10px 15px" }}>
-        Enviar
+      <button
+        style={{ marginTop: "10px", padding: "10px 15px" }}
+        disabled={addStatus === 'loading'}
+      >
+        {addStatus === 'loading' ? 'Enviando...' : 'Enviar'}
       </button>
     </form>
   );

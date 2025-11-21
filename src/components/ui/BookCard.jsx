@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom";
 import "../../assets/styles/BookCard.css";
 import usePortada from "../../hooks/usePortada";
 export default function BookCard({
@@ -12,13 +13,20 @@ export default function BookCard({
   return (
     <div className="col">
       <div className="card h-100 shadow-sm">
-        <img
-          src={portada}
-          className="card-img-top"
-          alt={libro.titulo}
-        />
+        <Link to={`/book/${libro.id}`}>
+          <img
+            src={portada}
+            className="card-img-top"
+            alt={libro.titulo}
+            style={{ cursor: 'pointer' }}
+          />
+        </Link>
         <div className="card-body">
-          <h5 className="card-title">{libro.titulo}</h5>
+          <h5 className="card-title">
+            <Link to={`/book/${libro.id}`} style={{ textDecoration: 'none', color: 'inherit' }}>
+              {libro.titulo}
+            </Link>
+          </h5>
           <p className="card-text text-secondary">{libro.autor}</p>
 
           {isInLibrary ? (

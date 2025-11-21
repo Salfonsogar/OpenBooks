@@ -1,21 +1,21 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchReviewsByBookId, selectReviews, selectReviewsStatus } from "../../store/reviewsSlice";
 
 export default function Reviews({ bookId }) {
-  const [reviews, setReviews] = useState([]);
+  const dispatch = useDispatch();
+  const reviews = useSelector(selectReviews);
+  const status = useSelector(selectReviewsStatus);
 
   useEffect(() => {
-    const getReviews = async () => {
-      try {
-        const res = await fetch(`http://localhost:5181/api/Resena/libro/${bookId}`);
-        const data = await res.json();
-        setReviews(data);
-      } catch (err) {
-        console.error("Error obteniendo reseñas:", err);
-      }
-    };
+    if (bookId) {
+      dispatch(fetchReviewsByBookId(bookId));
+    }
+  }, [dispatch, bookId]);
 
-    getReviews();
-  }, [bookId]);
+  if (status === 'loading') {
+    return <p>Cargando reseñas...</p>;
+  }
 
   return (
     <div style={{ marginTop: "20px" }}>
@@ -26,7 +26,7 @@ export default function Reviews({ bookId }) {
       ) : (
         reviews.map((r) => (
           <div
-            key={r.id}
+            key={r.id || Math.random()}
             style={{
               marginBottom: "15px",
               borderBottom: "1px solid #ddd",
@@ -35,6 +35,7 @@ export default function Reviews({ bookId }) {
           >
             <strong>{r.usuarioNombre || "Usuario"}</strong>
             <p>{r.comentario}</p>
+            {r.calificacion && <p>Calificación: {r.calificacion} ★</p>}
           </div>
         ))
       )}

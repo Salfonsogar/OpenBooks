@@ -24,6 +24,7 @@ import DenunciasPage from './pages/DenunciasPage.jsx';
 import SugerenciasPage from './pages/SugerenciasPage.jsx';
 import MonitoreoLibrosPage from './pages/MonitoreoLibrosPage.jsx';
 import Users from './pages/Users.jsx';
+import BookPage from './pages/BookPage.jsx';
 
 function App() {
   const navigate = useNavigate();
@@ -106,6 +107,7 @@ function App() {
               <ProfileForm />
             </ProtectedRoute>
           } />
+          <Route path="/book/:id" element={<BookPage />} />
         </Routes>
       </main>
       <Footer />
