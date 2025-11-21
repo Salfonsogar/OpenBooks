@@ -1,5 +1,7 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { useDispatch } from "react-redux";
+import { logout } from "../../store/authSlice";
 import AuthModal from "../auth/AuthModal";
 import "../../assets/styles/Navbar.css";
 import user from "../../assets/icons/user.svg";
@@ -11,6 +13,14 @@ import bookUser from "../../assets/icons/book-user.svg";
 export default function Navbar() {
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [showAccount, setShowAccount] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate('/');
+    setShowAccount(false);
+  };
 
   return (
     <nav className="navbar navbar-expand-lg custom-navbar">
@@ -86,13 +96,14 @@ export default function Navbar() {
                   </span>
                 </li>
                 <li className="nav-item">
-                  <Link 
-                    className="nav-link text-white" 
-                    to="/cerrar-sesion"
+                  <button
+                    className="nav-link text-white btn btn-link text-decoration-none"
+                    onClick={handleLogout}
+                    style={{ background: 'none', border: 'none' }}
                   >
                     <i className="fas fa-sign-out-alt me-2"></i>
                     Cerrar sesión
-                  </Link>
+                  </button>
                 </li>
               </>
             )}

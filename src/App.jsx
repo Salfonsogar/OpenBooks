@@ -34,7 +34,7 @@ function App() {
       {isAdmin ? <NavbarAdmin /> : <Navbar />}
       <main>
         <Routes>
-          <Route path="/" element={isAdmin ? <AdminPage /> :<Home/> }  />
+          <Route path="/" element={isAdmin ? <AdminPage /> : <Home />} />
           <Route path="*" element={<NotFoundPage />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/library" element={
@@ -42,7 +42,7 @@ function App() {
               <Library />
             </ProtectedRoute>
           } />
-          <Route path="/Login" element={<AuthModal onClose={()=> navigate('/')} />} />
+          <Route path="/Login" element={<AuthModal onClose={() => navigate('/')} />} />
           <Route path="/Upload" element={
             <ProtectedRoute requiredRoles={['Administrador']}>
               <UploadBooksPage />
@@ -54,9 +54,9 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="/Admin" element={
-            //<ProtectedRoute requiredRoles={['Administrador']}>
+            <ProtectedRoute requiredRoles={['Administrador']}>
               <AdminPage />
-            //</ProtectedRoute>
+            </ProtectedRoute>
           } />
           <Route path="/penalizacion-page" element={
             <ProtectedRoute requiredRoles={['Administrador']}>
