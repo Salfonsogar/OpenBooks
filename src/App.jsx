@@ -25,6 +25,7 @@ import SugerenciasPage from './pages/SugerenciasPage.jsx';
 import MonitoreoLibrosPage from './pages/MonitoreoLibrosPage.jsx';
 import Users from './pages/Users.jsx';
 import BookPage from './pages/BookPage.jsx';
+import CategoriasPage from './pages/CategoriasPage.jsx';
 
 function App() {
   const navigate = useNavigate();
@@ -79,17 +80,17 @@ function App() {
               <SugerenciasPage />
             </ProtectedRoute>
           } />
-          <Route path="/monitoreo-libros" element={
+          <Route path="/libros" element={
             <ProtectedRoute requiredRoles={['Administrador']}>
               <MonitoreoLibrosPage />
             </ProtectedRoute>
           } />
-          <Route path="/usuarios" element={
+          <Route path="/categorias" element={
             <ProtectedRoute requiredRoles={['Administrador']}>
-              <Users />
+              <CategoriasPage />
             </ProtectedRoute>
           } />
-          <Route path="/books" element={
+          <Route path="/usuarios" element={
             <ProtectedRoute requiredRoles={['Administrador']}>
               <Users />
             </ProtectedRoute>

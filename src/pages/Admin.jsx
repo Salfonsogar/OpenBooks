@@ -6,7 +6,7 @@ export default function AdminPage() {
     {
       title: '📚 Gestionar Libros',
       text: 'Administra todos los libros del sistema: editar, eliminar o revisar detalles.',
-      to: '/monitoreo-libros',
+      to: '/libros',
       buttonText: 'Gestionar',
     },
     {

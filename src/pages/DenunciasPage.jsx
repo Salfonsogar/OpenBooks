@@ -1,9 +1,9 @@
 export default function DenunciasPage() {
   return (
-    <div className="min-vh-100 py-5" style={{ background: 'linear-gradient(135deg, #fff0f0 0%, #fff 100%)' }}>
+    <div className="min-vh-100 py-5" style={{ background: 'linear-gradient(135deg, #f3e9e0 0%, #fff 100%)' }}>
       <div className="container" style={{ maxWidth: '1200px' }}>
         <div className="mb-5">
-          <h1 className="display-5 fw-bold mb-2" style={{ color: '#8a2b2b' }}>Denuncias</h1>
+          <h1 className="display-5 fw-bold mb-2" style={{ color: '#6e3b3b' }}>Denuncias</h1>
           <p className="text-muted">Gestiona y revisa las denuncias realizadas</p>
         </div>
 

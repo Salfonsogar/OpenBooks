@@ -110,10 +110,20 @@ export default function NavbarAdmin() {
             <li className="nav-item">
               <Link
                 className="nav-link text-white"
-                to="/monitoreo-libros"
+                to="/libros"
               >
-                <i className="fas fa-eye me-2"></i>
-                Monitoreo de libros
+                <i className="fas fa-book-open me-2"></i>
+                Libros
+              </Link>
+            </li>
+
+            <li className="nav-item">
+              <Link
+                className="nav-link text-white"
+                to="/categorias"
+              >
+                <i className="fas fa-tags me-2"></i>
+                Categorías
               </Link>
             </li>
 
@@ -126,7 +136,7 @@ export default function NavbarAdmin() {
                 <i className="fas fa-user-circle me-2"></i>
                 Cuenta{" "}
                 <i
-                  className={`fa fa - angle - ${showAccount ? "up" : "down"} ms - 1`}
+                  className={`fa fa-angle-${showAccount ? "up" : "down"} ms-1`}
                   aria-hidden="true"
                 ></i>
               </span>

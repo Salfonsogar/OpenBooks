@@ -3,185 +3,229 @@ import { Plus, Search, Edit, Trash2 } from 'lucide-react';
 
 export default function Users() {
   const [showModal, setShowModal] = useState(false);
+  const [editingUser, setEditingUser] = useState(null);
+  const [formData, setFormData] = useState({
+    nombre: "",
+    email: "",
+    contraseña: "",
+    rol: "Usuario"
+  });
+
+  // Datos de ejemplo (en producción vendrían de Redux/API)
+  const [users] = useState([
+    { id: 1, nombre: "María García", email: "maria@ejemplo.com", rol: "Admin", estado: "Activo" },
+    { id: 2, nombre: "Carlos López", email: "carlos@ejemplo.com", rol: "Usuario", estado: "Activo" },
+    { id: 3, nombre: "Ana Martínez", email: "ana@ejemplo.com", rol: "Usuario", estado: "Activo" },
+    { id: 4, nombre: "Pedro Sánchez", email: "pedro@ejemplo.com", rol: "Usuario", estado: "Inactivo" }
+  ]);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const openModal = (user = null) => {
+    if (user) {
+      setEditingUser(user);
+      setFormData({
+        nombre: user.nombre || "",
+        email: user.email || "",
+        contraseña: "", // No mostramos la contraseña actual
+        rol: user.rol || "Usuario"
+      });
+    } else {
+      setEditingUser(null);
+      setFormData({
+        nombre: "",
+        email: "",
+        contraseña: "",
+        rol: "Usuario"
+      });
+    }
+    setShowModal(true);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    // Aquí iría la lógica para crear/actualizar usuario
+    console.log("Guardando usuario:", formData);
+    setShowModal(false);
+  };
+
+  const handleDelete = (id) => {
+    if (window.confirm("¿Estás seguro de eliminar este usuario?")) {
+      // Aquí iría la lógica para eliminar usuario
+      console.log("Eliminando usuario:", id);
+    }
+  };
 
   return (
-    <div className="container" style={{ maxWidth: '1200px' }}>
-      
-      <div className="card shadow-sm">
-        <div className="card-header bg-white d-flex justify-content-between align-items-start">
+    <div className="min-vh-100 py-5" style={{ background: 'linear-gradient(135deg, #f3e9e0 0%, #fff 100%)' }}>
+      <div className="container" style={{ maxWidth: '1200px' }}>
+        <div className="d-flex justify-content-between align-items-center mb-5">
           <div>
-            <h5 className="card-title mb-1">Gestión de Usuarios</h5>
-            <p className="text-muted mb-0">
-              Administra los usuarios y sus roles en el sistema
-            </p>
+            <h1 className="display-5 fw-bold mb-2" style={{ color: '#6e3b3b' }}>Gestión de Usuarios</h1>
+            <p className="text-muted">Administra los usuarios y sus roles en el sistema</p>
           </div>
-
-          <button
-            className="btn btn-primary"
-            onClick={() => setShowModal(true)}
-          >
+          <button className="btn btn-main btn-lg" onClick={() => openModal()}>
             <Plus size={16} className="me-2" />
             Nuevo Usuario
           </button>
         </div>
-      </div>
 
-      <div className="card-body">
+        <div className="card shadow-sm p-4">
+          {/* Buscador */}
+          <div className="mb-4 position-relative">
+            <Search
+              size={18}
+              className="position-absolute text-muted"
+              style={{ left: '12px', top: '10px', pointerEvents: 'none' }}
+            />
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Buscar usuarios..."
+              style={{ paddingLeft: '40px' }}
+            />
+          </div>
 
-        {/* Buscador */}
-        <div className="mb-4 position-relative">
-          <Search
-            size={18}
-            className="position-absolute text-muted"
-            style={{ left: '12px', top: '10px', pointerEvents: 'none' }}
-          />
-          <input
-            type="text"
-            className="form-control"
-            placeholder="Buscar usuarios..."
-            style={{ paddingLeft: '40px' }}
-          />
-        </div>
-
-        {/* Tabla */}
-        <div className="table-responsive">
-          <table className="table table-hover mb-0">
-            <thead>
-              <tr style={{ borderBottom: '2px solid #e9ecef' }}>
-                <th style={{ color: '#6e3b3b', fontWeight: 600 }}>Usuario</th>
-                <th style={{ color: '#6e3b3b', fontWeight: 600 }}>Email</th>
-                <th style={{ color: '#6e3b3b', fontWeight: 600 }}>Rol</th>
-                <th style={{ color: '#6e3b3b', fontWeight: 600 }}>Estado</th>
-                <th className="text-end" style={{ color: '#6e3b3b', fontWeight: 600 }}>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-
-              {/* Usuario 1 */}
-              <tr>
-                <td className="fw-medium">María García</td>
-                <td>maria@ejemplo.com</td>
-                <td>
-                  <span className="badge" style={{ backgroundColor: '#6e3b3b', color: 'white' }}>
-                    Administrador
-                  </span>
-                </td>
-                <td>
-                  <span className="badge" style={{ backgroundColor: '#d4edda', color: '#155724' }}>
-                    Activo
-                  </span>
-                </td>
-                <td className="text-end">
-                  <button className="btn btn-sm btn-ghost me-2"><Edit size={16} /></button>
-                  <button className="btn btn-sm btn-ghost text-danger"><Trash2 size={16} /></button>
-                </td>
-              </tr>
-
-              {/* Usuario 2 */}
-              <tr>
-                <td className="fw-medium">Carlos López</td>
-                <td>carlos@ejemplo.com</td>
-                <td>
-                  <span className="badge" style={{ backgroundColor: '#c9a66b', color: '#fff' }}>
-                    Editor
-                  </span>
-                </td>
-                <td>
-                  <span className="badge" style={{ backgroundColor: '#d4edda', color: '#155724' }}>
-                    Activo
-                  </span>
-                </td>
-                <td className="text-end">
-                  <button className="btn btn-sm btn-ghost me-2"><Edit size={16} /></button>
-                  <button className="btn btn-sm btn-ghost text-danger"><Trash2 size={16} /></button>
-                </td>
-              </tr>
-
-              {/* Usuario 3 */}
-              <tr>
-                <td className="fw-medium">Ana Martínez</td>
-                <td>ana@ejemplo.com</td>
-                <td>
-                  <span className="badge" style={{ backgroundColor: '#e9ecef', color: '#495057' }}>
-                    Lector
-                  </span>
-                </td>
-                <td>
-                  <span className="badge" style={{ backgroundColor: '#d4edda', color: '#155724' }}>
-                    Activo
-                  </span>
-                </td>
-                <td className="text-end">
-                  <button className="btn btn-sm btn-ghost me-2"><Edit size={16} /></button>
-                  <button className="btn btn-sm btn-ghost text-danger"><Trash2 size={16} /></button>
-                </td>
-              </tr>
-
-              {/* Usuario 4 */}
-              <tr>
-                <td className="fw-medium">Pedro Sánchez</td>
-                <td>pedro@ejemplo.com</td>
-                <td>
-                  <span className="badge" style={{ backgroundColor: '#e9ecef', color: '#495057' }}>
-                    Lector
-                  </span>
-                </td>
-                <td>
-                  <span className="badge" style={{ backgroundColor: '#fff3cd', color: '#856404' }}>
-                    Inactivo
-                  </span>
-                </td>
-                <td className="text-end">
-                  <button className="btn btn-sm btn-ghost me-2"><Edit size={16} /></button>
-                  <button className="btn btn-sm btn-ghost text-danger"><Trash2 size={16} /></button>
-                </td>
-              </tr>
-
-            </tbody>
-          </table>
+          {/* Tabla */}
+          <div className="table-responsive">
+            <table className="table table-hover mb-0 align-middle">
+              <thead className="table-light">
+                <tr>
+                  <th>Nombre</th>
+                  <th>Email</th>
+                  <th>Rol</th>
+                  <th>Estado</th>
+                  <th className="text-end">Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                {users.length === 0 ? (
+                  <tr>
+                    <td colSpan="5" className="text-center py-4 text-muted">
+                      No hay usuarios registrados
+                    </td>
+                  </tr>
+                ) : (
+                  users.map((user) => (
+                    <tr key={user.id}>
+                      <td className="fw-medium">{user.nombre}</td>
+                      <td>{user.email}</td>
+                      <td>
+                        <span className={`badge ${user.rol === 'Admin' ? 'bg-danger' : 'bg-primary'}`}>
+                          {user.rol}
+                        </span>
+                      </td>
+                      <td>
+                        <span className={`badge ${user.estado === 'Activo' ? 'bg-success' : 'bg-warning'}`}>
+                          {user.estado}
+                        </span>
+                      </td>
+                      <td className="text-end">
+                        <button
+                          className="btn btn-sm btn-outline-primary me-2"
+                          onClick={() => openModal(user)}
+                        >
+                          <Edit size={16} />
+                        </button>
+                        <button
+                          className="btn btn-sm btn-outline-danger"
+                          onClick={() => handleDelete(user.id)}
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
-      {/* Modal crear usuario */}
+      {/* Modal */}
       {showModal && (
-        <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
+        <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <div className="modal-dialog modal-dialog-centered">
             <div className="modal-content">
-
-              <div className="modal-header border-bottom">
-                <h5 className="modal-title">Crear Nuevo Usuario</h5>
-                <button className="btn-close" onClick={() => setShowModal(false)}></button>
+              <div className="modal-header">
+                <h5 className="modal-title">
+                  {editingUser ? 'Editar Usuario' : 'Nuevo Usuario'}
+                </h5>
+                <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
               </div>
+              <form onSubmit={handleSubmit}>
+                <div className="modal-body">
+                  <div className="mb-3">
+                    <label className="form-label">Nombre</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="nombre"
+                      value={formData.nombre}
+                      onChange={handleInputChange}
+                      placeholder="Juan Pérez"
+                      required
+                    />
+                  </div>
 
-              <div className="modal-body">
-                <p className="text-muted mb-4">Ingresa los datos del nuevo usuario</p>
+                  <div className="mb-3">
+                    <label className="form-label">Email</label>
+                    <input
+                      type="email"
+                      className="form-control"
+                      name="email"
+                      value={formData.email}
+                      onChange={handleInputChange}
+                      placeholder="juan@ejemplo.com"
+                      required
+                    />
+                  </div>
 
-                <div className="mb-3">
-                  <label className="form-label">Nombre</label>
-                  <input type="text" className="form-control" placeholder="Juan Pérez" />
+                  <div className="mb-3">
+                    <label className="form-label">
+                      Contraseña {editingUser && "(dejar en blanco para no cambiar)"}
+                    </label>
+                    <input
+                      type="password"
+                      className="form-control"
+                      name="contraseña"
+                      value={formData.contraseña}
+                      onChange={handleInputChange}
+                      placeholder="••••••••"
+                      required={!editingUser}
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label">Rol</label>
+                    <select
+                      className="form-select"
+                      name="rol"
+                      value={formData.rol}
+                      onChange={handleInputChange}
+                      required
+                    >
+                      <option value="Usuario">Usuario</option>
+                      <option value="Admin">Admin</option>
+                    </select>
+                  </div>
                 </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Email</label>
-                  <input type="email" className="form-control" placeholder="juan@ejemplo.com" />
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
+                    Cancelar
+                  </button>
+                  <button type="submit" className="btn btn-primary">
+                    Guardar
+                  </button>
                 </div>
-
-                <div className="mb-3">
-                  <label className="form-label">Rol</label>
-                  <select className="form-select">
-                    <option value="">Selecciona un rol</option>
-                    <option value="admin">Administrador</option>
-                    <option value="editor">Editor</option>
-                    <option value="reader">Lector</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="modal-footer border-top">
-                <button className="btn btn-secondary" onClick={() => setShowModal(false)}>Cerrar</button>
-                <button className="btn btn-primary">Crear Usuario</button>
-              </div>
-
+              </form>
             </div>
           </div>
         </div>

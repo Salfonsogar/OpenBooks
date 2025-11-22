@@ -1,22 +1,30 @@
-import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import BookCard from "../components/ui/BookCard";
 import Pagination from "../components/ui/Pagination";
 import NotificationModal from "../components/ui/NotificationModal";
 import ReaderApp from "./ReaderApp";
-import { getBooks } from "../services/bookProvider";
+import {
+  fetchCatalogBooks,
+  selectCatalogBooks,
+  selectCatalogTotalPages,
+  selectCatalogStatus
+} from "../store/booksSlice";
 import "../assets/styles/library.css";
 import useBookFromBase64 from "../hooks/useBookFromBase64";
 import normalizeBook from "../utils/normalizeBook";
 
 export default function Biblioteca() {
-  const [books, setBooks] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const dispatch = useDispatch();
+  const books = useSelector(selectCatalogBooks);
+  const totalPages = useSelector(selectCatalogTotalPages);
+  const status = useSelector(selectCatalogStatus);
+  const loading = status === 'loading';
+
   const [page, setPage] = useState(1);
   const pageSize = 20;
 
   const [selectedBook, setSelectedBook] = useState(null);
   const [notifications, setNotifications] = useState([]);
-  const [totalPages, setTotalPages] = useState(1);
 
   const normalized = normalizeBook(selectedBook);
   // derive candidate from normalized fields to cover all variants
@@ -43,21 +51,8 @@ export default function Biblioteca() {
   }, [selectedBook, normalized, fileUrl]);
 
   useEffect(() => {
-    const cargarLibros = async () => {
-      setLoading(true);
-      try {
-        const { data, totalPages } = await getBooks(null, "", page, pageSize);
-        setBooks(data);
-        setTotalPages(totalPages);
-      } catch (error) {
-        console.error("Error al cargar libros:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    cargarLibros();
-  }, [page]);
+    dispatch(fetchCatalogBooks({ query: "", page, pageSize, autor: "", categorias: [] }));
+  }, [dispatch, page]);
 
   const showNotification = (msg) => {
     setNotifications((prev) => [...prev, msg]);

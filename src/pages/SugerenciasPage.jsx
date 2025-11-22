@@ -1,9 +1,9 @@
 export default function SugerenciasPage() {
   return (
-    <div className="min-vh-100 py-5" style={{ background: 'linear-gradient(135deg, #f2ffe6 0%, #fff 100%)' }}>
+    <div className="min-vh-100 py-5" style={{ background: 'linear-gradient(135deg, #f3e9e0 0%, #fff 100%)' }}>
       <div className="container" style={{ maxWidth: '1200px' }}>
         <div className="mb-5">
-          <h1 className="display-5 fw-bold mb-2" style={{ color: '#3a6e2b' }}>Sugerencias</h1>
+          <h1 className="display-5 fw-bold mb-2" style={{ color: '#6e3b3b' }}>Sugerencias</h1>
           <p className="text-muted">Revisa las sugerencias enviadas por los usuarios</p>
         </div>
 
