@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export default function UploadBooksPage() {
+  const navigate = useNavigate();
   const [titulo, setTitulo] = useState('');
   const [autor, setAutor] = useState('');
   const [descripcion, setDescripcion] = useState('');
@@ -162,15 +164,7 @@ export default function UploadBooksPage() {
                 <button
                   type="button"
                   className="btn btn-secondary flex-fill"
-                  onClick={() => {
-                    setTitulo('');
-                    setAutor('');
-                    setDescripcion('');
-                    setPortada(null);
-                    setArchivo(null);
-                    document.getElementById('portada').value = null;
-                    document.getElementById('archivo').value = null;
-                  }}
+                  onClick={() => navigate('/libros')}
                 >
                   Cancelar
                 </button>
