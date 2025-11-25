@@ -1,18 +1,24 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-async function getBooksFromDataBase(query = "", page = 1, pageSize = 10, autor = "", categorias = []) {
+async function getBooksFromDataBase(query = "", page = 1, pageSize = 10, autor = "", categorias = [], token = null) {
     try {
         const baseUrl = "https://localhost:7080/api/Libros";
 
         const url = new URL(baseUrl);
-        if (query) url.searchParams.append("query", query);
+
+        if (query && query.trim()) url.searchParams.append("query", query.trim());
         url.searchParams.append("page", page);
         url.searchParams.append("pageSize", pageSize);
-        if (autor) url.searchParams.append("autor", autor);
+        if (autor && autor.trim()) url.searchParams.append("autor", autor.trim());
         if (categorias && categorias.length > 0) {
             categorias.forEach(cat => url.searchParams.append("categorias", cat));
         }
 
-        const response = await fetch(url.toString());
+        const headers = {};
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+
+        const response = await fetch(url.toString(), { headers });
         if (!response.ok) {
             throw new Error(`Error en la petición: ${response.status}`);
         }
@@ -38,13 +44,19 @@ async function getBooksFromDataBase(query = "", page = 1, pageSize = 10, autor =
     }
 }
 
-export const fetchBookById = createAsyncThunk(
-    'books/fetchBookById',
-    async (id, { rejectWithValue }) => {
+export const fetchBookDetail = createAsyncThunk(
+    'books/fetchBookDetail',
+    async (id, { rejectWithValue, getState }) => {
         try {
-            const response = await fetch(`https://localhost:7080/api/Libros/${id}`);
+            const token = getState().auth.token;
+            const headers = {};
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
+            const response = await fetch(`https://localhost:7080/api/Libros/${id}/detalle`, {
+                headers,
+            });
             if (!response.ok) {
-                throw new Error('Error fetching book');
+                throw new Error('Error fetching book details');
             }
             const data = await response.json();
             return data;
@@ -54,12 +66,64 @@ export const fetchBookById = createAsyncThunk(
     }
 );
 
+export const fetchBookContent = createAsyncThunk(
+    'books/fetchBookContent',
+    async (id, { rejectWithValue, getState }) => {
+        try {
+            const token = getState().auth.token;
+            const headers = {};
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
+            const response = await fetch(`https://localhost:7080/api/Libros/${id}`, {
+                headers,
+            });
+            if (!response.ok) {
+                throw new Error('Error fetching book content');
+            }
+            const blob = await response.blob();
+            return blob;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const downloadBook = createAsyncThunk(
+    'books/downloadBook',
+    async ({ id, titulo }, { rejectWithValue, getState }) => {
+        try {
+            const token = getState().auth.token;
+            const headers = {};
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
+            const response = await fetch(`https://localhost:7080/api/Libros/${id}/descargar`, {
+                headers,
+            });
+            if (!response.ok) {
+                throw new Error('Error downloading book');
+            }
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${titulo || 'libro'}.epub`; // Assuming epub, or try to get from headers
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            window.URL.revokeObjectURL(url);
+            return true;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
 export const fetchCatalogBooks = createAsyncThunk(
     'books/fetchCatalogBooks',
-    async ({ query, page, pageSize, autor, categorias }, { rejectWithValue }) => {
+    async ({ query, page, pageSize, autor, categorias }, { rejectWithValue, getState }) => {
         try {
-            // Using getBooksFromDataBase directly as it was the default source
-            const response = await getBooksFromDataBase(query, page, pageSize, autor, categorias);
+            const token = getState().auth.token;
+            const response = await getBooksFromDataBase(query, page, pageSize, autor, categorias, token);
             return response;
         } catch (error) {
             return rejectWithValue(error.message);
@@ -69,10 +133,10 @@ export const fetchCatalogBooks = createAsyncThunk(
 
 export const fetchTopViewedBooks = createAsyncThunk(
     'books/fetchTopViewedBooks',
-    async (_, { rejectWithValue }) => {
+    async (_, { rejectWithValue, getState }) => {
         try {
-            // Simulating top viewed with page 1
-            const response = await getBooksFromDataBase("", 1, 10, "", []);
+            const token = getState().auth.token;
+            const response = await getBooksFromDataBase("", 1, 10, "", [], token);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.message);
@@ -82,10 +146,10 @@ export const fetchTopViewedBooks = createAsyncThunk(
 
 export const fetchReports = createAsyncThunk(
     'books/fetchReports',
-    async (_, { rejectWithValue }) => {
+    async (_, { rejectWithValue, getState }) => {
         try {
-            // Simulating reports with page 2 (formerly top downloaded)
-            const response = await getBooksFromDataBase("", 2, 10, "", []);
+            const token = getState().auth.token;
+            const response = await getBooksFromDataBase("", 2, 10, "", [], token);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.message);
@@ -95,10 +159,10 @@ export const fetchReports = createAsyncThunk(
 
 export const fetchTopRatedBooks = createAsyncThunk(
     'books/fetchTopRatedBooks',
-    async (_, { rejectWithValue }) => {
+    async (_, { rejectWithValue, getState }) => {
         try {
-            // Simulating top rated with page 3
-            const response = await getBooksFromDataBase("", 3, 10, "", []);
+            const token = getState().auth.token;
+            const response = await getBooksFromDataBase("", 3, 10, "", [], token);
             return response.data;
         } catch (error) {
             return rejectWithValue(error.message);
@@ -106,19 +170,25 @@ export const fetchTopRatedBooks = createAsyncThunk(
     }
 );
 
-export const addBook = createAsyncThunk(
-    'books/addBook',
-    async (bookData, { rejectWithValue }) => {
+export const uploadBookAsync = createAsyncThunk(
+    'books/uploadBook',
+    async (formData, { rejectWithValue, getState }) => {
         try {
-            const response = await fetch("https://localhost:7080/api/Libros", {
+            const token = getState().auth.token;
+            const response = await fetch("https://localhost:7080/api/Libros/upload", {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify(bookData),
+                body: formData,
             });
-            if (!response.ok) throw new Error('Error creating book');
-            const data = await response.json();
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || errorData.message || 'Error al subir libro');
+            }
+
+            const data = await response.json().catch(() => ({}));
             return data;
         } catch (error) {
             return rejectWithValue(error.message);
@@ -128,14 +198,15 @@ export const addBook = createAsyncThunk(
 
 export const updateBook = createAsyncThunk(
     'books/updateBook',
-    async ({ id, bookData }, { rejectWithValue }) => {
+    async ({ id, formData }, { rejectWithValue, getState }) => {
         try {
+            const token = getState().auth.token;
             const response = await fetch(`https://localhost:7080/api/Libros/${id}`, {
-                method: 'PUT',
+                method: 'PATCH',
                 headers: {
-                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify(bookData),
+                body: formData,
             });
             if (!response.ok) throw new Error('Error updating book');
             const data = await response.json();
@@ -148,13 +219,39 @@ export const updateBook = createAsyncThunk(
 
 export const deleteBook = createAsyncThunk(
     'books/deleteBook',
-    async (id, { rejectWithValue }) => {
+    async (id, { rejectWithValue, getState }) => {
         try {
+            const token = getState().auth.token;
             const response = await fetch(`https://localhost:7080/api/Libros/${id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
             });
             if (!response.ok) throw new Error('Error deleting book');
             return id;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
+export const fetchBookForManagement = createAsyncThunk(
+    'books/fetchBookForManagement',
+    async (id, { rejectWithValue, getState }) => {
+        try {
+            const token = getState().auth.token;
+            const headers = {};
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
+            const response = await fetch(`https://localhost:7080/api/Libros/${id}`, {
+                headers,
+            });
+            if (!response.ok) {
+                throw new Error('Error fetching book for management');
+            }
+            const data = await response.json();
+            return data;
         } catch (error) {
             return rejectWithValue(error.message);
         }
@@ -198,15 +295,15 @@ const booksSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
-            // fetchBookById
-            .addCase(fetchBookById.pending, (state) => {
+            // fetchBookDetail
+            .addCase(fetchBookDetail.pending, (state) => {
                 state.status = 'loading';
             })
-            .addCase(fetchBookById.fulfilled, (state, action) => {
+            .addCase(fetchBookDetail.fulfilled, (state, action) => {
                 state.status = 'succeeded';
                 state.currentBook = action.payload;
             })
-            .addCase(fetchBookById.rejected, (state, action) => {
+            .addCase(fetchBookDetail.rejected, (state, action) => {
                 state.status = 'failed';
                 state.error = action.payload;
             })
@@ -259,9 +356,10 @@ const booksSlice = createSlice({
                 state.topRated.status = 'failed';
                 state.topRated.error = action.payload;
             })
-            // addBook
-            .addCase(addBook.fulfilled, (state, action) => {
-                state.catalog.items.push(action.payload);
+            // uploadBookAsync
+            .addCase(uploadBookAsync.fulfilled, (state, action) => {
+                // Optionally add to catalog if the response is the book object
+                // state.catalog.items.push(action.payload);
             })
             // updateBook
             .addCase(updateBook.fulfilled, (state, action) => {
@@ -276,7 +374,6 @@ const booksSlice = createSlice({
             });
     },
 });
-
 export const { clearCurrentBook } = booksSlice.actions;
 export default booksSlice.reducer;
 

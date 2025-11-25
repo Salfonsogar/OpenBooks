@@ -1,3 +1,5 @@
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+
 // AsyncThunk para resetear contraseña
 export const resetPasswordAsync = createAsyncThunk(
   'auth/resetPassword',
@@ -25,6 +27,7 @@ export const resetPasswordAsync = createAsyncThunk(
     }
   }
 );
+
 // AsyncThunk para registro
 export const registerAsync = createAsyncThunk(
   'auth/register',
@@ -54,7 +57,6 @@ export const registerAsync = createAsyncThunk(
     }
   }
 );
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 export const loginAsync = createAsyncThunk(
   'auth/login',
@@ -80,6 +82,7 @@ export const loginAsync = createAsyncThunk(
       }
 
       const data = await res.json();
+      console.log("LOGIN RESPONSE DATA:", data);
       return data;
     } catch (err) {
       return rejectWithValue(err.message || 'Network error');
@@ -87,12 +90,19 @@ export const loginAsync = createAsyncThunk(
   }
 );
 
-
 const initialState = {
   user: null,
   token: null,
   status: 'idle',
   error: null,
+};
+
+const normalizeUser = (user) => {
+  if (!user) return null;
+  return {
+    ...user,
+    nombreRol: user.nombreRol || user.NombreRol || user.rol || user.Rol || "Usuario"
+  };
 };
 
 const authSlice = createSlice({
@@ -113,10 +123,18 @@ const authSlice = createSlice({
         const raw = sessionStorage.getItem('auth');
         if (raw) {
           const parsed = JSON.parse(raw);
-          state.user = parsed.user || null;
+          state.user = normalizeUser(parsed.user || null);
           state.token = parsed.token || null;
         }
       } catch (err) { console.warn('authSlice loadFromSession error', err); }
+    },
+    updateUserProfile(state, action) {
+      if (state.user) {
+        state.user = { ...state.user, ...action.payload };
+        try {
+          sessionStorage.setItem('auth', JSON.stringify({ user: state.user, token: state.token }));
+        } catch (err) { console.warn('authSlice updateUserProfile sessionStorage error', err); }
+      }
     },
   },
   extraReducers: (builder) => {
@@ -163,7 +181,7 @@ const authSlice = createSlice({
         }
 
         state.status = 'succeeded';
-        state.user = payload.usuario;
+        state.user = normalizeUser(payload.usuario);
         state.token = payload.token;
         state.error = null;
         try {
@@ -177,7 +195,7 @@ const authSlice = createSlice({
   },
 });
 
-export const { logout, loadFromSession } = authSlice.actions;
+export const { logout, loadFromSession, updateUserProfile } = authSlice.actions;
 
 export default authSlice.reducer;
 

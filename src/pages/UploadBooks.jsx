@@ -1,13 +1,56 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { uploadBookAsync } from '../store/booksSlice';
+import { fetchCategories, selectAllCategories } from '../store/categoriesSlice';
+import { X, ChevronDown, Check } from 'lucide-react';
 
 export default function UploadBooksPage() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const categories = useSelector(selectAllCategories);
+
   const [titulo, setTitulo] = useState('');
   const [autor, setAutor] = useState('');
   const [descripcion, setDescripcion] = useState('');
   const [portada, setPortada] = useState(null);
   const [archivo, setArchivo] = useState(null);
+  const [selectedCategories, setSelectedCategories] = useState([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const dropdownRef = useRef(null);
+
+  useEffect(() => {
+    dispatch(fetchCategories({ pageNumber: 1, pageSize: 100 }));
+  }, [dispatch]);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setIsDropdownOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [dropdownRef]);
+
+  const toggleCategory = (catId) => {
+    setSelectedCategories(prev => {
+      if (prev.includes(catId)) {
+        return prev.filter(id => id !== catId);
+      } else {
+        return [...prev, catId];
+      }
+    });
+  };
+
+  const removeCategory = (catId, e) => {
+    e.stopPropagation();
+    setSelectedCategories(prev => prev.filter(id => id !== catId));
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,35 +60,47 @@ export default function UploadBooksPage() {
       return;
     }
 
+    if (selectedCategories.length === 0) {
+      alert('Por favor, seleccione al menos una categoría');
+      return;
+    }
+
     const formData = new FormData();
     formData.append('Titulo', titulo);
     formData.append('Autor', autor);
     formData.append('Descripcion', descripcion);
     formData.append('Portada', portada);
     formData.append('Archivo', archivo);
+    formData.append('CategoriasIds', JSON.stringify(selectedCategories));
+
+    setIsSubmitting(true);
 
     try {
-      const response = await fetch('https://localhost:7080/api/libros/upload', {
-        method: 'POST',
-        body: formData,
-      });
+      const resultAction = await dispatch(uploadBookAsync(formData));
 
-      if (response.ok) {
+      if (uploadBookAsync.fulfilled.match(resultAction)) {
         alert('Libro subido correctamente');
-        // Opcional: limpiar formulario o redirigir al listado
         setTitulo('');
         setAutor('');
         setDescripcion('');
         setPortada(null);
         setArchivo(null);
-        document.getElementById('portada').value = null;
-        document.getElementById('archivo').value = null;
+        setSelectedCategories([]);
+        const portadaInput = document.getElementById('portada');
+        const archivoInput = document.getElementById('archivo');
+        if (portadaInput) portadaInput.value = '';
+        if (archivoInput) archivoInput.value = '';
       } else {
-        const errorData = await response.json();
-        alert('Error al subir libro: ' + (errorData.error || 'Desconocido'));
+        if (resultAction.payload) {
+          alert('Error al subir libro: ' + resultAction.payload);
+        } else {
+          alert('Error al subir libro: ' + resultAction.error.message);
+        }
       }
     } catch (error) {
-      alert('Error en la conexión con el servidor: ' + error.message);
+      alert('Error inesperado: ' + error.message);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -58,27 +113,6 @@ export default function UploadBooksPage() {
             Agrega un nuevo libro a la biblioteca digital
           </p>
         </div>
-
-        {/* <div
-          className="alert alert-info d-flex align-items-center mb-4"
-          role="alert"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="20"
-            height="20"
-            fill="currentColor"
-            className="me-2"
-            viewBox="0 0 16 16"
-          >
-            <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z" />
-            <path d="m8.93 6.588-2.29.287-.082.38.45.083c.294.07.352.176.288.469l-.738 3.468c-.194.897.105 1.319.808 1.319.545 0 1.178-.252 1.465-.598l.088-.416c-.2.176-.492.246-.686.246-.275 0-.375-.193-.304-.533L8.93 6.588zM9 4.5a1 1 0 1 1-2 0 1 1 0 0 1 2 0z" />
-          </svg>
-          <div>
-            Asegúrate de tener los derechos necesarios para subir este contenido
-            a la biblioteca.
-          </div>
-        </div> */}
 
         <div className="card shadow-sm mb-4">
           <div className="card-header bg-white">
@@ -132,6 +166,71 @@ export default function UploadBooksPage() {
                 ></textarea>
               </div>
 
+              <div className="mb-3">
+                <label className="form-label">Categorías *</label>
+                <div className="position-relative" ref={dropdownRef}>
+                  <button
+                    type="button"
+                    className="form-select text-start d-flex justify-content-between align-items-center"
+                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  >
+                    <span className={selectedCategories.length === 0 ? "text-muted" : ""}>
+                      {selectedCategories.length === 0
+                        ? "Seleccionar categorías..."
+                        : `${selectedCategories.length} seleccionada(s)`}
+                    </span>
+                    <ChevronDown size={16} />
+                  </button>
+
+                  {isDropdownOpen && (
+                    <div className="position-absolute w-100 mt-1 bg-white border rounded shadow-sm p-2" style={{ zIndex: 1000, maxHeight: '250px', overflowY: 'auto' }}>
+                      {categories.map(cat => (
+                        <div
+                          key={cat.id}
+                          className="form-check py-1 px-2 hover-bg-light rounded cursor-pointer"
+                          onClick={() => toggleCategory(cat.id)}
+                          style={{ cursor: 'pointer' }}
+                        >
+                          <input
+                            className="form-check-input"
+                            type="checkbox"
+                            checked={selectedCategories.includes(cat.id)}
+                            onChange={() => { }}
+                            id={`cat-${cat.id}`}
+                            style={{ cursor: 'pointer' }}
+                          />
+                          <label className="form-check-label ms-2 w-100" htmlFor={`cat-${cat.id}`} style={{ cursor: 'pointer' }}>
+                            {cat.nombre}
+                          </label>
+                        </div>
+                      ))}
+                      {categories.length === 0 && (
+                        <div className="text-center text-muted py-2 small">No hay categorías disponibles</div>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <div className="d-flex flex-wrap gap-2 mt-2">
+                  {selectedCategories.map(catId => {
+                    const cat = categories.find(c => c.id === catId);
+                    if (!cat) return null;
+                    return (
+                      <span key={catId} className="badge bg-light text-dark border d-flex align-items-center px-2 py-1">
+                        {cat.nombre}
+                        <button
+                          type="button"
+                          className="btn-close ms-2"
+                          style={{ fontSize: '0.5rem' }}
+                          onClick={(e) => removeCategory(catId, e)}
+                          aria-label="Remove"
+                        ></button>
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+
               <div className="row g-3 mb-4">
                 <div className="col-md-6">
                   <label className="form-label">Portada del Libro</label>
@@ -158,13 +257,18 @@ export default function UploadBooksPage() {
               </div>
 
               <div className="d-flex gap-2">
-                <button type="submit" className="btn btn-main flex-fill">
-                  Subir Libro
+                <button
+                  type="submit"
+                  className="btn btn-main flex-fill"
+                  disabled={isSubmitting}
+                >
+                  {isSubmitting ? 'Subiendo...' : 'Subir Libro'}
                 </button>
                 <button
                   type="button"
                   className="btn btn-secondary flex-fill"
                   onClick={() => navigate('/libros')}
+                  disabled={isSubmitting}
                 >
                   Cancelar
                 </button>

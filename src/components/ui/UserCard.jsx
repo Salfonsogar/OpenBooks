@@ -1,10 +1,13 @@
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { selectAuthUser } from '../../store/authSlice';
+import { selectAllRoles } from '../../store/rolesSlice';
 import "../../assets/styles/userCard.css";
 
 export default function UserCard({ showSettingsButton = false }) {
   const user = useSelector(selectAuthUser);
+  const roles = useSelector(selectAllRoles);
+
   const getRoleBadgeColor = (role) => {
     const colors = {
       'Administrador': '#6e3b3b',
@@ -13,10 +16,19 @@ export default function UserCard({ showSettingsButton = false }) {
     return colors[role] || '#777';
   };
 
-  const avatar = user?.avatar || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+  const avatar = user?.fotoPerfil
+    ? `data:image/jpeg;base64,${user.fotoPerfil}`
+    : "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
+  console.log("UserCard - user:", user);
+  console.log("UserCard - fotoPerfil:", user?.fotoPerfil);
+  console.log("UserCard - avatar:", avatar);
+
   const name = user?.userName || user?.email || "userExample";
   const email = user?.email || "example@gmail.com";
-  const role = user?.roles?.[0] || "NA";
+
+  const userRoleObj = roles.find(r => r.id === user?.rolId);
+  const role = userRoleObj?.name || "Cargando...";
 
   return (
     <div className="card shadow-sm h-100">
@@ -33,9 +45,9 @@ export default function UserCard({ showSettingsButton = false }) {
         <p className="text-muted mb-3">{email}</p>
         <span
           className="badge mb-3 d-block mx-auto"
-          style={{ 
-            backgroundColor: getRoleBadgeColor(role), 
-            color: '#fff' 
+          style={{
+            backgroundColor: getRoleBadgeColor(role),
+            color: '#fff'
           }}
         >
           {role}
@@ -45,7 +57,7 @@ export default function UserCard({ showSettingsButton = false }) {
             Cambiar foto
           </button>
           {showSettingsButton && (
-            <Link 
+            <Link
               to="/profile-settings"
               className="btn-add-bookmark w-100 text-decoration-none account-settings-btn d-inline-flex align-items-center justify-content-center"
             >

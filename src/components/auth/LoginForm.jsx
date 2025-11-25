@@ -2,11 +2,13 @@ import AuthForm from "./AuthForm";
 import { Link, useNavigate } from "react-router-dom";
 import "../../assets/styles/LoginForm.css";
 import { useDispatch, useSelector } from 'react-redux';
+import { selectAllRoles } from '../../store/rolesSlice';
 import { loginAsync, selectAuthError, selectAuthStatus } from '../../store/authSlice';
 
 export default function LoginForm({ onClickTitle, onForgotPassword, onClose }) {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const roles = useSelector(selectAllRoles);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,11 +21,15 @@ export default function LoginForm({ onClickTitle, onForgotPassword, onClose }) {
       const res = await dispatch(loginAsync({ correo, contrasena }));
       if (loginAsync.fulfilled.match(res)) {
         const user = res.payload?.usuario || res.payload?.Usuario;
-        const roles = user?.roles || user?.Roles || [];
+
+        const userRoleObj = roles.find(r => r.id === user?.rolId);
+        const roleName = userRoleObj?.name || "";
+
         try { if (onClose) onClose(); } catch {
           console.error('LoginForm onClose error');
         }
-        if (roles.some(r => String(r).toLowerCase() === 'administrador')) navigate('/Admin');
+
+        if (String(roleName).toLowerCase() === 'administrador') navigate('/Admin');
         else navigate('/Profile');
       }
     } catch (err) {
@@ -33,7 +39,7 @@ export default function LoginForm({ onClickTitle, onForgotPassword, onClose }) {
 
   const authError = useSelector(selectAuthError);
   const authStatus = useSelector(selectAuthStatus);
-  
+
 
   return (
     <AuthForm title="Iniciar sesión" buttonText="Entrar" onClickTitle={onClickTitle} onSubmit={handleSubmit} className="login-form">
@@ -52,7 +58,7 @@ export default function LoginForm({ onClickTitle, onForgotPassword, onClose }) {
 
       <p>
         <Link to="/forgot-password" className="text-dark mb-3 forgot-password-link"
-        onClick={onForgotPassword}>
+          onClick={onForgotPassword}>
           He olvidado mi contraseña
         </Link>
       </p>

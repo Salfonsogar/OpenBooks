@@ -116,6 +116,6 @@ const categoriesSlice = createSlice({
 
 export default categoriesSlice.reducer;
 
-export const selectAllCategories = (state) => state.categories.items;
-export const selectCategoriesStatus = (state) => state.categories.status;
-export const selectCategoriesError = (state) => state.categories.error;
+export const selectAllCategories = (state) => state.categories?.items || [];
+export const selectCategoriesStatus = (state) => state.categories?.status || 'idle';
+export const selectCategoriesError = (state) => state.categories?.error || null;

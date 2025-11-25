@@ -1,23 +1,32 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import ProfileDeleteModal from "../components/profile/ProfileDeleteModal.jsx";
 import ChangePassword from "../components/profile/ChangePassword.jsx";
 import ProfileForm from "../components/profile/ProfileForm.jsx";
 import ProfileSidebar from "../components/profile/ProfileSidebar.jsx";
 import ProfileMainView from "../components/profile/ProfileMainView.jsx";
-import { selectAuthUser } from '../store/authSlice';
+import { selectAuthUser, logout } from '../store/authSlice';
+import { deleteUserAsync } from '../store/usersSlice';
 
 export default function ProfileSettings() {
   const [showModal, setShowModal] = useState(false);
   const [activeView, setActiveView] = useState("main");
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const user = useSelector(selectAuthUser);
 
-  const handleDeleteAccount = () => {
-    //API de deleteAccount
-    alert("Cuenta eliminada correctamente");
-    navigate("/login");
+  const handleDeleteAccount = async () => {
+    if (!user?.id) return;
+
+    const result = await dispatch(deleteUserAsync(user.id));
+
+    if (deleteUserAsync.fulfilled.match(result)) {
+      dispatch(logout());
+      navigate("/login");
+    } else {
+      alert("Error al eliminar la cuenta. Por favor, intenta de nuevo.");
+    }
   };
 
   return (
@@ -47,15 +56,15 @@ export default function ProfileSettings() {
           </div>
 
           <div className="col-lg-9">
-              {activeView === "main" && <ProfileMainView user={user} />}
-              {activeView === "changePassword" && (
-                <div className="card-body">
-                  <ChangePassword user={user} />
-                </div>
-              )}
-              {activeView === "profile" && (
-                <ProfileForm userData={user} />
-              )}
+            {activeView === "main" && <ProfileMainView user={user} />}
+            {activeView === "changePassword" && (
+              <div className="card-body">
+                <ChangePassword user={user} />
+              </div>
+            )}
+            {activeView === "profile" && (
+              <ProfileForm userData={user} />
+            )}
           </div>
         </div>
 

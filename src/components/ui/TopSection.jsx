@@ -1,8 +1,21 @@
 import React from 'react';
 import BookCard from './BookCard';
 
-export default function TopSection({ title, icon, books, onAdd, onRemove, onRead, estanteria }) {
+export default function TopSection({
+    title,
+    icon,
+    books,
+    libraryBooks = [],
+    isAuthenticated,
+    onAdd,
+    onRemove,
+    onRead
+}) {
     if (!books || books.length === 0) return null;
+
+    const isInLibrary = (libro) => {
+        return libraryBooks.some(lb => lb.id === libro.id);
+    };
 
     return (
         <div className="mb-5">
@@ -22,7 +35,9 @@ export default function TopSection({ title, icon, books, onAdd, onRemove, onRead
                     <div key={i} style={{ minWidth: '220px', maxWidth: '220px' }}>
                         <BookCard
                             libro={libro}
-                            isInLibrary={estanteria.some(l => l.titulo === libro.titulo && l.autor === libro.autor)}
+                            showAdd={!isInLibrary(libro)}
+                            showRemove={isInLibrary(libro)}
+                            showDownload={false}
                             onAdd={onAdd}
                             onRemove={onRemove}
                             onRead={onRead}

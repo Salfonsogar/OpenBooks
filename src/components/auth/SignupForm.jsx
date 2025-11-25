@@ -4,11 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { registerAsync } from '../../store/authSlice';
 
 
+import { selectAllRoles } from '../../store/rolesSlice';
+
 export default function SignupForm({ onClickTitle }) {
   const dispatch = useDispatch();
   const [success, setSuccess] = useState("");
   const status = useSelector(state => state.auth.status);
   const error = useSelector(state => state.auth.error);
+  const roles = useSelector(selectAllRoles);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -17,8 +20,12 @@ export default function SignupForm({ onClickTitle }) {
     const nombreUsuario = form.nombreUsuario.value;
     const correo = form.correo.value;
     const contraseña = form.contraseña.value;
-    const rolId = 0;
-    const result = await dispatch(registerAsync({ nombreUsuario, contraseña, correo, rolId }));
+    const nombreCompleto = form.nombreCompleto.value;
+
+    const userRole = roles.find(r => r.name === 'Usuario' || r.name === 'usuario');
+    const rolId = userRole ? userRole.id : 2;
+
+    const result = await dispatch(registerAsync({ nombreUsuario, nombreCompleto, contraseña, correo, rolId }));
     if (registerAsync.fulfilled.match(result)) {
       setSuccess("¡Registro exitoso! Ahora puedes iniciar sesión.");
       form.reset();
@@ -36,6 +43,13 @@ export default function SignupForm({ onClickTitle }) {
         type="text"
         name="nombreUsuario"
         placeholder="Nombre de usuario"
+        required
+        disabled={status === 'loading'}
+      />
+      <input
+        type="text"
+        name="nombreCompleto"
+        placeholder="Nombre completo"
         required
         disabled={status === 'loading'}
       />

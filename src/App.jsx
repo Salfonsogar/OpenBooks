@@ -1,10 +1,12 @@
+import { useEffect, useMemo } from 'react';
 import { Routes, Route, useNavigate } from 'react-router-dom';
 import Home from './pages/Home';
 import Catalog from './pages/Catalog';
 import Navbar from './components/layout/Navbar';
 import NavbarAdmin from './components/layout/NavbarAdmin';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { selectAuthUser } from './store/authSlice';
+import { fetchRolesAsync, selectAllRoles } from './store/rolesSlice';
 import Footer from './components/layout/Footer';
 import Library from './pages/Library';
 import AuthModal from './components/auth/AuthModal.jsx';
@@ -26,17 +28,36 @@ import MonitoreoLibrosPage from './pages/MonitoreoLibrosPage.jsx';
 import Users from './pages/Users.jsx';
 import BookPage from './pages/BookPage.jsx';
 import CategoriasPage from './pages/CategoriasPage.jsx';
+import AdminReviews from './pages/AdminReviews.jsx';
+import EditBook from './pages/EditBook.jsx';
 
 function App() {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const user = useSelector(selectAuthUser);
-  const isAdmin = user && Array.isArray(user.roles) && user.roles.some(r => String(r).toLowerCase() === 'administrador');
+  const roles = useSelector(selectAllRoles);
+
+  useEffect(() => {
+    dispatch(fetchRolesAsync());
+  }, [dispatch]);
+
+  const isAdmin = useMemo(() => {
+    if (!user || !user.rolId || !roles.length) return false;
+    const userRole = roles.find(r => r.id === user.rolId);
+    return userRole && (userRole.name === 'Administrador' || userRole.name === 'Admin');
+  }, [user, roles]);
+
   return (
     <>
       {isAdmin ? <NavbarAdmin /> : <Navbar />}
       <main>
         <Routes>
           <Route path="/" element={isAdmin ? <AdminPage /> : <Home />} />
+          <Route path="/Admin" element={
+            <ProtectedRoute requiredRoles={['Administrador']}>
+              <AdminPage />
+            </ProtectedRoute>
+          } />
           <Route path="*" element={<NotFoundPage />} />
           <Route path="/catalog" element={<Catalog />} />
           <Route path="/library" element={
@@ -45,26 +66,8 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="/Login" element={<AuthModal onClose={() => navigate('/')} />} />
-          <Route path="/Upload" element={
-            <ProtectedRoute requiredRoles={['Administrador']}>
-              <UploadBooksPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/profile" element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          } />
-          <Route path="/Admin" element={
-            <ProtectedRoute requiredRoles={['Administrador']}>
-              <AdminPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/penalizacion-page" element={
-            <ProtectedRoute requiredRoles={['Administrador']}>
-              <PenalizacionesPage />
-            </ProtectedRoute>
-          } />
+          <Route path="/Upload" element={<ProtectedRoute requiredRoles={['Administrador']}><UploadBooksPage /></ProtectedRoute>} />
+          <Route path="/penalizacion-page" element={<ProtectedRoute requiredRoles={['Administrador']}><PenalizacionesPage /></ProtectedRoute>} />
           <Route path="/reportes" element={
             <ProtectedRoute requiredRoles={['Administrador']}>
               <ReportesPage />
@@ -85,6 +88,11 @@ function App() {
               <MonitoreoLibrosPage />
             </ProtectedRoute>
           } />
+          <Route path="/libros/editar/:id" element={
+            <ProtectedRoute requiredRoles={['Administrador']}>
+              <EditBook />
+            </ProtectedRoute>
+          } />
           <Route path="/categorias" element={
             <ProtectedRoute requiredRoles={['Administrador']}>
               <CategoriasPage />
@@ -93,6 +101,11 @@ function App() {
           <Route path="/usuarios" element={
             <ProtectedRoute requiredRoles={['Administrador']}>
               <Users />
+            </ProtectedRoute>
+          } />
+          <Route path="/profile" element={
+            <ProtectedRoute>
+              <ProfilePage />
             </ProtectedRoute>
           } />
           <Route path="/forgot-password" element={<ForgotPassword />} />
@@ -109,6 +122,11 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="/book/:id" element={<BookPage />} />
+          <Route path="/reviews" element={
+            <ProtectedRoute requiredRoles={['Administrador']}>
+              <AdminReviews />
+            </ProtectedRoute>
+          } />
         </Routes>
       </main>
       <Footer />

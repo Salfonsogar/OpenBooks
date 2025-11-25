@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import "../assets/styles/Catalog.css";
-import { useBookshelf } from "../hooks/useBookshelf";
 import SearchBar from "../components/ui/SearchBar";
 import Pagination from "../components/ui/Pagination";
 import NotificationModal from "../components/ui/NotificationModal";
@@ -10,9 +10,14 @@ import TopSection from "../components/ui/TopSection";
 import { useCatalog } from "../hooks/useCatalog";
 import CatalogFilters from "../components/catalog/CatalogFilters";
 import CatalogGrid from "../components/catalog/CatalogGrid";
+import { addBookToLibrary, removeBookFromLibrary, fetchUserLibrary, selectLibraryBooks } from "../store/librarySlice";
+import { selectIsAuthenticated } from "../store/authSlice";
 
 export default function Catalog() {
-  // Custom hook for catalog logic
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const libraryBooks = useSelector(selectLibraryBooks);
+
   const {
     query,
     autor,
@@ -36,10 +41,6 @@ export default function Catalog() {
     activeFiltersCount
   } = useCatalog();
 
-  // Bookshelf logic
-  const { estanteria, handleAddBook, handleRemoveBook } = useBookshelf();
-
-  // Local UI state
   const [notifications, setNotifications] = useState([]);
   const [selectedBook, setSelectedBook] = useState(null);
 
@@ -47,14 +48,40 @@ export default function Catalog() {
     selectedBook?.ArchivoBase64 ?? selectedBook?.url ?? selectedBook?.Url
   );
 
-  const onAdd = (libro) => {
-    const result = handleAddBook(libro);
-    if (result) showNotification(result.message);
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(fetchUserLibrary({ page: 1, pageSize: 1000 }));
+    }
+  }, [dispatch, isAuthenticated]);
+
+  const onAdd = async (libro) => {
+    if (!isAuthenticated) {
+      showNotification("Debes iniciar sesión para agregar libros a tu biblioteca");
+      return;
+    }
+
+    try {
+      await dispatch(addBookToLibrary(libro.id)).unwrap();
+      showNotification(`Libro "${libro.titulo}" agregado a tu biblioteca`);
+      dispatch(fetchUserLibrary({ page: 1, pageSize: 1000 }));
+    } catch (error) {
+      showNotification(`Error al agregar libro: ${error}`);
+    }
   };
 
-  const onRemove = (libro) => {
-    const result = handleRemoveBook(libro);
-    if (result) showNotification(result.message);
+  const onRemove = async (libro) => {
+    if (!isAuthenticated) {
+      showNotification("Debes iniciar sesión");
+      return;
+    }
+
+    try {
+      await dispatch(removeBookFromLibrary(libro.id)).unwrap();
+      showNotification(`Libro "${libro.titulo}" eliminado de tu biblioteca`);
+      dispatch(fetchUserLibrary({ page: 1, pageSize: 1000 }));
+    } catch (error) {
+      showNotification(`Error al eliminar libro: ${error}`);
+    }
   };
 
   const showNotification = (msg) => {
@@ -81,29 +108,6 @@ export default function Catalog() {
       ) : (
         <>
           <SearchBar onSearch={handleSearch} history={history} />
-
-          {!query && !autor && categorias.length === 0 && (
-            <>
-              <TopSection
-                title="Más Vistos"
-                icon="bi-eye"
-                books={topViewed}
-                estanteria={estanteria}
-                onAdd={onAdd}
-                onRemove={onRemove}
-                onRead={(libro) => setSelectedBook(libro)}
-              />
-              <TopSection
-                title="Más valorados"
-                icon="bi-star"
-                books={topRated}
-                estanteria={estanteria}
-                onAdd={onAdd}
-                onRemove={onRemove}
-                onRead={(libro) => setSelectedBook(libro)}
-              />
-            </>
-          )}
 
           <div className="d-flex justify-content-between align-items-center mb-3">
             <button
@@ -141,23 +145,53 @@ export default function Catalog() {
             handleCategoriaToggle={handleCategoriaToggle}
           />
 
-          <CatalogGrid
-            loading={loading}
-            books={books}
-            activeFiltersCount={activeFiltersCount}
-            clearFilters={clearFilters}
-            estanteria={estanteria}
-            onAdd={onAdd}
-            onRemove={onRemove}
-            onRead={(libro) => setSelectedBook(libro)}
-          />
+          {!query && !autor && categorias.length === 0 && (
+            <>
+              <TopSection
+                title="Más Vistos"
+                icon="bi-eye"
+                books={topViewed}
+                libraryBooks={libraryBooks}
+                isAuthenticated={isAuthenticated}
+                onAdd={onAdd}
+                onRemove={onRemove}
+                onRead={(libro) => setSelectedBook(libro)}
+              />
+              <TopSection
+                title="Más valorados"
+                icon="bi-star"
+                books={topRated}
+                libraryBooks={libraryBooks}
+                isAuthenticated={isAuthenticated}
+                onAdd={onAdd}
+                onRemove={onRemove}
+                onRead={(libro) => setSelectedBook(libro)}
+              />
+            </>
+          )}
 
-          {totalPages > 1 && (
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              onPageChange={setPage}
-            />
+          {(query || autor || categorias.length > 0) && (
+            <>
+              <CatalogGrid
+                loading={loading}
+                books={books}
+                activeFiltersCount={activeFiltersCount}
+                clearFilters={clearFilters}
+                libraryBooks={libraryBooks}
+                isAuthenticated={isAuthenticated}
+                onAdd={onAdd}
+                onRemove={onRemove}
+                onRead={(libro) => setSelectedBook(libro)}
+              />
+
+              {totalPages > 1 && (
+                <Pagination
+                  page={page}
+                  totalPages={totalPages}
+                  onPageChange={setPage}
+                />
+              )}
+            </>
           )}
 
           <div className="toast-container">

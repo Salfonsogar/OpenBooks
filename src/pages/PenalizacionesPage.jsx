@@ -1,212 +1,259 @@
-import { AlertTriangle, Search, Filter, Eye } from 'lucide-react';
-import { useState } from 'react';
+import { AlertTriangle, Search, Trash2, User, Calendar, MessageSquare } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchUsersAsync } from '../store/usersSlice';
+import { fetchSancionesPorUsuarioAsync, createSancionAsync, deleteSancionAsync } from '../store/sancionesSlice';
 
 export default function PenalizacionesPage() {
-  const [showModal, setShowModal] = useState(false);
-  const [filterUser, setFilterUser] = useState('');
-  const [filterStatus, setFilterStatus] = useState('');
+  const dispatch = useDispatch();
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedUser, setSelectedUser] = useState(null);
 
-  const penalizaciones = [
-    {
-      id: 1,
-      usuario: 'Carlos López',
-      motivo: 'Préstamo vencido',
-      fecha: '2024-11-15',
-      estado: 'activo',
-      descripcion: 'Libro no devuelto después de 30 días',
-    },
-    {
-      id: 2,
-      usuario: 'Ana Martínez',
-      motivo: 'Daño al material',
-      fecha: '2024-11-10',
-      estado: 'apelado',
-      descripcion: 'Páginas arrancadas del libro',
-    },
-    {
-      id: 3,
-      usuario: 'Pedro Sánchez',
-      motivo: 'Comportamiento inadecuado',
-      fecha: '2024-11-05',
-      estado: 'desactivado',
-      descripcion: 'Múltiples reportes de ruido excesivo',
-    },
-  ];
+  const [duracion, setDuracion] = useState(0);
+  const [comentario, setComentario] = useState('');
 
-  const getStatusBadge = (estado) => {
-    const styles = {
-      activo: { bg: '#f8d7da', color: '#721c24', border: '#f5c6cb' },
-      desactivado: { bg: '#d4edda', color: '#155724', border: '#c3e6cb' },
-      apelado: { bg: '#fff3cd', color: '#856404', border: '#ffeeba' },
+  const { users, status: usersStatus } = useSelector((state) => state.users);
+  const { sanciones, status: sancionesStatus } = useSelector((state) => state.sanciones);
+
+  useEffect(() => {
+    if (searchTerm.length > 2) {
+      dispatch(fetchUsersAsync({ pageNumber: 1, pageSize: 100 }));
+    }
+  }, [searchTerm, dispatch]);
+
+  const filteredUsers = users.filter(user =>
+    user.nombre?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    user.email?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleUserSelect = (user) => {
+    setSelectedUser(user);
+    dispatch(fetchSancionesPorUsuarioAsync(user.id));
+    setSearchTerm('');
+  };
+
+  const handleCreateSancion = async (e) => {
+    e.preventDefault();
+    if (!selectedUser) return;
+
+    const newSancion = {
+      idUsuario: selectedUser.id,
+      duracion: parseInt(duracion),
+      comentario: comentario
     };
 
-    return (
-      <span
-        className="badge"
-        style={{
-          backgroundColor: styles[estado].bg,
-          color: styles[estado].color,
-          border: `1px solid ${styles[estado].border}`,
-        }}
-      >
-        {estado.charAt(0).toUpperCase() + estado.slice(1)}
-      </span>
-    );
+    await dispatch(createSancionAsync(newSancion));
+    dispatch(fetchSancionesPorUsuarioAsync(selectedUser.id));
+    setDuracion(0);
+    setComentario('');
+  };
+
+  const handleDeleteSancion = async (id) => {
+    if (window.confirm('¿Estás seguro de eliminar esta sanción?')) {
+      await dispatch(deleteSancionAsync(id));
+      if (selectedUser) {
+        dispatch(fetchSancionesPorUsuarioAsync(selectedUser.id));
+      }
+    }
   };
 
   return (
-    <div
-      className="min-vh-100 py-5"
-      style={{ background: 'linear-gradient(135deg, #f3e9e0 0%, #fff 100%)' }}
-    >
+    <div className="min-vh-100 py-5" style={{ background: 'linear-gradient(135deg, #f3e9e0 0%, #fff 100%)' }}>
       <div className="container" style={{ maxWidth: '1200px' }}>
         <div className="mb-5">
           <h1 className="display-5 fw-bold mb-2" style={{ color: '#6e3b3b' }}>
-            Penalizaciones
+            Gestión de Sanciones
           </h1>
           <p className="text-muted">
-            Gestiona las penalizaciones aplicadas a los usuarios
+            Busca un usuario para ver y gestionar sus penalizaciones.
           </p>
         </div>
 
-        <div className="card shadow-sm">
-          <div className="card-body">
-            {/* Filtros */}
-            <div className="row mb-4">
-              <div className="col-md-6 mb-3 mb-md-0">
-                <div className="position-relative">
-                  <Search
-                    size={18}
-                    className="position-absolute text-muted"
-                    style={{ left: '12px', top: '10px', pointerEvents: 'none' }}
-                  />
+        <div className="row g-4">
+          <div className="col-md-4">
+            <div className="card shadow-sm border-0 h-100">
+              <div className="card-body">
+                <h5 className="card-title mb-3" style={{ color: '#6e3b3b' }}>Buscar Usuario</h5>
+                <div className="position-relative mb-3">
+                  <Search size={18} className="position-absolute text-muted" style={{ left: '12px', top: '12px' }} />
                   <input
                     type="text"
-                    className="form-control"
-                    placeholder="Buscar por usuario..."
-                    style={{ paddingLeft: '40px' }}
-                    value={filterUser}
-                    onChange={(e) => setFilterUser(e.target.value)}
+                    className="form-control ps-5"
+                    placeholder="Nombre o email..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
                   />
                 </div>
-              </div>
-              <div className="col-md-3">
-                <select
-                  className="form-select"
-                  value={filterStatus}
-                  onChange={(e) => setFilterStatus(e.target.value)}
-                >
-                  <option value="">Todos los estados</option>
-                  <option value="activo">Activo</option>
-                  <option value="desactivado">Desactivado</option>
-                  <option value="apelado">Apelado</option>
-                </select>
-              </div>
-            </div>
 
-            {/* Tabla */}
-            <div className="table-responsive">
-              <table className="table table-hover mb-0">
-                <thead>
-                  <tr style={{ borderBottom: '2px solid #e9ecef' }}>
-                    <th style={{ color: '#6e3b3b', fontWeight: '600' }}>
-                      Usuario
-                    </th>
-                    <th style={{ color: '#6e3b3b', fontWeight: '600' }}>
-                      Motivo
-                    </th>
-                    <th style={{ color: '#6e3b3b', fontWeight: '600' }}>
-                      Fecha
-                    </th>
-                    <th style={{ color: '#6e3b3b', fontWeight: '600' }}>
-                      Estado
-                    </th>
-                    <th
-                      className="text-end"
-                      style={{ color: '#6e3b3b', fontWeight: '600' }}
-                    >
-                      Acciones
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {penalizaciones.map((pen) => (
-                    <tr key={pen.id}>
-                      <td className="fw-medium">{pen.usuario}</td>
-                      <td>{pen.motivo}</td>
-                      <td>{pen.fecha}</td>
-                      <td>{getStatusBadge(pen.estado)}</td>
-                      <td className="text-end">
+                {searchTerm.length > 0 && (
+                  <div className="list-group list-group-flush overflow-auto" style={{ maxHeight: '300px' }}>
+                    {usersStatus === 'loading' ? (
+                      <div className="text-center p-3">Cargando...</div>
+                    ) : filteredUsers.length > 0 ? (
+                      filteredUsers.map(user => (
                         <button
-                          className="btn btn-sm btn-ghost"
-                          title="Ver detalles"
-                          onClick={() => setShowModal(true)}
+                          key={user.id}
+                          className={`list-group-item list-group-item-action ${selectedUser?.id === user.id ? 'active' : ''}`}
+                          onClick={() => handleUserSelect(user)}
                         >
-                          <Eye size={16} />
+                          <div className="d-flex align-items-center">
+                            <div className="bg-light rounded-circle p-2 me-2">
+                              <User size={16} />
+                            </div>
+                            <div>
+                              <div className="fw-bold">{user.nombre}</div>
+                              <small className="text-muted">{user.email}</small>
+                            </div>
+                          </div>
                         </button>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
+                      ))
+                    ) : (
+                      <div className="text-center p-3 text-muted">No se encontraron usuarios</div>
+                    )}
+                  </div>
+                )}
+
+                {selectedUser && (
+                  <div className="mt-4 p-3 bg-light rounded border">
+                    <h6 className="fw-bold mb-2">Usuario Seleccionado:</h6>
+                    <div className="d-flex align-items-center mb-2">
+                      <User size={20} className="me-2 text-primary" />
+                      <span className="fw-medium">{selectedUser.nombre}</span>
+                    </div>
+                    <div className="small text-muted">{selectedUser.email}</div>
+                    <button
+                      className="btn btn-sm btn-outline-secondary mt-3 w-100"
+                      onClick={() => setSelectedUser(null)}
+                    >
+                      Limpiar selección
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
+          </div>
+
+          <div className="col-md-8">
+            {selectedUser ? (
+              <div className="d-flex flex-column gap-4">
+                <div className="card shadow-sm border-0">
+                  <div className="card-header bg-white border-bottom-0 pt-4 px-4">
+                    <h5 className="card-title m-0" style={{ color: '#6e3b3b' }}>Nueva Sanción</h5>
+                  </div>
+                  <div className="card-body px-4 pb-4">
+                    <form onSubmit={handleCreateSancion}>
+                      <div className="row g-3">
+                        <div className="col-md-4">
+                          <label className="form-label small fw-bold text-muted">Duración (días)</label>
+                          <div className="input-group">
+                            <span className="input-group-text bg-light"><Calendar size={16} /></span>
+                            <input
+                              type="number"
+                              className="form-control"
+                              value={duracion}
+                              onChange={(e) => setDuracion(e.target.value)}
+                              min="1"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-8">
+                          <label className="form-label small fw-bold text-muted">Comentario</label>
+                          <div className="input-group">
+                            <span className="input-group-text bg-light"><MessageSquare size={16} /></span>
+                            <input
+                              type="text"
+                              className="form-control"
+                              value={comentario}
+                              onChange={(e) => setComentario(e.target.value)}
+                              placeholder="Razón de la sanción..."
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="col-12 text-end">
+                          <button type="submit" className="btn btn-primary px-4">
+                            Aplicar Sanción
+                          </button>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </div>
+
+                <div className="card shadow-sm border-0">
+                  <div className="card-header bg-white border-bottom-0 pt-4 px-4 d-flex justify-content-between align-items-center">
+                    <h5 className="card-title m-0" style={{ color: '#6e3b3b' }}>Historial de Sanciones</h5>
+                    <span className="badge bg-light text-dark border">
+                      Total: {sanciones.length}
+                    </span>
+                  </div>
+                  <div className="card-body px-0">
+                    {sancionesStatus === 'loading' ? (
+                      <div className="text-center py-5">
+                        <div className="spinner-border text-primary" role="status">
+                          <span className="visually-hidden">Cargando...</span>
+                        </div>
+                      </div>
+                    ) : sanciones.length > 0 ? (
+                      <div className="table-responsive">
+                        <table className="table table-hover align-middle mb-0">
+                          <thead className="bg-light">
+                            <tr>
+                              <th className="ps-4">ID</th>
+                              <th>Comentario</th>
+                              <th>Duración</th>
+                              <th>Fecha Inicio</th>
+                              <th className="text-end pe-4">Acciones</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {sanciones.map((sancion) => (
+                              <tr key={sancion.id}>
+                                <td className="ps-4 text-muted">#{sancion.id}</td>
+                                <td className="fw-medium">{sancion.comentario}</td>
+                                <td>
+                                  <span className="badge bg-warning text-dark">
+                                    {sancion.duracion} días
+                                  </span>
+                                </td>
+                                <td className="text-muted">
+                                  {new Date(sancion.fechaInicio).toLocaleDateString()}
+                                </td>
+                                <td className="text-end pe-4">
+                                  <button
+                                    className="btn btn-sm btn-outline-danger border-0"
+                                    onClick={() => handleDeleteSancion(sancion.id)}
+                                    title="Eliminar sanción"
+                                  >
+                                    <Trash2 size={18} />
+                                  </button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    ) : (
+                      <div className="text-center py-5 text-muted">
+                        <AlertTriangle size={48} className="mb-3 opacity-25" />
+                        <p>Este usuario no tiene sanciones activas.</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+
+              </div>
+            ) : (
+              <div className="h-100 d-flex flex-column align-items-center justify-content-center text-muted border rounded-3 bg-light p-5" style={{ borderStyle: 'dashed !important' }}>
+                <User size={64} className="mb-3 opacity-25" />
+                <h4>Selecciona un usuario</h4>
+                <p>Utiliza el buscador de la izquierda para encontrar un usuario y gestionar sus sanciones.</p>
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {/* Modal Detalles */}
-      {showModal && (
-        <div
-          className="modal d-block"
-          style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}
-        >
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header border-bottom">
-                <h5 className="modal-title">Detalles de Penalización</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setShowModal(false)}
-                ></button>
-              </div>
-              <div className="modal-body">
-                <div className="mb-3">
-                  <label className="form-label fw-bold">Usuario</label>
-                  <p className="mb-0">Carlos López</p>
-                </div>
-                <div className="mb-3">
-                  <label className="form-label fw-bold">Motivo</label>
-                  <p className="mb-0">Préstamo vencido</p>
-                </div>
-                <div className="mb-3">
-                  <label className="form-label fw-bold">Descripción</label>
-                  <p className="mb-0">
-                    Libro no devuelto después de 30 días
-                  </p>
-                </div>
-                <div className="mb-3">
-                  <label className="form-label fw-bold">Fecha</label>
-                  <p className="mb-0">2024-11-15</p>
-                </div>
-                <div className="mb-3">
-                  <label className="form-label fw-bold">Estado</label>
-                  <div>{getStatusBadge('activo')}</div>
-                </div>
-              </div>
-              <div className="modal-footer border-top">
-                <button
-                  type="button"
-                  className="btn btn-secondary"
-                  onClick={() => setShowModal(false)}
-                >
-                  Cerrar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

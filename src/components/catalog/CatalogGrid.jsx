@@ -6,7 +6,8 @@ export default function CatalogGrid({
     books,
     activeFiltersCount,
     clearFilters,
-    estanteria,
+    libraryBooks = [],
+    isAuthenticated,
     onAdd,
     onRemove,
     onRead
@@ -45,8 +46,12 @@ export default function CatalogGrid({
         );
     }
 
+    const isInLibrary = (libro) => {
+        return libraryBooks.some(lb => lb.id === libro.id);
+    };
+
     return (
-        <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-1">
+        <div className="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3">
             {books.map((libro, i) => (
                 <BookCard
                     key={i}
@@ -56,10 +61,9 @@ export default function CatalogGrid({
                             ? `data:image/png;base64,${libro.PortadaBase64}`
                             : "/placeholder.png",
                     }}
-                    isInLibrary={estanteria.some(
-                        (l) =>
-                            l.titulo === libro.titulo && l.autor === libro.autor
-                    )}
+                    showAdd={!isInLibrary(libro)}
+                    showRemove={isInLibrary(libro)}
+                    showDownload={false}
                     onAdd={onAdd}
                     onRemove={onRemove}
                     onRead={onRead}

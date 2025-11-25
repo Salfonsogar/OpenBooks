@@ -1,65 +1,165 @@
-import { useState } from 'react';
-import { Plus, Search, Edit, Trash2 } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Plus, Search, Edit, Trash2, Upload, X, User } from 'lucide-react';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  fetchUsersAsync,
+  createUserAsync,
+  updateUserAsync,
+  deleteUserAsync,
+  selectAllUsers,
+  selectUsersStatus,
+  selectUsersPagination,
+  selectUserCreateStatus,
+  selectUserCreateError,
+  selectUserUpdateStatus,
+  selectUserUpdateError,
+  resetCreateStatus,
+  resetUpdateStatus
+} from '../store/usersSlice';
+import { selectAllRoles } from '../store/rolesSlice';
 
 export default function Users() {
+  const dispatch = useDispatch();
+  const users = useSelector(selectAllUsers);
+  const status = useSelector(selectUsersStatus);
+  const pagination = useSelector(selectUsersPagination);
+  const createStatus = useSelector(selectUserCreateStatus);
+  const createError = useSelector(selectUserCreateError);
+  const updateStatus = useSelector(selectUserUpdateStatus);
+  const updateError = useSelector(selectUserUpdateError);
+  const roles = useSelector(selectAllRoles);
+
   const [showModal, setShowModal] = useState(false);
   const [editingUser, setEditingUser] = useState(null);
   const [formData, setFormData] = useState({
-    nombre: "",
+    nombreCompleto: "",
+    userName: "",
     email: "",
     contraseña: "",
-    rol: "Usuario"
+    rolId: 0,
+    estado: true,
+    sancionado: false,
+    fotoPerfilBase64: ""
   });
+  const [previewImage, setPreviewImage] = useState("");
 
-  // Datos de ejemplo (en producción vendrían de Redux/API)
-  const [users] = useState([
-    { id: 1, nombre: "María García", email: "maria@ejemplo.com", rol: "Admin", estado: "Activo" },
-    { id: 2, nombre: "Carlos López", email: "carlos@ejemplo.com", rol: "Usuario", estado: "Activo" },
-    { id: 3, nombre: "Ana Martínez", email: "ana@ejemplo.com", rol: "Usuario", estado: "Activo" },
-    { id: 4, nombre: "Pedro Sánchez", email: "pedro@ejemplo.com", rol: "Usuario", estado: "Inactivo" }
-  ]);
+  useEffect(() => {
+    dispatch(fetchUsersAsync({ pageNumber: 1, pageSize: 10 }));
+  }, [dispatch]);
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setEditingUser(null);
+    setFormData({
+      nombreCompleto: "",
+      userName: "",
+      email: "",
+      contraseña: "",
+      rolId: 0,
+      estado: true,
+      sancionado: false,
+      fotoPerfilBase64: ""
+    });
+    dispatch(resetCreateStatus());
+    dispatch(resetUpdateStatus());
+    setPreviewImage("");
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
-      [name]: value
+      [name]: name === 'rolId' ? parseInt(value) : value
     }));
+  };
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        alert("La imagen no debe superar 2MB");
+        return;
+      }
+      if (!file.type.startsWith('image/')) {
+        alert("Solo se permiten archivos de imagen");
+        return;
+      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const base64String = reader.result.split(',')[1];
+        setFormData(prev => ({ ...prev, fotoPerfilBase64: base64String }));
+        setPreviewImage(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemoveImage = () => {
+    setFormData(prev => ({ ...prev, fotoPerfilBase64: "" }));
+    setPreviewImage("");
   };
 
   const openModal = (user = null) => {
     if (user) {
       setEditingUser(user);
       setFormData({
-        nombre: user.nombre || "",
+        nombreCompleto: user.nombreCompleto || "",
+        userName: user.userName || "",
         email: user.email || "",
-        contraseña: "", // No mostramos la contraseña actual
-        rol: user.rol || "Usuario"
+        contraseña: "",
+        rolId: user.rolId || 0,
+        estado: user.estado !== undefined ? user.estado : true,
+        sancionado: user.sancionado || false,
+        fotoPerfilBase64: user.fotoPerfil || ""
       });
+      setPreviewImage(user.fotoPerfil ? `data:image/jpeg;base64,${user.fotoPerfil}` : "");
     } else {
       setEditingUser(null);
+      const defaultRole = roles.find(r => r.name === 'Usuario');
       setFormData({
-        nombre: "",
+        nombreCompleto: "",
+        userName: "",
         email: "",
         contraseña: "",
-        rol: "Usuario"
+        rolId: defaultRole ? defaultRole.id : 0,
+        estado: true,
+        sancionado: false,
+        fotoPerfilBase64: ""
       });
     }
+    dispatch(resetCreateStatus());
+    dispatch(resetUpdateStatus());
     setShowModal(true);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aquí iría la lógica para crear/actualizar usuario
-    console.log("Guardando usuario:", formData);
-    setShowModal(false);
+    if (editingUser) {
+      const result = await dispatch(updateUserAsync({ id: editingUser.id, userData: formData }));
+      if (updateUserAsync.fulfilled.match(result)) {
+        handleCloseModal();
+        dispatch(fetchUsersAsync({ pageNumber: pagination.currentPage, pageSize: pagination.pageSize }));
+      }
+    } else {
+      const result = await dispatch(createUserAsync(formData));
+      if (createUserAsync.fulfilled.match(result)) {
+        handleCloseModal();
+        dispatch(fetchUsersAsync({ pageNumber: pagination.currentPage, pageSize: pagination.pageSize }));
+      }
+    }
   };
 
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     if (window.confirm("¿Estás seguro de eliminar este usuario?")) {
-      // Aquí iría la lógica para eliminar usuario
-      console.log("Eliminando usuario:", id);
+      const result = await dispatch(deleteUserAsync(id));
+      if (deleteUserAsync.fulfilled.match(result)) {
+        dispatch(fetchUsersAsync({ pageNumber: pagination.currentPage, pageSize: pagination.pageSize }));
+      }
     }
+  };
+
+  const handlePageChange = (newPage) => {
+    dispatch(fetchUsersAsync({ pageNumber: newPage, pageSize: pagination.pageSize }));
   };
 
   return (
@@ -77,7 +177,6 @@ export default function Users() {
         </div>
 
         <div className="card shadow-sm p-4">
-          {/* Buscador */}
           <div className="mb-4 position-relative">
             <Search
               size={18}
@@ -92,12 +191,11 @@ export default function Users() {
             />
           </div>
 
-          {/* Tabla */}
           <div className="table-responsive">
             <table className="table table-hover mb-0 align-middle">
               <thead className="table-light">
                 <tr>
-                  <th>Nombre</th>
+                  <th>Usuario</th>
                   <th>Email</th>
                   <th>Rol</th>
                   <th>Estado</th>
@@ -105,7 +203,9 @@ export default function Users() {
                 </tr>
               </thead>
               <tbody>
-                {users.length === 0 ? (
+                {status === 'loading' ? (
+                  <tr><td colSpan="5" className="text-center py-4">Cargando usuarios...</td></tr>
+                ) : users.length === 0 ? (
                   <tr>
                     <td colSpan="5" className="text-center py-4 text-muted">
                       No hay usuarios registrados
@@ -114,16 +214,19 @@ export default function Users() {
                 ) : (
                   users.map((user) => (
                     <tr key={user.id}>
-                      <td className="fw-medium">{user.nombre}</td>
+                      <td className="fw-medium">
+                        <div>{user.userName}</div>
+                        <small className="text-muted">{user.nombreCompleto}</small>
+                      </td>
                       <td>{user.email}</td>
                       <td>
-                        <span className={`badge ${user.rol === 'Admin' ? 'bg-danger' : 'bg-primary'}`}>
-                          {user.rol}
+                        <span className={`badge ${user.nombreRol === 'Administrador' ? 'bg-danger' : 'bg-primary'}`}>
+                          {user.nombreRol}
                         </span>
                       </td>
                       <td>
-                        <span className={`badge ${user.estado === 'Activo' ? 'bg-success' : 'bg-warning'}`}>
-                          {user.estado}
+                        <span className={`badge ${user.estado ? 'bg-success' : 'bg-warning'}`}>
+                          {user.estado ? 'Activo' : 'Inactivo'}
                         </span>
                       </td>
                       <td className="text-end">
@@ -146,10 +249,29 @@ export default function Users() {
               </tbody>
             </table>
           </div>
+
+          {pagination.totalPages > 1 && (
+            <div className="d-flex justify-content-center mt-4">
+              <nav>
+                <ul className="pagination">
+                  <li className={`page-item ${pagination.currentPage === 1 ? 'disabled' : ''}`}>
+                    <button className="page-link" onClick={() => handlePageChange(pagination.currentPage - 1)}>Anterior</button>
+                  </li>
+                  {[...Array(pagination.totalPages)].map((_, i) => (
+                    <li key={i + 1} className={`page-item ${pagination.currentPage === i + 1 ? 'active' : ''}`}>
+                      <button className="page-link" onClick={() => handlePageChange(i + 1)}>{i + 1}</button>
+                    </li>
+                  ))}
+                  <li className={`page-item ${pagination.currentPage === pagination.totalPages ? 'disabled' : ''}`}>
+                    <button className="page-link" onClick={() => handlePageChange(pagination.currentPage + 1)}>Siguiente</button>
+                  </li>
+                </ul>
+              </nav>
+            </div>
+          )}
         </div>
       </div>
 
-      {/* Modal */}
       {showModal && (
         <div className="modal fade show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
           <div className="modal-dialog modal-dialog-centered">
@@ -158,17 +280,84 @@ export default function Users() {
                 <h5 className="modal-title">
                   {editingUser ? 'Editar Usuario' : 'Nuevo Usuario'}
                 </h5>
-                <button type="button" className="btn-close" onClick={() => setShowModal(false)}></button>
+                <button type="button" className="btn-close" onClick={handleCloseModal}></button>
               </div>
               <form onSubmit={handleSubmit}>
                 <div className="modal-body">
+                  {((createStatus === 'failed' && createError) || (updateStatus === 'failed' && updateError)) && (
+                    <div className="alert alert-danger">
+                      <ul className="mb-0 ps-3">
+                        {Array.isArray(createError || updateError) ? (createError || updateError).map((err, idx) => (
+                          <li key={idx}>{err}</li>
+                        )) : <li>{createError || updateError}</li>}
+                      </ul>
+                    </div>
+                  )}
+
+                  <div className="mb-3 text-center">
+                    <label className="form-label fw-bold d-block mb-2">Foto de Perfil</label>
+                    {previewImage ? (
+                      <div className="position-relative d-inline-block">
+                        <img
+                          src={previewImage}
+                          alt="Preview"
+                          className="rounded-circle"
+                          style={{ width: '100px', height: '100px', objectFit: 'cover' }}
+                        />
+                        <button
+                          type="button"
+                          className="btn btn-danger btn-sm position-absolute top-0 end-0 rounded-circle"
+                          onClick={handleRemoveImage}
+                          style={{ width: '25px', height: '25px', padding: 0 }}
+                        >
+                          <X size={14} />
+                        </button>
+                      </div>
+                    ) : (
+                      <div
+                        className="rounded-circle bg-secondary d-inline-flex align-items-center justify-content-center"
+                        style={{ width: '100px', height: '100px' }}
+                      >
+                        <User size={40} className="text-white" />
+                      </div>
+                    )}
+                    <div className="mt-2">
+                      <label htmlFor="imageUpload" className="btn btn-outline-primary btn-sm">
+                        <Upload size={14} className="me-1" />
+                        Subir Imagen
+                      </label>
+                      <input
+                        id="imageUpload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="d-none"
+                      />
+                      <small className="d-block text-muted mt-1">Máx 2MB</small>
+                    </div>
+                  </div>
+
+
                   <div className="mb-3">
-                    <label className="form-label">Nombre</label>
+                    <label className="form-label">Nombre de Usuario</label>
                     <input
                       type="text"
                       className="form-control"
-                      name="nombre"
-                      value={formData.nombre}
+                      name="userName"
+                      value={formData.userName}
+                      onChange={handleInputChange}
+                      placeholder="juanperez"
+                      required
+                    />
+                  </div>
+
+                  <div className="mb-3">
+                    <label className="form-label">Nombre Completo</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      name="nombreCompleto"
+                      value={formData.nombreCompleto}
                       onChange={handleInputChange}
                       placeholder="Juan Pérez"
                       required
@@ -201,28 +390,63 @@ export default function Users() {
                       placeholder="••••••••"
                       required={!editingUser}
                     />
+                    {!editingUser && <small className="text-muted">Debe contener mayúscula, número y carácter especial.</small>}
                   </div>
 
                   <div className="mb-3">
                     <label className="form-label">Rol</label>
                     <select
                       className="form-select"
-                      name="rol"
-                      value={formData.rol}
+                      name="rolId"
+                      value={formData.rolId}
                       onChange={handleInputChange}
                       required
                     >
-                      <option value="Usuario">Usuario</option>
-                      <option value="Admin">Admin</option>
+                      <option value={0}>Seleccionar Rol</option>
+                      {roles.map(role => (
+                        <option key={role.id} value={role.id}>{role.name}</option>
+                      ))}
                     </select>
+                  </div>
+
+                  <div className="mb-3">
+                    <div className="form-check">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        id="estadoCheck"
+                        name="estado"
+                        checked={formData.estado}
+                        onChange={(e) => setFormData(prev => ({ ...prev, estado: e.target.checked }))}
+                      />
+                      <label className="form-check-label" htmlFor="estadoCheck">
+                        Usuario Activo
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="mb-3">
+                    <div className="form-check">
+                      <input
+                        type="checkbox"
+                        className="form-check-input"
+                        id="sancionadoCheck"
+                        name="sancionado"
+                        checked={formData.sancionado}
+                        onChange={(e) => setFormData(prev => ({ ...prev, sancionado: e.target.checked }))}
+                      />
+                      <label className="form-check-label" htmlFor="sancionadoCheck">
+                        Usuario Sancionado
+                      </label>
+                    </div>
                   </div>
                 </div>
                 <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
+                  <button type="button" className="btn btn-secondary" onClick={handleCloseModal}>
                     Cancelar
                   </button>
-                  <button type="submit" className="btn btn-primary">
-                    Guardar
+                  <button type="submit" className="btn btn-primary" disabled={createStatus === 'loading' || updateStatus === 'loading'}>
+                    {(createStatus === 'loading' || updateStatus === 'loading') ? 'Guardando...' : 'Guardar'}
                   </button>
                 </div>
               </form>

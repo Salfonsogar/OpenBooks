@@ -1,14 +1,14 @@
-import { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import {
   fetchCatalogBooks,
+  deleteBook,
   selectCatalogBooks,
-  selectCatalogStatus,
-  deleteBook
-} from "../store/booksSlice";
+  selectCatalogStatus
+} from '../store/booksSlice';
 
-export default function MonitoreoLibrosPage() {
+const MonitoreoLibrosPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const books = useSelector(selectCatalogBooks);
@@ -77,16 +77,22 @@ export default function MonitoreoLibrosPage() {
                       <td>{book.autor}</td>
                       <td>
                         <span className="badge bg-warning text-dark">
-                          <i className="fas fa-star me-1"></i>
-                          {book.valoracion || 0}
+                          {book.valoracion || 'N/A'} <i className="fas fa-star small"></i>
                         </span>
                       </td>
                       <td className="text-end">
                         <button
+                          className="btn btn-sm btn-outline-primary me-2"
+                          onClick={() => navigate(`/libros/editar/${book.id}`)}
+                          title="Editar libro"
+                        >
+                          <i className="fas fa-edit"></i>
+                        </button>
+                        <button
                           className="btn btn-sm btn-outline-danger"
                           onClick={() => handleDelete(book.id)}
                         >
-                          <i className="fas fa-trash"></i>
+                          <i className="fas fa-trash-alt"></i>
                         </button>
                       </td>
                     </tr>
@@ -99,4 +105,6 @@ export default function MonitoreoLibrosPage() {
       </div>
     </div>
   );
-}
+};
+
+export default MonitoreoLibrosPage;
