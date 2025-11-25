@@ -20,13 +20,13 @@ export default function AdminReviews() {
     const deleteStatus = useSelector(selectDeleteStatus);
     const deleteError = useSelector(selectDeleteError);
     const updateStatus = useSelector(selectUpdateStatus);
-    const { page, totalPages } = useSelector(selectReviewsPagination);
+    const { page = 1, totalPages = 1 } =
+        useSelector(selectReviewsPagination) || {};
     const user = useSelector(selectAuthUser);
 
     const [editingId, setEditingId] = useState(null);
     const [editText, setEditText] = useState("");
 
-    // Load reviews on mount
     useEffect(() => {
         dispatch(fetchReviewsAsync({ page: 1, pageSize: 5 }));
     }, [dispatch]);
