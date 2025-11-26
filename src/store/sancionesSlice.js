@@ -17,10 +17,8 @@ export const fetchSancionesPorUsuarioAsync = createAsyncThunk(
             }
 
             const data = await response.json();
-            console.log('GET /api/Sancion/usuario/{id} response:', data);
             return data;
         } catch (error) {
-            console.error('Error fetching sanciones:', error);
             return rejectWithValue(error.message);
         }
     }
@@ -42,19 +40,17 @@ export const createSancionAsync = createAsyncThunk(
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                throw new Error(errorData.message || 'Error al crear sanción');
+                throw new Error(errorData.message || errorData.title || 'Error al crear sanción');
             }
 
             // The API might not return the created object, or might return it.
             // We'll log what we get.
             const data = await response.json().catch(() => ({}));
-            console.log('POST /api/Sancion response:', data);
 
             // If the API doesn't return the full object with ID, we might need to re-fetch
             // or optimistically add it. For now, let's return what we sent + response data.
             return { ...sancionData, ...data };
         } catch (error) {
-            console.error('Error creating sancion:', error);
             return rejectWithValue(error.message);
         }
     }
@@ -76,10 +72,8 @@ export const deleteSancionAsync = createAsyncThunk(
                 throw new Error('Error al eliminar sanción');
             }
 
-            console.log(`DELETE /api/Sancion/${id} response status:`, response.status);
             return id;
         } catch (error) {
-            console.error('Error deleting sancion:', error);
             return rejectWithValue(error.message);
         }
     }
@@ -148,3 +142,10 @@ const sancionesSlice = createSlice({
 
 export const { resetStatus } = sancionesSlice.actions;
 export default sancionesSlice.reducer;
+
+// Selectors
+export const selectSanciones = (state) => state.sanciones.sanciones;
+export const selectSancionesStatus = (state) => state.sanciones.status;
+export const selectSancionesCreateStatus = (state) => state.sanciones.createStatus;
+export const selectSancionesDeleteStatus = (state) => state.sanciones.deleteStatus;
+export const selectSancionesError = (state) => state.sanciones.error;

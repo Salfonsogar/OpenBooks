@@ -2,15 +2,18 @@ import { useDispatch, useSelector } from "react-redux";
 import StarRating from "./StarRating";
 import { createRating, updateRating, selectUserRating } from "../../store/ratingsSlice";
 import { selectIsAuthenticated } from "../../store/authSlice";
+import NotificationModal from "./NotificationModal";
+import useNotification from "../../hooks/useNotification";
 
 export default function BookInfo({ book }) {
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const userRating = useSelector((state) => selectUserRating(state, book.id));
+  const { notification, showNotification, closeNotification } = useNotification();
 
   const handleRate = async (puntuacion) => {
     if (!isAuthenticated) {
-      alert("Debes iniciar sesión para valorar libros");
+      showNotification("Debes iniciar sesión para valorar libros");
       return;
     }
 
@@ -21,8 +24,7 @@ export default function BookInfo({ book }) {
         await dispatch(createRating({ idLibro: book.id, puntuacion })).unwrap();
       }
     } catch (error) {
-      console.error("Error al valorar:", error);
-      alert("Error al guardar la valoración");
+      showNotification("Error al guardar la valoración");
     }
   };
 
@@ -55,6 +57,12 @@ export default function BookInfo({ book }) {
       )}
 
       <p><strong>Categorías:</strong> {book.categorias?.map(c => c.nombre).join(", ")}</p>
+
+      <NotificationModal
+        message={notification.message}
+        isOpen={notification.isOpen}
+        onClose={closeNotification}
+      />
     </div>
   );
 }

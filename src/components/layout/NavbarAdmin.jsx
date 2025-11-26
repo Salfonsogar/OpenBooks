@@ -58,13 +58,6 @@ export default function NavbarAdmin() {
             </li>
 
             <li className="nav-item">
-              <Link className="nav-link text-white" to="/reviews">
-                <i className="fas fa-star me-2"></i>
-                Reseñas
-              </Link>
-            </li>
-
-            <li className="nav-item">
               <Link
                 className="nav-link text-white"
                 to="/denuncias"

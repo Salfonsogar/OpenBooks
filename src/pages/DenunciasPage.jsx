@@ -1,46 +1,42 @@
 import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { AlertTriangle, Trash2, FileText, Calendar, User, Plus, X } from 'lucide-react';
+import { Trash2, FileText, User } from 'lucide-react';
 import {
   fetchDenunciasAsync,
-  createDenunciaAsync,
-  deleteDenunciaAsync,
   selectAllDenuncias,
   selectDenunciasStatus,
-  selectDenunciasPagination,
-  selectDenunciasDeleteStatus,
-  selectDenunciasCreateStatus,
-  resetCreateStatus
+  selectDenunciasPagination
 } from '../store/denunciasSlice';
+import { createSancionAsync, selectSancionesCreateStatus, resetStatus } from '../store/sancionesSlice';
+import SancionModal from '../components/ui/SancionModal';
+import NotificationModal from '../components/ui/NotificationModal';
+import useNotification from '../hooks/useNotification';
 
 export default function DenunciasPage() {
   const dispatch = useDispatch();
   const denuncias = useSelector(selectAllDenuncias);
   const status = useSelector(selectDenunciasStatus);
-  const deleteStatus = useSelector(selectDenunciasDeleteStatus);
-  const createStatus = useSelector(selectDenunciasCreateStatus);
+  const sancionCreateStatus = useSelector(selectSancionesCreateStatus);
   const { pagina, totalPages } = useSelector(selectDenunciasPagination);
 
-  const [showModal, setShowModal] = useState(false);
-
-  const [idDenunciante, setIdDenunciante] = useState('');
-  const [idDenunciado, setIdDenunciado] = useState('');
-  const [comentario, setComentario] = useState('');
+  const [showSancionModal, setShowSancionModal] = useState(false);
+  const [selectedDenuncia, setSelectedDenuncia] = useState(null);
+  const { notification, showNotification, closeNotification } = useNotification();
 
   useEffect(() => {
     dispatch(fetchDenunciasAsync({ pagina: 1, tamanoPagina: 10 }));
   }, [dispatch]);
 
   useEffect(() => {
-    if (createStatus === 'succeeded') {
-      setShowModal(false);
-      setIdDenunciante('');
-      setIdDenunciado('');
-      setComentario('');
-      dispatch(fetchDenunciasAsync({ pagina: 1, tamanoPagina: 10 }));
-      dispatch(resetCreateStatus());
+    if (sancionCreateStatus === 'succeeded') {
+      setShowSancionModal(false);
+      setSelectedDenuncia(null);
+      dispatch(resetStatus());
+      showNotification('Sanción creada exitosamente');
+    } else if (sancionCreateStatus === 'failed') {
+      showNotification('Error al crear la sanción');
     }
-  }, [createStatus, dispatch]);
+  }, [sancionCreateStatus, dispatch, showNotification]);
 
   const handlePageChange = (newPage) => {
     if (newPage >= 1 && newPage <= totalPages) {
@@ -48,19 +44,23 @@ export default function DenunciasPage() {
     }
   };
 
-  const handleDelete = async (id) => {
-    if (window.confirm('¿Estás seguro de eliminar esta denuncia?')) {
-      await dispatch(deleteDenunciaAsync(id));
-    }
+  const handleOpenSancionModal = (denuncia) => {
+    setSelectedDenuncia(denuncia);
+    setShowSancionModal(true);
   };
 
-  const handleCreate = async (e) => {
-    e.preventDefault();
-    await dispatch(createDenunciaAsync({
-      idDenunciante: parseInt(idDenunciante),
-      idDenunciado: parseInt(idDenunciado),
+  const handleCreateSancion = async ({ duracion, comentario }) => {
+    if (!selectedDenuncia) {
+      return;
+    }
+
+    const sancionData = {
+      idUsuario: selectedDenuncia.idDenunciado,
+      duracion,
       comentario
-    }));
+    };
+
+    await dispatch(createSancionAsync(sancionData));
   };
 
   return (
@@ -72,16 +72,9 @@ export default function DenunciasPage() {
               Gestión de Denuncias
             </h1>
             <p className="text-muted mb-0">
-              Administra las denuncias realizadas por los usuarios.
+              Administra las denuncias realizadas por los usuarios y aplica sanciones.
             </p>
           </div>
-          <button
-            className="btn btn-primary d-flex align-items-center gap-2"
-            onClick={() => setShowModal(true)}
-          >
-            <Plus size={18} />
-            Nueva Denuncia
-          </button>
         </div>
 
         <div className="card shadow-sm border-0">
@@ -106,10 +99,9 @@ export default function DenunciasPage() {
                     <thead className="bg-light">
                       <tr>
                         <th className="ps-4">ID</th>
-                        <th>Denunciante (ID)</th>
-                        <th>Denunciado (ID)</th>
+                        <th>Denunciante</th>
+                        <th>Denunciado</th>
                         <th>Comentario</th>
-                        <th>Fecha</th>
                         <th className="text-end pe-4">Acciones</th>
                       </tr>
                     </thead>
@@ -120,13 +112,13 @@ export default function DenunciasPage() {
                           <td>
                             <div className="d-flex align-items-center">
                               <User size={16} className="me-2 text-secondary" />
-                              <span>{denuncia.idDenunciante}</span>
+                              <span>{denuncia.nombreDenunciante || denuncia.idDenunciante}</span>
                             </div>
                           </td>
                           <td>
                             <div className="d-flex align-items-center">
                               <User size={16} className="me-2 text-danger" />
-                              <span>{denuncia.idDenunciado}</span>
+                              <span>{denuncia.nombreDenunciado || denuncia.idDenunciado}</span>
                             </div>
                           </td>
                           <td className="text-muted" style={{ maxWidth: '300px' }}>
@@ -134,20 +126,14 @@ export default function DenunciasPage() {
                               {denuncia.comentario}
                             </div>
                           </td>
-                          <td>
-                            <div className="d-flex align-items-center text-muted small">
-                              <Calendar size={14} className="me-1" />
-                              {denuncia.fecha ? new Date(denuncia.fecha).toLocaleDateString() : 'N/A'}
-                            </div>
-                          </td>
                           <td className="text-end pe-4">
                             <button
-                              className="btn btn-sm btn-outline-danger border-0"
-                              onClick={() => handleDelete(denuncia.id)}
-                              disabled={deleteStatus === 'loading'}
-                              title="Eliminar denuncia"
+                              className="btn btn-sm btn-warning"
+                              onClick={() => handleOpenSancionModal(denuncia)}
+                              title="Aplicar sanción"
                             >
-                              <Trash2 size={18} />
+                              <i className="bi bi-exclamation-triangle me-1"></i>
+                              Sancionar
                             </button>
                           </td>
                         </tr>
@@ -188,72 +174,22 @@ export default function DenunciasPage() {
         </div>
       </div>
 
-      {showModal && (
-        <div className="modal d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-          <div className="modal-dialog modal-dialog-centered">
-            <div className="modal-content">
-              <div className="modal-header border-bottom">
-                <h5 className="modal-title">Nueva Denuncia</h5>
-                <button
-                  type="button"
-                  className="btn-close"
-                  onClick={() => setShowModal(false)}
-                ></button>
-              </div>
-              <form onSubmit={handleCreate}>
-                <div className="modal-body">
-                  <div className="mb-3">
-                    <label className="form-label fw-bold small text-muted">ID Denunciante</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={idDenunciante}
-                      onChange={(e) => setIdDenunciante(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label fw-bold small text-muted">ID Denunciado</label>
-                    <input
-                      type="number"
-                      className="form-control"
-                      value={idDenunciado}
-                      onChange={(e) => setIdDenunciado(e.target.value)}
-                      required
-                    />
-                  </div>
-                  <div className="mb-3">
-                    <label className="form-label fw-bold small text-muted">Comentario</label>
-                    <textarea
-                      className="form-control"
-                      rows="3"
-                      value={comentario}
-                      onChange={(e) => setComentario(e.target.value)}
-                      required
-                    ></textarea>
-                  </div>
-                </div>
-                <div className="modal-footer border-top">
-                  <button
-                    type="button"
-                    className="btn btn-secondary"
-                    onClick={() => setShowModal(false)}
-                  >
-                    Cancelar
-                  </button>
-                  <button
-                    type="submit"
-                    className="btn btn-primary"
-                    disabled={createStatus === 'loading'}
-                  >
-                    {createStatus === 'loading' ? 'Guardando...' : 'Crear Denuncia'}
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-      )}
+      <SancionModal
+        show={showSancionModal}
+        onClose={() => {
+          setShowSancionModal(false);
+          setSelectedDenuncia(null);
+        }}
+        onSubmit={handleCreateSancion}
+        isLoading={sancionCreateStatus === 'loading'}
+        denunciadoNombre={selectedDenuncia?.nombreDenunciado || selectedDenuncia?.idDenunciado || ''}
+      />
+
+      <NotificationModal
+        message={notification.message}
+        isOpen={notification.isOpen}
+        onClose={closeNotification}
+      />
     </div>
   );
 }

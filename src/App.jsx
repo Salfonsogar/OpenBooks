@@ -28,8 +28,9 @@ import MonitoreoLibrosPage from './pages/MonitoreoLibrosPage.jsx';
 import Users from './pages/Users.jsx';
 import BookPage from './pages/BookPage.jsx';
 import CategoriasPage from './pages/CategoriasPage.jsx';
-import AdminReviews from './pages/AdminReviews.jsx';
+// import AdminReviews from './pages/AdminReviews.jsx';
 import EditBook from './pages/EditBook.jsx';
+import AdminNotifications from './components/admin/AdminNotifications.jsx';
 
 function App() {
   const navigate = useNavigate();
@@ -50,6 +51,7 @@ function App() {
   return (
     <>
       {isAdmin ? <NavbarAdmin /> : <Navbar />}
+      {isAdmin && <AdminNotifications />}
       <main>
         <Routes>
           <Route path="/" element={isAdmin ? <AdminPage /> : <Home />} />
@@ -122,11 +124,6 @@ function App() {
             </ProtectedRoute>
           } />
           <Route path="/book/:id" element={<BookPage />} />
-          <Route path="/reviews" element={
-            <ProtectedRoute requiredRoles={['Administrador']}>
-              <AdminReviews />
-            </ProtectedRoute>
-          } />
         </Routes>
       </main>
       <Footer />

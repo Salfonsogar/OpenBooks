@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 
 export const fetchSugerenciasAsync = createAsyncThunk(
     'sugerencias/fetchSugerencias',
@@ -16,7 +16,6 @@ export const fetchSugerenciasAsync = createAsyncThunk(
                 throw new Error('Error al obtener sugerencias');
             }
             const data = await response.json();
-            console.log("DEBUG fetchSugerenciasAsync response:", data);
             return data;
         } catch (err) {
             return rejectWithValue(err.message);
@@ -47,7 +46,6 @@ export const createSugerenciaAsync = createAsyncThunk(
             }
 
             const data = await response.json().catch(() => ({}));
-            console.log("DEBUG createSugerenciaAsync response:", data);
             return data;
         } catch (error) {
             return rejectWithValue([error.message]);
@@ -116,9 +114,10 @@ const sugerenciasSlice = createSlice({
                     state.sugerencias = action.payload;
                     state.totalRecords = action.payload.length;
                 } else {
-                    state.sugerencias = action.payload.sugerencias || action.payload.results || action.payload;
+                    // Map API response: datos, paginaActual, tamanoPagina, totalPaginas, totalRegistros
+                    state.sugerencias = action.payload.datos || action.payload.sugerencias || action.payload.results || [];
                     state.totalRecords = action.payload.totalRegistros || action.payload.totalRecords || 0;
-                    state.pagina = action.payload.pagina || state.pagina;
+                    state.pagina = action.payload.paginaActual || action.payload.pagina || state.pagina;
                     state.tamanoPagina = action.payload.tamanoPagina || state.tamanoPagina;
                 }
             })
@@ -161,12 +160,17 @@ export default sugerenciasSlice.reducer;
 export const selectAllSugerencias = (state) => state.sugerencias.sugerencias;
 export const selectSugerenciasStatus = (state) => state.sugerencias.status;
 export const selectSugerenciasError = (state) => state.sugerencias.error;
-export const selectSugerenciasPagination = (state) => ({
-    pagina: state.sugerencias.pagina,
-    tamanoPagina: state.sugerencias.tamanoPagina,
-    totalRecords: state.sugerencias.totalRecords,
-    totalPages: Math.ceil(state.sugerencias.totalRecords / state.sugerencias.tamanoPagina)
-});
+export const selectSugerenciasPagination = createSelector(
+    [(state) => state.sugerencias.pagina,
+    (state) => state.sugerencias.tamanoPagina,
+    (state) => state.sugerencias.totalRecords],
+    (pagina, tamanoPagina, totalRecords) => ({
+        pagina,
+        tamanoPagina,
+        totalRecords,
+        totalPages: Math.ceil(totalRecords / tamanoPagina)
+    })
+);
 export const selectSugerenciasCreateStatus = (state) => state.sugerencias.createStatus;
 export const selectSugerenciasCreateError = (state) => state.sugerencias.createError;
 export const selectSugerenciasDeleteStatus = (state) => state.sugerencias.deleteStatus;

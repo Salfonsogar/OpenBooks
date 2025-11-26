@@ -16,7 +16,6 @@ export const fetchDenunciasAsync = createAsyncThunk(
                 throw new Error('Error al obtener denuncias');
             }
             const data = await response.json();
-            console.log("DEBUG fetchDenunciasAsync response:", data);
             return data;
         } catch (err) {
             return rejectWithValue(err.message);
@@ -47,7 +46,6 @@ export const createDenunciaAsync = createAsyncThunk(
             }
 
             const data = await response.json().catch(() => ({}));
-            console.log("DEBUG createDenunciaAsync response:", data);
             return data;
         } catch (error) {
             return rejectWithValue([error.message]);
@@ -116,9 +114,10 @@ const denunciasSlice = createSlice({
                     state.denuncias = action.payload;
                     state.totalRecords = action.payload.length;
                 } else {
-                    state.denuncias = action.payload.denuncias || action.payload.results || action.payload;
+                    // Map API response: datos, paginaActual, tamanoPagina, totalPaginas, totalRegistros
+                    state.denuncias = action.payload.datos || action.payload.denuncias || action.payload.results || [];
                     state.totalRecords = action.payload.totalRegistros || action.payload.totalRecords || 0;
-                    state.pagina = action.payload.pagina || state.pagina;
+                    state.pagina = action.payload.paginaActual || action.payload.pagina || state.pagina;
                     state.tamanoPagina = action.payload.tamanoPagina || state.tamanoPagina;
                 }
             })

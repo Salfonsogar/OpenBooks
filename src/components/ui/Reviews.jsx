@@ -1,22 +1,23 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchBookReviewsAsync,
   createReviewAsync,
   updateReviewAsync,
   deleteReviewAsync,
-  selectBookReviews,
   selectReviewsStatus,
   selectCreateStatus,
   selectCreateError,
   resetCreateStatus
 } from "../../store/reviewsSlice";
-
+import { createDenunciaAsync } from "../../store/denunciasSlice";
+import { fetchUsersAsync } from "../../store/usersSlice";
+import ReportModal from "./ReportModal";
+import NotificationModal from "./NotificationModal";
+import useNotification from "../../hooks/useNotification";
 import { selectAuthUser } from "../../store/authSlice";
 
-export default function Reviews({ bookId }) {
+export default function Reviews({ bookId, reviews = [], onReviewChange }) {
   const dispatch = useDispatch();
-  const reviews = useSelector(selectBookReviews);
   const status = useSelector(selectReviewsStatus);
   const createStatus = useSelector(selectCreateStatus);
   const createError = useSelector(selectCreateError);
@@ -24,20 +25,21 @@ export default function Reviews({ bookId }) {
 
   const [newReview, setNewReview] = useState("");
   const [editingId, setEditingId] = useState(null);
-  const [editText, setEditText] = useState("");
+  const [texto, setTexto] = useState("");
 
-  useEffect(() => {
-    if (bookId) {
-      dispatch(fetchBookReviewsAsync({ idLibro: bookId }));
-    }
-  }, [dispatch, bookId]);
+  // Report Logic
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [selectedReviewForReport, setSelectedReviewForReport] = useState(null);
+  const [isReporting, setIsReporting] = useState(false);
+  const { notification, showNotification, closeNotification } = useNotification();
 
   useEffect(() => {
     if (createStatus === "succeeded") {
       setNewReview("");
       dispatch(resetCreateStatus());
+      if (onReviewChange) onReviewChange();
     }
-  }, [createStatus, dispatch]);
+  }, [createStatus, dispatch, onReviewChange]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -53,31 +55,82 @@ export default function Reviews({ bookId }) {
 
   const handleEdit = (review) => {
     setEditingId(review.id);
-    setEditText(review.texto);
+    setTexto(review.texto);
   };
 
   const handleUpdate = async (idResena) => {
-    if (!editText.trim()) return;
+    if (!texto.trim()) return;
 
     const result = await dispatch(
-      updateReviewAsync({ idResena, texto: editText })
+      updateReviewAsync({ idResena, texto })
     );
 
     if (updateReviewAsync.fulfilled.match(result)) {
       setEditingId(null);
-      setEditText("");
+      setTexto("");
+      if (onReviewChange) onReviewChange();
     }
   };
 
   const handleDelete = async (idResena) => {
     if (window.confirm("¿Eliminar reseña?")) {
-      await dispatch(deleteReviewAsync(idResena));
+      const result = await dispatch(deleteReviewAsync(idResena));
+      if (deleteReviewAsync.fulfilled.match(result)) {
+        if (onReviewChange) onReviewChange();
+      }
     }
   };
 
   const handleCancelEdit = () => {
     setEditingId(null);
-    setEditText("");
+    setTexto("");
+  };
+
+  const handleOpenReport = (review) => {
+    setSelectedReviewForReport(review);
+    setShowReportModal(true);
+  };
+
+  const handleReportSubmit = async (comentario) => {
+    if (!selectedReviewForReport || !user) return;
+
+    setIsReporting(true);
+    try {
+      let idDenunciado = selectedReviewForReport.idUsuario;
+
+      if (!idDenunciado) {
+        const usersResponse = await dispatch(fetchUsersAsync({ pageSize: 100 })).unwrap();
+        const users = usersResponse.results || [];
+        const foundUser = users.find(u =>
+          u.nombreUsuario === selectedReviewForReport.nombreUsuario ||
+          u.userName === selectedReviewForReport.nombreUsuario ||
+          u.nombre === selectedReviewForReport.nombreUsuario
+        );
+        if (foundUser) {
+          idDenunciado = foundUser.id;
+        }
+      }
+
+      if (!idDenunciado) {
+        showNotification("No se pudo identificar al usuario autor de la reseña para denunciarlo.");
+        setIsReporting(false);
+        return;
+      }
+
+      await dispatch(createDenunciaAsync({
+        idDenunciante: user.id,
+        idDenunciado: idDenunciado,
+        comentario: comentario
+      })).unwrap();
+
+      showNotification("Denuncia enviada exitosamente.");
+      setShowReportModal(false);
+      setSelectedReviewForReport(null);
+    } catch (error) {
+      showNotification("Error al enviar la denuncia.");
+    } finally {
+      setIsReporting(false);
+    }
   };
 
   if (status === "loading") {
@@ -160,55 +213,57 @@ export default function Reviews({ bookId }) {
                     {review.nombreUsuario ?? "Usuario"}
                   </h6>
                   <small className="text-muted">
-                    {review.fecha &&
-                      new Date(review.fecha).toLocaleDateString()}
+                    {new Date(review.fechaCreacion).toLocaleDateString()}
                   </small>
                 </div>
-
-                {user && review.idUsuario === user.id && (
-                  <div className="btn-group btn-group-sm">
-                    {editingId === review.id ? (
-                      <>
-                        <button
-                          className="btn btn-success"
-                          onClick={() => handleUpdate(review.id)}
-                        >
-                          <i className="bi bi-check"></i>
-                        </button>
-                        <button
-                          className="btn btn-secondary"
-                          onClick={handleCancelEdit}
-                        >
-                          <i className="bi bi-x"></i>
-                        </button>
-                      </>
-                    ) : (
-                      <>
-                        <button
-                          className="btn btn-outline-primary"
-                          onClick={() => handleEdit(review)}
-                        >
-                          <i className="bi bi-pencil"></i>
-                        </button>
-                        <button
-                          className="btn btn-outline-danger"
-                          onClick={() => handleDelete(review.id)}
-                        >
-                          <i className="bi bi-trash"></i>
-                        </button>
-                      </>
-                    )}
+                {user && user.id === review.idUsuario && (
+                  <div>
+                    <button
+                      className="btn btn-sm btn-outline-primary me-2"
+                      onClick={() => handleEdit(review)}
+                    >
+                      <i className="bi bi-pencil"></i>
+                    </button>
+                    <button
+                      className="btn btn-sm btn-outline-danger"
+                      onClick={() => handleDelete(review.id)}
+                    >
+                      <i className="bi bi-trash"></i>
+                    </button>
                   </div>
+                )}
+                {user && user.id !== review.idUsuario && (
+                  <button
+                    className="btn btn-sm btn-outline-warning"
+                    onClick={() => handleOpenReport(review)}
+                  >
+                    <i className="bi bi-flag me-1"></i>
+                    Reportar
+                  </button>
                 )}
               </div>
 
               {editingId === review.id ? (
-                <textarea
-                  className="form-control"
-                  rows="3"
-                  value={editText}
-                  onChange={(e) => setEditText(e.target.value)}
-                />
+                <div>
+                  <textarea
+                    className="form-control mb-2"
+                    value={texto}
+                    onChange={(e) => setTexto(e.target.value)}
+                    rows="3"
+                  />
+                  <button
+                    className="btn btn-sm btn-success me-2"
+                    onClick={() => handleUpdate(review.id)}
+                  >
+                    Guardar
+                  </button>
+                  <button
+                    className="btn btn-sm btn-secondary"
+                    onClick={handleCancelEdit}
+                  >
+                    Cancelar
+                  </button>
+                </div>
               ) : (
                 <p className="mb-0">{review.texto}</p>
               )}
@@ -216,6 +271,19 @@ export default function Reviews({ bookId }) {
           ))}
         </div>
       )}
+
+      <ReportModal
+        show={showReportModal}
+        onClose={() => setShowReportModal(false)}
+        onSubmit={handleReportSubmit}
+        isLoading={isReporting}
+      />
+
+      <NotificationModal
+        message={notification.message}
+        isOpen={notification.isOpen}
+        onClose={closeNotification}
+      />
     </div>
   );
 }
