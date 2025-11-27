@@ -66,27 +66,6 @@ export const fetchBookDetail = createAsyncThunk(
     }
 );
 
-export const fetchBookContent = createAsyncThunk(
-    'books/fetchBookContent',
-    async (id, { rejectWithValue, getState }) => {
-        try {
-            const token = getState().auth.token;
-            const headers = {};
-            if (token) headers['Authorization'] = `Bearer ${token}`;
-
-            const response = await fetch(`https://localhost:7080/api/Libros/${id}`, {
-                headers,
-            });
-            if (!response.ok) {
-                throw new Error('Error fetching book content');
-            }
-            const blob = await response.blob();
-            return blob;
-        } catch (error) {
-            return rejectWithValue(error.message);
-        }
-    }
-);
 
 export const downloadBook = createAsyncThunk(
     'books/downloadBook',

@@ -4,14 +4,13 @@ import "../assets/styles/Catalog.css";
 import SearchBar from "../components/ui/SearchBar";
 import Pagination from "../components/ui/Pagination";
 import NotificationModal from "../components/ui/NotificationModal";
-import ReaderApp from "./ReaderApp";
-import useBookFromBase64 from "../hooks/useBookFromBase64";
 import TopSection from "../components/ui/TopSection";
 import { useCatalog } from "../hooks/useCatalog";
 import CatalogFilters from "../components/catalog/CatalogFilters";
 import CatalogGrid from "../components/catalog/CatalogGrid";
 import { addBookToLibrary, removeBookFromLibrary, fetchUserLibrary, selectLibraryBooks } from "../store/librarySlice";
 import { selectIsAuthenticated } from "../store/authSlice";
+import { fetchManifest } from "../store/readerSlice";
 
 export default function Catalog() {
   const dispatch = useDispatch();
@@ -42,11 +41,6 @@ export default function Catalog() {
   } = useCatalog();
 
   const [notifications, setNotifications] = useState([]);
-  const [selectedBook, setSelectedBook] = useState(null);
-
-  const fileUrl = useBookFromBase64(
-    selectedBook?.ArchivoBase64 ?? selectedBook?.url ?? selectedBook?.Url
-  );
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -100,116 +94,109 @@ export default function Catalog() {
         </p>
       </div>
 
-      {selectedBook ? (
-        <ReaderApp
-          fileUrl={fileUrl}
-          onClose={() => setSelectedBook(null)}
-        />
-      ) : (
-        <>
-          <SearchBar onSearch={handleSearch} history={history} />
+      <>
+        <SearchBar onSearch={handleSearch} history={history} />
 
-          <div className="d-flex justify-content-between align-items-center mb-3">
-            <button
-              className="button"
-              onClick={() => setShowFilters(!showFilters)}
-            >
-              <i className={`bi bi-funnel${showFilters ? '-fill' : ''} me-2`}></i>
-              Filtros Avanzados
-              {activeFiltersCount > 0 && (
-                <span className="badge bg-danger ms-2">{activeFiltersCount}</span>
-              )}
-            </button>
-
+        <div className="d-flex justify-content-between align-items-center mb-3">
+          <button
+            className="button"
+            onClick={() => setShowFilters(!showFilters)}
+          >
+            <i className={`bi bi-funnel${showFilters ? '-fill' : ''} me-2`}></i>
+            Filtros Avanzados
             {activeFiltersCount > 0 && (
-              <button
-                className="btn btn-outline-secondary btn-sm"
-                onClick={clearFilters}
-              >
-                <i className="bi bi-x-circle me-1"></i>
-                Limpiar filtros
-              </button>
+              <span className="badge bg-danger ms-2">{activeFiltersCount}</span>
             )}
-          </div>
+          </button>
 
-          <CatalogFilters
-            showFilters={showFilters}
-            activeFiltersCount={activeFiltersCount}
-            clearFilters={clearFilters}
-            autor={autor}
-            handleAutorChange={handleAutorChange}
-            setAutor={setAutor}
-            setPage={setPage}
-            categorias={categorias}
-            allCategorias={allCategorias}
-            handleCategoriaToggle={handleCategoriaToggle}
-          />
-
-          {!query && !autor && categorias.length === 0 && (
-            <>
-              <TopSection
-                title="Más Vistos"
-                icon="bi-eye"
-                books={topViewed}
-                libraryBooks={libraryBooks}
-                isAuthenticated={isAuthenticated}
-                onAdd={onAdd}
-                onRemove={onRemove}
-                onRead={(libro) => setSelectedBook(libro)}
-              />
-              <TopSection
-                title="Más valorados"
-                icon="bi-star"
-                books={topRated}
-                libraryBooks={libraryBooks}
-                isAuthenticated={isAuthenticated}
-                onAdd={onAdd}
-                onRemove={onRemove}
-                onRead={(libro) => setSelectedBook(libro)}
-              />
-            </>
+          {activeFiltersCount > 0 && (
+            <button
+              className="btn btn-outline-secondary btn-sm"
+              onClick={clearFilters}
+            >
+              <i className="bi bi-x-circle me-1"></i>
+              Limpiar filtros
+            </button>
           )}
+        </div>
 
-          {(query || autor || categorias.length > 0) && (
-            <>
-              <CatalogGrid
-                loading={loading}
-                books={books}
-                activeFiltersCount={activeFiltersCount}
-                clearFilters={clearFilters}
-                libraryBooks={libraryBooks}
-                isAuthenticated={isAuthenticated}
-                onAdd={onAdd}
-                onRemove={onRemove}
-                onRead={(libro) => setSelectedBook(libro)}
+        <CatalogFilters
+          showFilters={showFilters}
+          activeFiltersCount={activeFiltersCount}
+          clearFilters={clearFilters}
+          autor={autor}
+          handleAutorChange={handleAutorChange}
+          setAutor={setAutor}
+          setPage={setPage}
+          categorias={categorias}
+          allCategorias={allCategorias}
+          handleCategoriaToggle={handleCategoriaToggle}
+        />
+
+        {!query && !autor && categorias.length === 0 && (
+          <>
+            <TopSection
+              title="Más Vistos"
+              icon="bi-eye"
+              books={topViewed}
+              libraryBooks={libraryBooks}
+              isAuthenticated={isAuthenticated}
+              onAdd={onAdd}
+              onRemove={onRemove}
+              onRead={(libro) => dispatch(fetchManifest(libro.id))}
+            />
+            <TopSection
+              title="Más valorados"
+              icon="bi-star"
+              books={topRated}
+              libraryBooks={libraryBooks}
+              isAuthenticated={isAuthenticated}
+              onAdd={onAdd}
+              onRemove={onRemove}
+              onRead={(libro) => dispatch(fetchManifest(libro.id))}
+            />
+          </>
+        )}
+
+        {(query || autor || categorias.length > 0) && (
+          <>
+            <CatalogGrid
+              loading={loading}
+              books={books}
+              activeFiltersCount={activeFiltersCount}
+              clearFilters={clearFilters}
+              libraryBooks={libraryBooks}
+              isAuthenticated={isAuthenticated}
+              onAdd={onAdd}
+              onRemove={onRemove}
+              onRead={(libro) => dispatch(fetchManifest(libro.id))}
+            />
+
+            {totalPages > 1 && (
+              <Pagination
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
               />
+            )}
+          </>
+        )}
 
-              {totalPages > 1 && (
-                <Pagination
-                  page={page}
-                  totalPages={totalPages}
-                  onPageChange={setPage}
-                />
-              )}
-            </>
-          )}
-
-          <div className="toast-container">
-            {notifications.map((msg, i) => (
-              <NotificationModal
-                key={i}
-                message={msg}
-                isOpen={true}
-                onClose={() =>
-                  setNotifications((prev) =>
-                    prev.filter((_, idx) => idx !== i)
-                  )
-                }
-              />
-            ))}
-          </div>
-        </>
-      )}
+        <div className="toast-container">
+          {notifications.map((msg, i) => (
+            <NotificationModal
+              key={i}
+              message={msg}
+              isOpen={true}
+              onClose={() =>
+                setNotifications((prev) =>
+                  prev.filter((_, idx) => idx !== i)
+                )
+              }
+            />
+          ))}
+        </div>
+      </>
     </div>
   );
 }

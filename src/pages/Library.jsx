@@ -3,10 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import BookCard from "../components/ui/BookCard";
 import Pagination from "../components/ui/Pagination";
 import NotificationModal from "../components/ui/NotificationModal";
-import ReaderApp from "./ReaderApp";
 import {
-  downloadBook,
-  fetchBookContent
+  downloadBook
 } from "../store/booksSlice";
 import {
   fetchUserLibrary,
@@ -22,13 +20,12 @@ export default function Biblioteca() {
   const books = useSelector(selectLibraryBooks);
   const totalPages = useSelector(selectLibraryTotalPages);
   const status = useSelector(selectLibraryStatus);
+
   const loading = status === 'loading';
 
   const [page, setPage] = useState(1);
   const pageSize = 20;
 
-  const [selectedBook, setSelectedBook] = useState(null);
-  const [readerUrl, setReaderUrl] = useState(null);
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
@@ -57,91 +54,68 @@ export default function Biblioteca() {
     }
   };
 
-  const handleRead = async (book) => {
-    try {
-      const blob = await dispatch(fetchBookContent(book.id)).unwrap();
-      const url = URL.createObjectURL(blob);
-      setReaderUrl(url);
-      setSelectedBook(book);
-    } catch (error) {
-      showNotification(`Error al abrir el libro: ${error}`);
-    }
-  };
 
-  const handleCloseReader = () => {
-    if (readerUrl) {
-      URL.revokeObjectURL(readerUrl);
-    }
-    setReaderUrl(null);
-    setSelectedBook(null);
-  };
+
 
   return (
     <main className="container my-5">
       <h1 className="mb-4">Mi Biblioteca 📚</h1>
 
-      {selectedBook && readerUrl ? (
-        <ReaderApp
-          fileUrl={readerUrl}
-          onClose={handleCloseReader}
-        />
-      ) : (
-        <>
+
+
+      <div
+        id="biblioteca-lista"
+        className="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3"
+      >
+        {loading ? (
           <div
-            id="biblioteca-lista"
-            className="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3"
+            className="d-flex justify-content-center align-items-center w-100"
+            style={{ minHeight: 200 }}
           >
-            {loading ? (
-              <div
-                className="d-flex justify-content-center align-items-center w-100"
-                style={{ minHeight: 200 }}
-              >
-                <div className="spinner-border" role="status">
-                  <span className="visually-hidden">Cargando...</span>
-                </div>
-              </div>
-            ) : books.length === 0 ? (
-              <p className="text-muted">No hay libros disponibles en tu biblioteca.</p>
-            ) : (
-              books.map((libro, i) => (
-                <BookCard
-                  key={i}
-                  libro={libro}
-                  showAdd={false}
-                  showRemove={true}
-                  showDownload={true}
-                  onRemove={handleRemove}
-                  onRead={handleRead}
-                  onDownload={handleDownload}
-                />
-              ))
-            )}
+            <div className="spinner-border" role="status">
+              <span className="visually-hidden">Cargando...</span>
+            </div>
           </div>
-
-          {totalPages > 1 && (
-            <Pagination
-              page={page}
-              totalPages={totalPages}
-              onPageChange={setPage}
+        ) : books.length === 0 ? (
+          <p className="text-muted">No hay libros disponibles en tu biblioteca.</p>
+        ) : (
+          books.map((libro, i) => (
+            <BookCard
+              key={i}
+              libro={libro}
+              showAdd={false}
+              showRemove={true}
+              showDownload={true}
+              onRemove={handleRemove}
+              onDownload={handleDownload}
             />
-          )}
+          ))
+        )}
+      </div>
 
-          <div className="toast-container">
-            {notifications.map((msg, i) => (
-              <NotificationModal
-                key={i}
-                message={msg}
-                isOpen={true}
-                onClose={() =>
-                  setNotifications((prev) =>
-                    prev.filter((_, idx) => idx !== i)
-                  )
-                }
-              />
-            ))}
-          </div>
-        </>
+      {totalPages > 1 && (
+        <Pagination
+          page={page}
+          totalPages={totalPages}
+          onPageChange={setPage}
+        />
       )}
+
+      <div className="toast-container">
+        {notifications.map((msg, i) => (
+          <NotificationModal
+            key={i}
+            message={msg}
+            isOpen={true}
+            onClose={() =>
+              setNotifications((prev) =>
+                prev.filter((_, idx) => idx !== i)
+              )
+            }
+          />
+        ))}
+      </div>
     </main>
   );
 }
+

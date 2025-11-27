@@ -31,12 +31,16 @@ import CategoriasPage from './pages/CategoriasPage.jsx';
 // import AdminReviews from './pages/AdminReviews.jsx';
 import EditBook from './pages/EditBook.jsx';
 import AdminNotifications from './components/admin/AdminNotifications.jsx';
+import Reader from './reader/Reader';
+import { selectReaderBookId } from './store/readerSlice';
 
 function App() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const user = useSelector(selectAuthUser);
+
   const roles = useSelector(selectAllRoles);
+  const readerBookId = useSelector(selectReaderBookId);
 
   useEffect(() => {
     dispatch(fetchRolesAsync());
@@ -50,6 +54,7 @@ function App() {
 
   return (
     <>
+      {readerBookId && <Reader />}
       {isAdmin ? <NavbarAdmin /> : <Navbar />}
       {isAdmin && <AdminNotifications />}
       <main>

@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 import "../../assets/styles/BookCard.css";
 import usePortada from "../../hooks/usePortada";
+import { useDispatch } from "react-redux";
+import { fetchManifest } from "../../store/readerSlice";
 
 export default function BookCard({
   libro,
@@ -12,7 +14,16 @@ export default function BookCard({
   showRemove = false,
   showDownload = false,
 }) {
+  const dispatch = useDispatch();
   const portada = usePortada(libro);
+
+  const handleRead = () => {
+    if (onRead) {
+      onRead(libro);
+    } else {
+      dispatch(fetchManifest(libro.id));
+    }
+  };
 
   return (
     <div className="col">
@@ -59,7 +70,7 @@ export default function BookCard({
 
             <button
               className="btn-leer flex-fill"
-              onClick={() => onRead(libro)}
+              onClick={handleRead}
             >
               Leer
             </button>

@@ -10,6 +10,7 @@ import sancionesReducer from './sancionesSlice';
 import sugerenciasReducer from './sugerenciasSlice';
 import libraryReducer from './librarySlice';
 import ratingsReducer from './ratingsSlice';
+import readerReducer from './readerSlice';
 
 const store = configureStore({
   reducer: {
@@ -24,6 +25,7 @@ const store = configureStore({
     sanciones: sancionesReducer,
     sugerencias: sugerenciasReducer,
     ratings: ratingsReducer,
+    reader: readerReducer,
   },
 });
 
