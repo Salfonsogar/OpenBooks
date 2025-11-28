@@ -1,5 +1,9 @@
 .list-group-item.active {
-  background-color: #e2edfa !important;
+  background-color: #e7eaec !important;
   border-color: #dee2e6 !important;
   color: #212529 !important;
+}
+
+.list-group-item:hover {
+  background-color: #f2f7fa !important;
 }

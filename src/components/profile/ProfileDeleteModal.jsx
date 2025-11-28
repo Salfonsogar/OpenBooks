@@ -78,10 +78,10 @@ export default function DeleteAccountModal({ onClose }) {
           >
             Estoy de acuerdo en eliminar mi cuenta de forma irreversible
           </label>
-        </div>      
+        </div>
         {error && <div className="alert alert-danger mt-3">{error}</div>}
         <div className="d-flex justify-content-end gap-2 mt-4">
-          <button className="button" onClick={onClose}>
+          <button className="button " onClick={onClose}>
             Cancelar
           </button>
           <button
@@ -97,6 +97,12 @@ export default function DeleteAccountModal({ onClose }) {
             @keyframes fadeIn {
               from { opacity: 0; transform: translateY(-10px); }
               to { opacity: 1; transform: translateY(0); }
+            }
+            .btn-danger {
+            color: red;
+            }
+            .btn-danger:hover {
+            background-color: #9c0720 !important;
             }
           `}
         </style>
