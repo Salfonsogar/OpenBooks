@@ -1,0 +1,447 @@
+/* ========================================
+   REVIEWS COMPONENT STYLES - CAFÉ PALETTE
+   ======================================== */
+
+.reviews-container {
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 2rem 0 !important;
+}
+
+.reviews-title {
+    font-size: 1.75rem !important;
+    font-weight: 700 !important;
+    color: #3e2723 !important;
+    margin-bottom: 2rem !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    padding: 0 !important;
+}
+
+.reviews-title i {
+    color: #5d4037 !important;
+    font-size: 1.5rem !important;
+}
+
+/* Loading State */
+.reviews-loading {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: var(--spacing-2xl) !important;
+    gap: var(--spacing-md) !important;
+    color: #8d6e63 !important;
+}
+
+.spinner {
+    width: 40px !important;
+    height: 40px !important;
+    border: 4px solid #d7ccc8 !important;
+    border-top-color: #5d4037 !important;
+    border-radius: 50% !important;
+    animation: spin 0.8s linear infinite !important;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Review Form Card */
+.review-form-card {
+    background: #fff !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    margin-bottom: 2rem !important;
+    box-shadow: 0 2px 8px rgba(62, 39, 35, 0.08) !important;
+    border: 2px solid #d7ccc8 !important;
+}
+
+.form-title {
+    font-size: 1.1rem !important;
+    font-weight: 600 !important;
+    color: #3e2723 !important;
+    margin-bottom: 1rem !important;
+    text-align: center !important;
+    border-bottom: 2px solid #efebe9 !important;
+    padding-bottom: 0.75rem !important;
+}
+
+.form-group {
+    margin-bottom: 1rem !important;
+}
+
+.review-textarea {
+    width: 100% !important;
+    padding: 1rem !important;
+    border: 2px solid #d7ccc8 !important;
+    border-radius: 8px !important;
+    font-size: 0.95rem !important;
+    line-height: 1.6 !important;
+    color: #3e2723 !important;
+    background: #fafafa !important;
+    resize: vertical !important;
+    transition: all 0.2s ease !important;
+    font-family: inherit !important;
+    min-height: 100px !important;
+}
+
+.review-textarea:focus {
+    outline: none !important;
+    border-color: #5d4037 !important;
+    background: #fff !important;
+    box-shadow: 0 0 0 3px rgba(93, 64, 55, 0.1) !important;
+}
+
+.review-textarea:disabled {
+    opacity: 0.6 !important;
+    cursor: not-allowed !important;
+    background: #f5f5f5 !important;
+}
+
+.review-textarea::placeholder {
+    color: #a1887f !important;
+    font-style: italic !important;
+}
+
+/* Error Alert */
+.error-alert {
+    background: #ffebee !important;
+    border: 1px solid #ffcdd2 !important;
+    color: #c62828 !important;
+    padding: var(--spacing-sm) var(--spacing-md) !important;
+    border-radius: var(--radius-md) !important;
+    margin-bottom: var(--spacing-md) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: var(--spacing-sm) !important;
+}
+
+/* Submit Button */
+.btn-submit {
+    background: linear-gradient(135deg, #6d4c41 0%, #5d4037 100%) !important;
+    color: #fff !important;
+    border: none !important;
+    padding: 0.75rem 2rem !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    cursor: pointer !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 4px 12px rgba(93, 64, 55, 0.25) !important;
+    width: 100% !important;
+    justify-content: center !important;
+}
+
+.btn-submit:hover:not(:disabled) {
+    background: linear-gradient(135deg, #5d4037 0%, #4e342e 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(93, 64, 55, 0.35) !important;
+}
+
+.btn-submit:disabled {
+    opacity: 0.5 !important;
+    cursor: not-allowed !important;
+    transform: none !important;
+}
+
+.btn-submit i {
+    font-size: 1.1rem !important;
+}
+
+.btn-spinner {
+    width: 16px !important;
+    height: 16px !important;
+    border: 2px solid rgba(255, 255, 255, 0.3) !important;
+    border-top-color: white !important;
+    border-radius: 50% !important;
+    animation: spin 0.6s linear infinite !important;
+}
+
+/* Empty State */
+.empty-state {
+    text-align: center !important;
+    padding: 3rem 2rem !important;
+    background: linear-gradient(135deg, #fafafa 0%, #f5f5f5 100%) !important;
+    border-radius: 12px !important;
+    border: 2px dashed #d7ccc8 !important;
+}
+
+.empty-state i {
+    font-size: 3.5rem !important;
+    color: #bcaaa4 !important;
+    margin-bottom: 1rem !important;
+    display: block !important;
+    opacity: 0.7 !important;
+}
+
+.empty-state p {
+    color: #8d6e63 !important;
+    font-size: 1rem !important;
+    margin: 0 !important;
+    font-weight: 500 !important;
+}
+
+/* Reviews List */
+.reviews-list {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: var(--spacing-lg) !important;
+}
+
+/* Review Card */
+.review-card {
+    background: #fff !important;
+    border-radius: 12px !important;
+    padding: 1.5rem !important;
+    box-shadow: 0 2px 8px rgba(62, 39, 35, 0.08) !important;
+    border: 1px solid #e0e0e0 !important;
+    transition: all 0.3s ease !important;
+    margin-bottom: 1rem !important;
+}
+
+.review-card:hover {
+    box-shadow: 0 4px 16px rgba(62, 39, 35, 0.12) !important;
+    border-color: #bcaaa4 !important;
+    transform: translateY(-2px) !important;
+}
+
+.review-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 1rem !important;
+    gap: 1rem !important;
+    padding-bottom: 0.75rem !important;
+    border-bottom: 1px solid #f5f5f5 !important;
+}
+
+.user-info {
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.75rem !important;
+    flex: 1 !important;
+}
+
+.user-avatar {
+    width: 44px !important;
+    height: 44px !important;
+    background: linear-gradient(135deg, #8d6e63 0%, #6d4c41 100%) !important;
+    border-radius: 50% !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    color: #fff !important;
+    font-size: 1.4rem !important;
+    flex-shrink: 0 !important;
+    box-shadow: 0 2px 8px rgba(93, 64, 55, 0.2) !important;
+    border: 2px solid #fff !important;
+}
+
+.user-details {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+}
+
+.user-name {
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+    color: #3e2723 !important;
+    margin: 0 !important;
+}
+
+.review-date {
+    font-size: 0.8rem !important;
+    color: #a1887f !important;
+    font-weight: 400 !important;
+}
+
+/* Review Actions */
+.review-actions {
+    display: flex !important;
+    gap: 0.5rem !important;
+    flex-shrink: 0 !important;
+    align-items: center !important;
+}
+
+.btn-icon {
+    width: 36px !important;
+    height: 36px !important;
+    border: 1.5px solid #d7ccc8 !important;
+    background: #fff !important;
+    border-radius: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    font-size: 0.95rem !important;
+}
+
+.btn-icon:hover {
+    transform: translateY(-2px) scale(1.05) !important;
+    box-shadow: 0 4px 12px rgba(62, 39, 35, 0.15) !important;
+}
+
+.btn-edit {
+    color: #6d4c41 !important;
+    border-color: #a1887f !important;
+}
+
+.btn-edit:hover {
+    background: #6d4c41 !important;
+    color: white !important;
+    border-color: #6d4c41 !important;
+}
+
+.btn-delete {
+    color: #d32f2f !important;
+    border-color: #ffcdd2 !important;
+}
+
+.btn-delete:hover {
+    background: #d32f2f !important;
+    color: white !important;
+    border-color: #d32f2f !important;
+}
+
+.btn-report {
+    padding: 0.5rem 1rem !important;
+    border: 1.5px solid #f57c00 !important;
+    background: #fff !important;
+    color: #f57c00 !important;
+    border-radius: 8px !important;
+    font-size: 0.85rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.4rem !important;
+    transition: all 0.2s ease !important;
+}
+
+.btn-report:hover {
+    background: #f57c00 !important;
+    color: white !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(245, 124, 0, 0.3) !important;
+}
+
+.btn-report i {
+    font-size: 0.9rem !important;
+}
+
+/* Review Content */
+.review-content {
+    margin-top: 0 !important;
+    padding-top: 0.75rem !important;
+}
+
+.review-text {
+    color: #4e342e !important;
+    line-height: 1.7 !important;
+    margin: 0 !important;
+    white-space: pre-wrap !important;
+    word-wrap: break-word !important;
+    font-size: 0.95rem !important;
+}
+
+/* Edit Form */
+.edit-form {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 1rem !important;
+}
+
+.edit-actions {
+    display: flex !important;
+    gap: 0.75rem !important;
+}
+
+.btn-save {
+    padding: 0.6rem 1.5rem !important;
+    background: linear-gradient(135deg, #6d4c41 0%, #5d4037 100%) !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 0.5rem !important;
+    transition: all 0.2s ease !important;
+    font-size: 0.9rem !important;
+    box-shadow: 0 2px 8px rgba(93, 64, 55, 0.2) !important;
+}
+
+.btn-save:hover {
+    background: linear-gradient(135deg, #5d4037 0%, #4e342e 100%) !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 12px rgba(93, 64, 55, 0.3) !important;
+}
+
+.btn-save i {
+    font-size: 1rem !important;
+}
+
+.btn-cancel {
+    padding: 0.6rem 1.5rem !important;
+    background: #fff !important;
+    color: #6d4c41 !important;
+    border: 1.5px solid #d7ccc8 !important;
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    font-size: 0.9rem !important;
+}
+
+.btn-cancel:hover {
+    background: #efebe9 !important;
+    border-color: #bcaaa4 !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 2px 8px rgba(62, 39, 35, 0.1) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .reviews-container {
+        padding: 1rem 0 !important;
+    }
+
+    .reviews-title {
+        font-size: 1.5rem !important;
+    }
+
+    .review-header {
+        flex-direction: row !important;
+        align-items: center !important;
+    }
+
+    .review-actions {
+        flex-direction: column !important;
+        gap: 0.4rem !important;
+    }
+
+    .review-form-card {
+        padding: 1.25rem !important;
+    }
+
+    .btn-report {
+        padding: 0.4rem 0.75rem !important;
+        font-size: 0.8rem !important;
+    }
+
+    .user-avatar {
+        width: 40px !important;
+        height: 40px !important;
+        font-size: 1.2rem !important;
+    }
+}

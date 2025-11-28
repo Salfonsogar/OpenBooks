@@ -15,6 +15,7 @@ import ReportModal from "./ReportModal";
 import NotificationModal from "./NotificationModal";
 import useNotification from "../../hooks/useNotification";
 import { selectAuthUser } from "../../store/authSlice";
+import "./Reviews.css";
 
 export default function Reviews({ bookId, reviews = [], onReviewChange }) {
   const dispatch = useDispatch();
@@ -133,140 +134,168 @@ export default function Reviews({ bookId, reviews = [], onReviewChange }) {
     }
   };
 
+  const formatDate = (dateString) => {
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) {
+        return "Fecha inválida";
+      }
+      return date.toLocaleDateString("es-ES", {
+        year: "numeric",
+        month: "long",
+        day: "numeric"
+      });
+    } catch {
+      return "Fecha inválida";
+    }
+  };
+
   if (status === "loading") {
     return (
-      <div className="text-center py-4">
-        <div className="spinner-border" role="status">
-          <span className="visually-hidden">Cargando reseñas...</span>
-        </div>
+      <div className="reviews-loading">
+        <div className="spinner"></div>
+        <span>Cargando reseñas...</span>
       </div>
     );
   }
 
   return (
-    <div className="mt-4">
-      <h3 className="mb-4">
-        <i className="bi bi-chat-left-text me-2"></i>
+    <div className="reviews-container">
+      <h3 className="reviews-title">
+        <i className="bi bi-chat-left-text"></i>
         Reseñas
       </h3>
 
       {user && (
-        <div className="card mb-4">
-          <div className="card-body">
-            <h5 className="card-title">Escribe una reseña</h5>
+        <div className="review-form-card">
+          <h5 className="form-title">Escribe una reseña</h5>
 
-            <form onSubmit={handleSubmit}>
-              <div className="mb-3">
-                <textarea
-                  className="form-control"
-                  rows="3"
-                  placeholder="Comparte tu opinión..."
-                  value={newReview}
-                  onChange={(e) => setNewReview(e.target.value)}
-                  disabled={createStatus === "loading"}
-                  required
-                />
+          <form onSubmit={handleSubmit}>
+            <div className="form-group">
+              <textarea
+                className="review-textarea"
+                rows="4"
+                placeholder="Comparte tu opinión sobre este libro..."
+                value={newReview}
+                onChange={(e) => setNewReview(e.target.value)}
+                disabled={createStatus === "loading"}
+                required
+              />
+            </div>
+
+            {createStatus === "failed" && createError && (
+              <div className="error-alert">
+                <i className="bi bi-exclamation-triangle"></i>
+                {Array.isArray(createError)
+                  ? createError.join(", ")
+                  : createError}
               </div>
+            )}
 
-              {createStatus === "failed" && createError && (
-                <div className="alert alert-danger">
-                  {Array.isArray(createError)
-                    ? createError.join(", ")
-                    : createError}
-                </div>
+            <button
+              type="submit"
+              className="btn-submit"
+              disabled={createStatus === "loading" || !newReview.trim()}
+            >
+              {createStatus === "loading" ? (
+                <>
+                  <span className="btn-spinner"></span>
+                  Publicando...
+                </>
+              ) : (
+                <>
+                  <i className="bi bi-send"></i>
+                  Publicar reseña
+                </>
               )}
-
-              <button
-                type="submit"
-                className="btn btn-primary"
-                disabled={createStatus === "loading" || !newReview.trim()}
-              >
-                {createStatus === "loading" ? (
-                  <>
-                    <span className="spinner-border spinner-border-sm me-2"></span>
-                    Publicando...
-                  </>
-                ) : (
-                  <>
-                    <i className="bi bi-send me-2"></i>Publicar reseña
-                  </>
-                )}
-              </button>
-            </form>
-          </div>
+            </button>
+          </form>
         </div>
       )}
 
       {reviews.length === 0 ? (
-        <div className="alert alert-info">
-          <i className="bi bi-info-circle me-2"></i>
-          No hay reseñas todavía.
+        <div className="empty-state">
+          <i className="bi bi-chat-left-text-fill"></i>
+          <p>No hay reseñas todavía. ¡Sé el primero en compartir tu opinión!</p>
         </div>
       ) : (
-        <div className="list-group">
+        <div className="reviews-list">
           {reviews.map((review) => (
-            <div key={review.id} className="list-group-item">
-              <div className="d-flex justify-content-between mb-2">
-                <div>
-                  <h6 className="mb-1">
-                    <i className="bi bi-person-circle me-2"></i>
-                    {review.nombreUsuario ?? "Usuario"}
-                  </h6>
-                  <small className="text-muted">
-                    {new Date(review.fechaCreacion).toLocaleDateString()}
-                  </small>
-                </div>
-                {user && user.id === review.idUsuario && (
-                  <div>
-                    <button
-                      className="btn btn-sm btn-outline-primary me-2"
-                      onClick={() => handleEdit(review)}
-                    >
-                      <i className="bi bi-pencil"></i>
-                    </button>
-                    <button
-                      className="btn btn-sm btn-outline-danger"
-                      onClick={() => handleDelete(review.id)}
-                    >
-                      <i className="bi bi-trash"></i>
-                    </button>
+            <div key={review.id} className="review-card">
+              <div className="review-header">
+                <div className="user-info">
+                  <div className="user-avatar">
+                    <i className="bi bi-person-circle"></i>
                   </div>
-                )}
-                {user && user.id !== review.idUsuario && (
-                  <button
-                    className="btn btn-sm btn-outline-warning"
-                    onClick={() => handleOpenReport(review)}
-                  >
-                    <i className="bi bi-flag me-1"></i>
-                    Reportar
-                  </button>
-                )}
+                  <div className="user-details">
+                    <h6 className="user-name">
+                      {review.nombreUsuario ?? "Usuario Anónimo"}
+                    </h6>
+                    <small className="review-date">
+                      {formatDate(review.fechaCreacion)}
+                    </small>
+                  </div>
+                </div>
+
+                <div className="review-actions">
+                  {user && user.id === review.idUsuario ? (
+                    <>
+                      <button
+                        className="btn-icon btn-edit"
+                        onClick={() => handleEdit(review)}
+                        title="Editar"
+                      >
+                        <i className="bi bi-pencil"></i>
+                      </button>
+                      <button
+                        className="btn-icon btn-delete"
+                        onClick={() => handleDelete(review.id)}
+                        title="Eliminar"
+                      >
+                        <i className="bi bi-trash"></i>
+                      </button>
+                    </>
+                  ) : user ? (
+                    <button
+                      className="btn-report"
+                      onClick={() => handleOpenReport(review)}
+                    >
+                      <i className="bi bi-flag"></i>
+                      Reportar
+                    </button>
+                  ) : null}
+                </div>
               </div>
 
-              {editingId === review.id ? (
-                <div>
-                  <textarea
-                    className="form-control mb-2"
-                    value={texto}
-                    onChange={(e) => setTexto(e.target.value)}
-                    rows="3"
-                  />
-                  <button
-                    className="btn btn-sm btn-success me-2"
-                    onClick={() => handleUpdate(review.id)}
-                  >
-                    Guardar
-                  </button>
-                  <button
-                    className="btn btn-sm btn-secondary"
-                    onClick={handleCancelEdit}
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              ) : (
-                <p className="mb-0">{review.texto}</p>
-              )}
+              <div className="review-content">
+                {editingId === review.id ? (
+                  <div className="edit-form">
+                    <textarea
+                      className="review-textarea"
+                      value={texto}
+                      onChange={(e) => setTexto(e.target.value)}
+                      rows="3"
+                    />
+                    <div className="edit-actions">
+                      <button
+                        className="btn-save"
+                        onClick={() => handleUpdate(review.id)}
+                      >
+                        <i className="bi bi-check-lg"></i>
+                        Guardar
+                      </button>
+                      <button
+                        className="btn-cancel"
+                        onClick={handleCancelEdit}
+                      >
+                        Cancelar
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <p className="review-text">{review.texto}</p>
+                )}
+              </div>
             </div>
           ))}
         </div>
