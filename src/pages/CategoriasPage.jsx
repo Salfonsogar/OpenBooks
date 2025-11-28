@@ -8,7 +8,7 @@ import {
     updateCategory,
     deleteCategory
 } from "../store/categoriesSlice";
-
+import "../styles/CategoriasPage.css";
 export default function CategoriasPage() {
     const dispatch = useDispatch();
     const categories = useSelector(selectAllCategories);
@@ -125,13 +125,13 @@ export default function CategoriasPage() {
                                                         className="btn btn-sm btn-outline-primary me-2"
                                                         onClick={() => openModal(category)}
                                                     >
-                                                        <i className="fas fa-edit"></i>
+                                                        <i class="fas fa-edit icono"></i>
                                                     </button>
                                                     <button
                                                         className="btn btn-sm btn-outline-danger"
                                                         onClick={() => handleDelete(id)}
                                                     >
-                                                        <i className="fas fa-trash"></i>
+                                                        <i class="fas fa-trash icono"></i>
                                                     </button>
                                                 </td>
                                             </tr>
@@ -170,10 +170,10 @@ export default function CategoriasPage() {
                                     </div>
                                 </div>
                                 <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
+                                    <button type="button" className="btn " onClick={() => setShowModal(false)}>
                                         Cancelar
                                     </button>
-                                    <button type="submit" className="btn btn-primary">
+                                    <button type="submit" className="btn ">
                                         Guardar
                                     </button>
                                 </div>
