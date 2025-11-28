@@ -2,13 +2,13 @@ import "../../assets/styles/profileSidebar.css";
 
 export default function ProfileSidebar({ activeView, setActiveView, onDelete }) {
   return (
-    <div className="card shadow-sm" style={{ 
+    <div className="card shadow-sm" style={{
       top: '0',
       position: "sticky",
       height: "100vh",
       overflowY: "auto",
       borderRadius: "0.75rem",
-     }}>
+    }}>
       <div
         className="card-header"
       >

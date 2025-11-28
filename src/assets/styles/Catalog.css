@@ -35,7 +35,7 @@ input.input-busqueda:focus {
 .btn-buscar,
 .btn.btn-buscar,
 button.btn-buscar {
-  background: linear-gradient(135deg, #6e3b3b, #8b5e3c) !important;
+  background-color: #6e3b3b !important;
   color: white !important;
   font-weight: 600;
   border: none !important;
@@ -48,7 +48,7 @@ button.btn-buscar {
 .btn-buscar:hover,
 .btn.btn-buscar:hover,
 button.btn-buscar:hover {
-  background: linear-gradient(135deg, #8b5e3c, #6e3b3b) !important;
+  background-color: #8b5e3c !important;
   color: white !important;
   transform: scale(1.05);
 }

@@ -1,11 +1,55 @@
-.privacity-settings-button{
- font-family: inherit;
- font-size: 1rem;
- margin-bottom: 12px;
- padding: 8px 16px;
- border-radius: 4px;
- background-color: #6e3b3b !important;
- border: none;
- transition: background 0.2s;
- width: 100%;
+/* Tabs Styling Override - Mayor especificidad para sobrescribir Bootstrap */
+.nav-tabs .nav-link,
+.nav-tabs .nav-link:link,
+.nav-tabs .nav-link:visited {
+    color: #5c5c5c !important;
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+    transition: all 0.3s ease;
+    background-color: transparent !important;
+}
+
+.nav-tabs .nav-link:hover,
+.nav-tabs .nav-link:focus {
+    color: #6e3b3b !important;
+    border: none !important;
+    border-bottom: 2px solid transparent !important;
+    background-color: rgba(110, 59, 59, 0.05) !important;
+    isolation: auto !important;
+}
+
+.nav-tabs .nav-link.active,
+.nav-tabs .nav-item.show .nav-link {
+    color: #212529 !important;
+    border: none !important;
+    border-bottom: 2px solid #6e3b3b !important;
+    background-color: transparent !important;
+    font-weight: 600;
+}
+
+/* Asegurar que los iconos dentro también sean del color correcto */
+.nav-tabs .nav-link i,
+.nav-tabs .nav-link.active i {
+    color: #212529 !important;
+}
+
+.privacity-settings-button {
+    font-family: inherit;
+    font-size: 1rem;
+    margin-bottom: 12px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    background-color: #6e3b3b !important;
+    border: none;
+    transition: background 0.2s;
+    width: 100%;
+    color: #fff;
+}
+
+.privacity-settings-button:hover {
+    background-color: #8b5e3c !important;
+}
+
+.nav-link {
+    color: #212529 !important;
 }

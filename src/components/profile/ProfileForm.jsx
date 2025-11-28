@@ -166,7 +166,7 @@ export default function ProfileForm({ userData }) {
               </div>
             )}
             <div className="mt-3">
-              <label htmlFor="imageUpload" className="btn btn-outline-primary btn-sm">
+              <label htmlFor="imageUpload" className="btn btn-outline-main btn-sm">
                 <Upload size={16} className="me-2" />
                 Subir Imagen
               </label>
@@ -253,7 +253,7 @@ export default function ProfileForm({ userData }) {
           </div>
 
           <div className="d-flex justify-content-end gap-2 pt-3">
-            <button type="submit" className="btn btn-primary btn-lg" disabled={updateStatus === 'loading'}>
+            <button type="submit" className="btn btn-main btn-lg" disabled={updateStatus === 'loading'}>
               {updateStatus === 'loading' ? (
                 <>
                   <span className="spinner-border spinner-border-sm me-2"></span>

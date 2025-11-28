@@ -2,6 +2,24 @@ body {
   overflow-x: hidden;
 }
 
+/* Asegurar que el toggler (hamburguesa) sea blanco */
+.navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(255, 255, 255, 1)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* Asegurar que el logo y texto del brand sean blancos */
+.navbar-brand {
+  color: #fff !important;
+}
+
+.navbar-brand img {
+  filter: brightness(0) invert(1);
+}
+
 .dropdown-menu {
   position: static !important;
   float: none !important;
@@ -32,4 +50,10 @@ body {
 .nav-item span:hover {
   background: #c9a66b;
   color: #fff;
+}
+
+/* Asegurar que todos los iconos en el navbar sean blancos */
+.navbar .nav-link img,
+.navbar .nav-item img {
+  filter: brightness(0) invert(1);
 }

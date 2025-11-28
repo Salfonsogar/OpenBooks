@@ -3,6 +3,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../../store/authSlice";
+import "../../assets/styles/Navbar.css";
 
 export default function NavbarAdmin() {
   const [showAccount, setShowAccount] = useState(false);
@@ -16,7 +17,7 @@ export default function NavbarAdmin() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg" style={{ backgroundColor: '#1a1a2e' }}>
+    <nav className="navbar navbar-expand-lg " >
       <div className="container-fluid">
         <a
           className="navbar-brand text-white"

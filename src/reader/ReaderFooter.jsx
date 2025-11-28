@@ -13,7 +13,7 @@ export default function ReaderFooter({
             display: 'flex',
             alignItems: 'center',
             gap: '15px',
-            fontSize: '0.9rem'
+            fontSize: '0.9rem',
         }}>
             <input
                 type="range"
@@ -25,7 +25,11 @@ export default function ReaderFooter({
                 style={{
                     flex: 1,
                     accentColor: '#6e3b3b',
-                    cursor: 'pointer'
+                    cursor: 'pointer',
+                    border: 'none',
+                    WebkitSliderThumb: {
+                        background: '#6e3b3b'
+                    }
                 }}
             />
 

@@ -1,0 +1,13 @@
+button {
+    background-color: transparent !important;
+    transition: all 0.3s ease;
+    animation: alternate 0.3s ease-in-out;
+}
+
+button:hover {
+    background-color: #6e3b3b !important;
+}
+
+button:active {
+    background-color: #6e3b3b !important;
+}

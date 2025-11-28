@@ -5,6 +5,7 @@ import ActivityTab from "../components/profile/ActivityTab";
 import SuggestionsTab from "../components/profile/SuggestionsTab";
 import PenaltiesTab from "../components/profile/PenaltiesTab";
 import { selectAuthUser } from '../store/authSlice';
+import "../assets/styles/profilePage.css";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("actividad");

@@ -202,7 +202,7 @@ export default function ChangePassword() {
         <div className="d-flex justify-content-end gap-2">
           <button
             type="button"
-            className="button"
+            className="btn btn-outline-secondary"
             onClick={() => setFormData({
               newPassword: "",
               confirmPassword: ""
@@ -214,7 +214,7 @@ export default function ChangePassword() {
           </button>
           <button
             type="submit"
-            className="btn-buscar"
+            className="btn btn-main"
             disabled={loading}
           >
             {loading ? (

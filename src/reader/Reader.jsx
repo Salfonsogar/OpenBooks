@@ -17,10 +17,14 @@ import { useReaderProgress } from './useReaderProgress';
 import { useReaderSettings } from './useReaderSettings';
 import { useIframeStyles } from './useIframeStyles';
 import { useReaderNavigation } from './useReaderNavigation';
+import { useReaderBookmarks } from './useReaderBookmarks';
+import { useReaderHighlights } from './useReaderHighlights';
 
 import ReaderHeader from './ReaderHeader';
 import ReaderSettingsPanel from './ReaderSettingsPanel';
 import ReaderTocSidebar from './ReaderTocSidebar';
+import ReaderBookmarksSidebar from './ReaderBookmarksSidebar';
+import ReaderHighlightMenu from './ReaderHighlightMenu';
 import ReaderContent from './ReaderContent';
 import ReaderFooter from './ReaderFooter';
 
@@ -39,8 +43,16 @@ export default function Reader() {
     const [isNavigatingBack, setIsNavigatingBack] = useState(false);
     const [showToc, setShowToc] = useState(false);
     const [showSettings, setShowSettings] = useState(false);
+    const [showBookmarks, setShowBookmarks] = useState(false);
 
     useReaderProgress(readerBookId, manifest, currentIndex);
+
+    const {
+        bookmarks,
+        addBookmark,
+        removeBookmark,
+        isBookmarked
+    } = useReaderBookmarks(readerBookId);
 
     const {
         fontSize,
@@ -63,6 +75,14 @@ export default function Reader() {
         isNavigatingBack,
         setIsNavigatingBack
     );
+
+    const {
+        highlights,
+        selectionMenu,
+        addHighlight,
+        removeHighlight,
+        setSelectionMenu
+    } = useReaderHighlights(readerBookId, iframeRef, currentIndex);
 
     const { handleNextPage, handlePrevPage } = useReaderNavigation(
         iframeRef,
@@ -133,8 +153,17 @@ export default function Reader() {
             <ReaderHeader
                 theme={theme}
                 title={manifest.titulo}
-                onToggleToc={() => setShowToc(!showToc)}
+                onToggleToc={() => { setShowToc(!showToc); setShowBookmarks(false); }}
                 onToggleSettings={() => setShowSettings(!showSettings)}
+                onToggleBookmarks={() => { setShowBookmarks(!showBookmarks); setShowToc(false); }}
+                onAddBookmark={() => {
+                    if (isBookmarked(currentIndex)) {
+                        removeBookmark(currentIndex);
+                    } else {
+                        addBookmark(currentIndex, `Página ${currentIndex + 1}`);
+                    }
+                }}
+                isBookmarked={isBookmarked(currentIndex)}
                 onClose={handleClose}
             />
 
@@ -157,6 +186,24 @@ export default function Reader() {
                 toc={manifest.toc}
                 onClose={() => setShowToc(false)}
                 onItemClick={handleTocClick}
+            />
+
+            <ReaderBookmarksSidebar
+                show={showBookmarks}
+                theme={theme}
+                bookmarks={bookmarks}
+                onClose={() => setShowBookmarks(false)}
+                onItemClick={(index) => {
+                    handleIndexChange(index);
+                    setShowBookmarks(false);
+                }}
+                onRemoveBookmark={removeBookmark}
+            />
+
+            <ReaderHighlightMenu
+                position={selectionMenu}
+                onSelectColor={addHighlight}
+                onClose={() => setSelectionMenu({ ...selectionMenu, show: false })}
             />
 
             <ReaderContent

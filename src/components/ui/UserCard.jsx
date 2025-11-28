@@ -53,13 +53,13 @@ export default function UserCard({ showSettingsButton = false }) {
           {role}
         </span>
         <div className="mt-3">
-          <button className="btn-add-bookmark w-100 mb-2">
+          <button className="btn btn-main w-100 mb-2">
             Cambiar foto
           </button>
           {showSettingsButton && (
             <Link
               to="/profile-settings"
-              className="btn-add-bookmark w-100 text-decoration-none account-settings-btn d-inline-flex align-items-center justify-content-center"
+              className="btn btn-outline-main w-100 text-decoration-none account-settings-btn d-inline-flex align-items-center justify-content-center"
             >
               <i className="bi bi-gear me-2"></i>
               Ajustes y privacidad
