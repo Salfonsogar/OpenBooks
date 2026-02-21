@@ -31,7 +31,7 @@ export default function AdminPage() {
       <div className="container" style={{ maxWidth: '1200px' }}>
         {/* Título */}
         <div className="mb-5 text-center">
-          <h1 className="display-5 fw-bold mb-3" style={{ color: '#6e3b3b' }}>
+          <h1 className="display-5 fw-bold mb-3" style={{ color: '#1E293B' }}>
             Panel de Administración
           </h1>
           <p className="lead text-secondary">
@@ -39,7 +39,7 @@ export default function AdminPage() {
           </p>
 
           <Link
-            to="/"
+            to="/Admin"
             className="btn btn-lg btn-main text-decoration-none mt-3"
           >
             Volver al Inicio

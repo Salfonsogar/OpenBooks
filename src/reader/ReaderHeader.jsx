@@ -10,49 +10,52 @@ export default function ReaderHeader({
     isBookmarked,
     onClose
 }) {
+    const headerBg = theme === 'dark' ? '#0f172a' : '#1e293b';
+    const headerText = '#fff';
+    
     return (
         <div className="reader-header" style={{
-            padding: '10px 20px',
-            backgroundColor: theme === 'dark' ? '#1a1a1a' : '#4b2626',
-            color: '#fff',
+            padding: '12px 24px',
+            backgroundColor: headerBg,
+            color: headerText,
             borderBottom: 'none',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
             zIndex: 1060,
-            boxShadow: '0 2px 5px rgba(0,0,0,0.2)',
+            boxShadow: '0 4px 20px rgba(0,0,0,0.3)',
         }}>
             <div className="d-flex align-items-center gap-3">
                 <button
-                    className={`btn btn-sm ${theme === 'dark' ? 'btn-outline-light' : 'btn-outline-light'}`}
+                    className="reader-btn"
                     onClick={onToggleToc}
                     title="Tabla de Contenido"
                     style={{
-                        borderColor: 'rgba(255,255,255,0.5)',
-                        color: '#fff',
-                        backgroundColor: theme === 'dark' ? '#1a1a1a' : '#fff'
+                        borderColor: 'rgba(255,255,255,0.3)',
+                        color: headerText,
+                        backgroundColor: 'transparent'
                     }}
                 >
                     <i className="bi bi-list"></i>
                 </button>
 
                 <button
-                    className={`btn btn-sm ${theme === 'dark' ? 'btn-outline-light' : 'btn-outline-light'}`}
+                    className="reader-btn"
                     onClick={onToggleBookmarks}
                     title="Marcadores"
-                    style={{ borderColor: 'rgba(255,255,255,0.5)', color: '#fff' }}
+                    style={{ borderColor: 'rgba(255,255,255,0.3)', color: headerText }}
                 >
                     <i className="bi bi-bookmarks"></i>
                 </button>
 
                 <button
-                    className={`btn btn-sm ${theme === 'dark' ? 'btn-outline-light' : 'btn-outline-light'}`}
+                    className="reader-btn"
                     onClick={onAddBookmark}
                     title={isBookmarked ? "Quitar marcador" : "Añadir marcador"}
                     style={{
-                        borderColor: 'rgba(255,255,255,0.5)',
-                        color: isBookmarked ? '#ffc107' : '#fff',
-                        backgroundColor: isBookmarked ? 'rgba(255, 193, 7, 0.2)' : 'transparent'
+                        borderColor: 'rgba(255,255,255,0.3)',
+                        color: isBookmarked ? '#fbbf24' : headerText,
+                        backgroundColor: isBookmarked ? 'rgba(251, 191, 36, 0.15)' : 'transparent'
                     }}
                 >
                     <i className={`bi ${isBookmarked ? 'bi-star-fill' : 'bi-star'}`}></i>
@@ -63,25 +66,27 @@ export default function ReaderHeader({
                     maxWidth: '300px',
                     whiteSpace: 'nowrap',
                     overflow: 'hidden',
-                    textOverflow: 'ellipsis'
+                    textOverflow: 'ellipsis',
+                    fontWeight: 500,
+                    fontSize: '1rem'
                 }}>
                     {title || 'Lector'}
                 </h5>
 
                 <button
-                    className={`btn btn-sm ${theme === 'dark' ? 'btn-outline-light' : 'btn-outline-light'}`}
+                    className="reader-btn"
                     onClick={onToggleSettings}
                     title="Configuración de lectura"
-                    style={{ borderColor: 'rgba(255,255,255,0.5)', color: '#fff' }}
+                    style={{ borderColor: 'rgba(255,255,255,0.3)', color: headerText }}
                 >
                     <i className="bi bi-gear"></i>
                 </button>
             </div>
 
             <button
-                className="btn btn-sm"
+                className="reader-btn-close"
                 onClick={onClose}
-                style={{ color: '#fff', borderColor: 'rgba(255,255,255,0.5)' }}
+                style={{ color: headerText, borderColor: 'rgba(255,255,255,0.3)' }}
             >
                 <i className="bi bi-x-lg"></i>
             </button>

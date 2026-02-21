@@ -17,12 +17,12 @@ export default function NavbarAdmin() {
   };
 
   return (
-    <nav className="navbar navbar-expand-lg " >
+    <nav className="navbar navbar-expand-lg navbar-admin" >
       <div className="container-fluid">
-        <a
-          className="navbar-brand text-white"
-          href="/"
-          style={{ cursor: 'pointer' }}
+        <Link
+          className="navbar-brand"
+          to="/Admin"
+          style={{ color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
         >
           <img
             src="https://cdn-icons-png.flaticon.com/512/29/29302.png"
@@ -30,9 +30,10 @@ export default function NavbarAdmin() {
             width="30"
             height="24"
             className="d-inline-block align-text-top me-2"
+            style={{ filter: 'brightness(0) invert(1)' }}
           />
-          OpenBooks Admin
-        </a>
+          <span style={{ color: '#fff', fontWeight: 600 }}>OpenBooks</span>
+        </Link>
 
         <button
           className="navbar-toggler"

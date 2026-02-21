@@ -1,4 +1,95 @@
-/* Scope button styles to reader UI specific containers to avoid overriding button styles globally */
+/* Reader Modern Styles */
+.reader-header,
+.reader-footer,
+.settings-panel,
+.toc-sidebar,
+.bookmarks-sidebar {
+    font-family: 'Inter', 'Segoe UI', sans-serif;
+}
+
+/* Reader Buttons - Modern Style */
+.reader-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    background: transparent;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reader-btn:hover {
+    background: rgba(99, 102, 241, 0.2);
+    border-color: #6366f1;
+    transform: translateY(-1px);
+}
+
+.reader-btn i {
+    font-size: 1.1rem;
+}
+
+.reader-btn-close {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 14px;
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 8px;
+    background: transparent;
+    color: #fff;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.reader-btn-close:hover {
+    background: rgba(239, 68, 68, 0.2);
+    border-color: #ef4444;
+    color: #ef4444;
+}
+
+/* Reader Slider */
+.reader-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 6px;
+    border-radius: 3px;
+    outline: none;
+    transition: all 0.2s ease;
+}
+
+.reader-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #6366f1;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.4);
+    transition: all 0.2s ease;
+}
+
+.reader-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.15);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.5);
+}
+
+.reader-slider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #6366f1;
+    cursor: pointer;
+    border: none;
+    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.4);
+}
+
+/* Scope button styles to reader UI specific containers */
 .reader-header button,
 .settings-panel button,
 .toc-sidebar button,
@@ -6,7 +97,6 @@
 .reader-footer button {
     background-color: transparent;
     transition: all 0.3s ease;
-    animation: alternate 0.3s ease-in-out;
 }
 
 .reader-header button:hover,
@@ -14,7 +104,8 @@
 .toc-sidebar button:hover,
 .bookmarks-sidebar button:hover,
 .reader-footer button:hover {
-    background-color: #6e3b3b;
+    background-color: rgba(99, 102, 241, 0.2);
+    border-color: #6366f1;
 }
 
 .reader-header button:active,
@@ -22,21 +113,175 @@
 .toc-sidebar button:active,
 .bookmarks-sidebar button:active,
 .reader-footer button:active {
-    background-color: #6e3b3b;
+    background-color: #4f46e5;
 }
 
-/* Specific styles for the highlight color swatches in the selection menu. Inline backgroundColor set in React will apply now. */
+/* Highlight color swatches */
 .highlight-menu button.color-swatch {
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     border-radius: 50%;
-    border: 2px solid #fff;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    border: 3px solid #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
     cursor: pointer;
     padding: 0;
-    transition: transform 0.2s;
+    transition: all 0.2s ease;
 }
 
 .highlight-menu button.color-swatch:hover {
     transform: scale(1.2);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+}
+
+/* Settings Panel Modern */
+.settings-panel {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    padding: 20px;
+}
+
+.settings-panel h6 {
+    color: #1e293b;
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+/* TOC Sidebar Modern */
+.toc-sidebar {
+    background: #fff;
+    border-right: 1px solid #e2e8f0;
+    padding: 20px;
+}
+
+.toc-sidebar button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #475569;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 4px;
+}
+
+.toc-sidebar button:hover {
+    background: #f1f5f9;
+    color: #6366f1;
+}
+
+.toc-sidebar button.active {
+    background: rgba(99, 102, 241, 0.1);
+    color: #6366f1;
+    font-weight: 500;
+}
+
+/* Bookmarks Sidebar Modern */
+.bookmarks-sidebar {
+    background: #fff;
+    border-right: 1px solid #e2e8f0;
+    padding: 20px;
+}
+
+.bookmarks-sidebar button {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 8px;
+    background: transparent;
+    color: #475569;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin-bottom: 4px;
+}
+
+.bookmarks-sidebar button:hover {
+    background: #f1f5f9;
+    color: #6366f1;
+}
+
+/* Theme buttons in settings */
+.theme-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    border: 2px solid transparent;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 4px;
+}
+
+.theme-btn:hover {
+    transform: scale(1.1);
+}
+
+.theme-btn.active {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+}
+
+/* Font size buttons */
+.font-size-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    color: #475569;
+}
+
+.font-size-btn:hover {
+    background: #f1f5f9;
+    border-color: #6366f1;
+    color: #6366f1;
+}
+
+/* Reader content area */
+.reader-content {
+    flex: 1;
+    overflow: auto;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.reader-content iframe {
+    max-width: 100%;
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+}
+
+/* Dark mode specific */
+.reader-overlay[data-theme="dark"] .settings-panel,
+.reader-overlay[data-theme="dark"] .toc-sidebar,
+.reader-overlay[data-theme="dark"] .bookmarks-sidebar {
+    background: #1e293b;
+    border-color: #334155;
+}
+
+.reader-overlay[data-theme="dark"] .toc-sidebar button,
+.reader-overlay[data-theme="dark"] .bookmarks-sidebar button {
+    color: #94a3b8;
+}
+
+.reader-overlay[data-theme="dark"] .toc-sidebar button:hover,
+.reader-overlay[data-theme="dark"] .bookmarks-sidebar button:hover {
+    background: #334155;
+    color: #818cf8;
 }

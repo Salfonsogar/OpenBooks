@@ -139,7 +139,7 @@ export default function Reader() {
     const totalPages = manifest.readingOrder.length;
 
     return (
-        <div className="reader-container" style={{
+        <div className="reader-container reader-overlay" style={{
             position: 'fixed',
             top: 0,
             left: 0,

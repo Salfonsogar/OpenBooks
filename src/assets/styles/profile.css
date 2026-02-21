@@ -2,7 +2,7 @@
 .nav-tabs .nav-link,
 .nav-tabs .nav-link:link,
 .nav-tabs .nav-link:visited {
-    color: #5c5c5c !important;
+    color: var(--text-secondary) !important;
     border: none !important;
     border-bottom: 2px solid transparent !important;
     transition: all 0.3s ease;
@@ -11,18 +11,18 @@
 
 .nav-tabs .nav-link:hover,
 .nav-tabs .nav-link:focus {
-    color: #6e3b3b !important;
+    color: var(--primary) !important;
     border: none !important;
     border-bottom: 2px solid transparent !important;
-    background-color: rgba(110, 59, 59, 0.05) !important;
+    background-color: rgba(99, 102, 241, 0.05) !important;
     isolation: auto !important;
 }
 
 .nav-tabs .nav-link.active,
 .nav-tabs .nav-item.show .nav-link {
-    color: #212529 !important;
+    color: var(--text-main) !important;
     border: none !important;
-    border-bottom: 2px solid #6e3b3b !important;
+    border-bottom: 2px solid var(--primary) !important;
     background-color: transparent !important;
     font-weight: 600;
 }
@@ -30,26 +30,26 @@
 /* Asegurar que los iconos dentro también sean del color correcto */
 .nav-tabs .nav-link i,
 .nav-tabs .nav-link.active i {
-    color: #212529 !important;
+    color: var(--text-main) !important;
 }
 
 .privacity-settings-button {
     font-family: inherit;
     font-size: 1rem;
     margin-bottom: 12px;
-    padding: 8px 16px;
-    border-radius: 4px;
-    background-color: #6e3b3b !important;
+    padding: 10px 16px;
+    border-radius: 8px;
+    background-color: var(--primary) !important;
     border: none;
-    transition: background 0.2s;
+    transition: all 0.2s;
     width: 100%;
     color: #fff;
 }
 
 .privacity-settings-button:hover {
-    background-color: #8b5e3c !important;
+    background-color: var(--primary-dark) !important;
 }
 
 .nav-link {
-    color: #212529 !important;
+    color: var(--text-main) !important;
 }

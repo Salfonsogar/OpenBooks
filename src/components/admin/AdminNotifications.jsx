@@ -19,10 +19,12 @@ export default function AdminNotifications() {
     };
 
     return (
-        <NotificationModal
-            message={currentNotification?.mensaje || ''}
-            isOpen={!!currentNotification}
-            onClose={handleClose}
-        />
+        <div className="admin-notifications">
+            <NotificationModal
+                message={currentNotification?.mensaje || ''}
+                isOpen={!!currentNotification}
+                onClose={handleClose}
+            />
+        </div>
     );
 }

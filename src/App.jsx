@@ -1,44 +1,30 @@
-import { useEffect, useMemo } from 'react';
-import { Routes, Route, useNavigate } from 'react-router-dom';
-import Home from './pages/Home';
-import Catalog from './pages/Catalog';
+import { Suspense, useEffect, useMemo } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchRolesAsync, selectAllRoles } from './store/rolesSlice';
+import { selectAuthUser, selectIsAuthenticated } from './store/authSlice';
+import { selectReaderBookId } from './store/readerSlice';
 import Navbar from './components/layout/Navbar';
 import NavbarAdmin from './components/layout/NavbarAdmin';
-import { useSelector, useDispatch } from 'react-redux';
-import { selectAuthUser } from './store/authSlice';
-import { fetchRolesAsync, selectAllRoles } from './store/rolesSlice';
 import Footer from './components/layout/Footer';
-import Library from './pages/Library';
-import AuthModal from './components/auth/AuthModal.jsx';
-import UploadBooksPage from './pages/UploadBooks';
-import ProfilePage from './pages/Profile';
-import AdminPage from './pages/Admin';
-import ForgotPassword from './pages/ForgotPassword';
-import VerifyCode from './pages/VerifyCode';
-import ResetPassword from './pages/ResetPassword';
-import ProfileSettings from './pages/ProfileSettings.jsx';
-import ProfileForm from './components/profile/ProfileForm.jsx';
-import NotFoundPage from './pages/NotFoundPage';
-import ProtectedRoute from './components/auth/ProtectedRoute.jsx';
-import PenalizacionesPage from './pages/PenalizacionesPage.jsx';
-import ReportesPage from './pages/ReportesPage.jsx';
-import DenunciasPage from './pages/DenunciasPage.jsx';
-import SugerenciasPage from './pages/SugerenciasPage.jsx';
-import MonitoreoLibrosPage from './pages/MonitoreoLibrosPage.jsx';
-import Users from './pages/Users.jsx';
-import BookPage from './pages/BookPage.jsx';
-import CategoriasPage from './pages/CategoriasPage.jsx';
-// import AdminReviews from './pages/AdminReviews.jsx';
-import EditBook from './pages/EditBook.jsx';
-import AdminNotifications from './components/admin/AdminNotifications.jsx';
+import AdminNotifications from './components/admin/AdminNotifications';
 import Reader from './reader/Reader';
-import { selectReaderBookId } from './store/readerSlice';
+import ProtectedRoute from './components/auth/ProtectedRoute';
+import { publicRoutes, protectedRoutes, adminRoutes } from './routes/routeConfig';
+
+const LoadingFallback = () => (
+  <div className="d-flex justify-content-center align-items-center vh-100">
+    <div className="spinner-border text-primary" role="status">
+      <span className="visually-hidden">Cargando...</span>
+    </div>
+  </div>
+);
 
 function App() {
-  const navigate = useNavigate();
+  const location = useLocation();
   const dispatch = useDispatch();
   const user = useSelector(selectAuthUser);
-
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   const roles = useSelector(selectAllRoles);
   const readerBookId = useSelector(selectReaderBookId);
 
@@ -52,86 +38,55 @@ function App() {
     return userRole && (userRole.name === 'Administrador' || userRole.name === 'Admin');
   }, [user, roles]);
 
+  // Si es admin y está autenticado, mostrar siempre el navbar de admin
+  const showAdminNavbar = isAuthenticated && isAdmin;
+
   return (
     <>
       {readerBookId && <Reader />}
-      {isAdmin ? <NavbarAdmin /> : <Navbar />}
-      {isAdmin && <AdminNotifications />}
-      <main>
-        <Routes>
-          <Route path="/" element={isAdmin ? <AdminPage /> : <Home />} />
-          <Route path="/Admin" element={
-            <ProtectedRoute requiredRoles={['Administrador']}>
-              <AdminPage />
-            </ProtectedRoute>
-          } />
-          <Route path="*" element={<NotFoundPage />} />
-          <Route path="/catalog" element={<Catalog />} />
-          <Route path="/library" element={
-            <ProtectedRoute>
-              <Library />
-            </ProtectedRoute>
-          } />
-          <Route path="/Login" element={<AuthModal onClose={() => navigate('/')} />} />
-          <Route path="/Upload" element={<ProtectedRoute requiredRoles={['Administrador']}><UploadBooksPage /></ProtectedRoute>} />
-          <Route path="/penalizacion-page" element={<ProtectedRoute requiredRoles={['Administrador']}><PenalizacionesPage /></ProtectedRoute>} />
-          <Route path="/reportes" element={
-            <ProtectedRoute requiredRoles={['Administrador']}>
-              <ReportesPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/denuncias" element={
-            <ProtectedRoute requiredRoles={['Administrador']}>
-              <DenunciasPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/sugerencias" element={
-            <ProtectedRoute requiredRoles={['Administrador']}>
-              <SugerenciasPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/libros" element={
-            <ProtectedRoute requiredRoles={['Administrador']}>
-              <MonitoreoLibrosPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/libros/editar/:id" element={
-            <ProtectedRoute requiredRoles={['Administrador']}>
-              <EditBook />
-            </ProtectedRoute>
-          } />
-          <Route path="/categorias" element={
-            <ProtectedRoute requiredRoles={['Administrador']}>
-              <CategoriasPage />
-            </ProtectedRoute>
-          } />
-          <Route path="/usuarios" element={
-            <ProtectedRoute requiredRoles={['Administrador']}>
-              <Users />
-            </ProtectedRoute>
-          } />
-          <Route path="/profile" element={
-            <ProtectedRoute>
-              <ProfilePage />
-            </ProtectedRoute>
-          } />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/verify-code" element={<VerifyCode />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/profile-settings" element={
-            <ProtectedRoute>
-              <ProfileSettings />
-            </ProtectedRoute>
-          } />
-          <Route path="/profile-form" element={
-            <ProtectedRoute>
-              <ProfileForm />
-            </ProtectedRoute>
-          } />
-          <Route path="/book/:id" element={<BookPage />} />
-        </Routes>
-      </main>
-      <Footer />
+      {showAdminNavbar ? <NavbarAdmin /> : <Navbar />}
+      {showAdminNavbar && <AdminNotifications />}
+      <Suspense fallback={<LoadingFallback />}>
+        <main>
+          <Routes>
+            {/* Rutas públicas */}
+            {publicRoutes.map((route, index) => (
+              <Route
+                key={`public-${index}`}
+                path={route.path}
+                element={route.element}
+              />
+            ))}
+
+            {/* Rutas protegidas - usuarios autenticados */}
+            {protectedRoutes.map((route, index) => (
+              <Route
+                key={`protected-${index}`}
+                path={route.path}
+                element={
+                  <ProtectedRoute>
+                    {route.element}
+                  </ProtectedRoute>
+                }
+              />
+            ))}
+
+            {/* Rutas de admin */}
+            {adminRoutes.map((route, index) => (
+              <Route
+                key={`admin-${index}`}
+                path={route.path}
+                element={
+                  <ProtectedRoute requiredRoles={['Administrador', 'Admin']}>
+                    {route.element}
+                  </ProtectedRoute>
+                }
+              />
+            ))}
+          </Routes>
+        </main>
+      </Suspense>
+      {!showAdminNavbar && <Footer />}
     </>
   );
 }

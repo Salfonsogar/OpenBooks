@@ -2,11 +2,11 @@ export default function ReaderHighlightMenu({ position, onSelectColor, onClose }
     if (!position.show) return null;
 
     const colors = [
-        { color: '#ffeb3b', name: 'Amarillo' },
-        { color: '#a5d6a7', name: 'Verde' },
-        { color: '#90caf9', name: 'Azul' },
-        { color: '#ce93d8', name: 'Violeta' },
-        { color: '#f48fb1', name: 'Rosa' }
+        { color: '#fef08a', name: 'Amarillo' },
+        { color: '#86efac', name: 'Verde' },
+        { color: '#93c5fd', name: 'Azul' },
+        { color: '#c4b5fd', name: 'Violeta' },
+        { color: '#f9a8d4', name: 'Rosa' }
     ];
 
     return (
@@ -18,19 +18,20 @@ export default function ReaderHighlightMenu({ position, onSelectColor, onClose }
             />
 
             <div
-                className="highlight-menu shadow-sm"
+                className="highlight-menu"
                 style={{
                     position: 'fixed',
                     top: position.y,
                     left: position.x,
                     transform: 'translate(-50%, -100%)',
-                    backgroundColor: '#fff',
-                    padding: '8px',
+                    backgroundColor: '#1e293b',
+                    padding: '8px 12px',
                     borderRadius: '50px',
                     display: 'flex',
                     gap: '8px',
                     zIndex: 1100,
-                    marginTop: '-10px'
+                    marginTop: '-10px',
+                    boxShadow: '0 4px 20px rgba(0,0,0,0.3)'
                 }}
             >
                 {colors.map((c) => (
@@ -41,7 +42,14 @@ export default function ReaderHighlightMenu({ position, onSelectColor, onClose }
                         title={c.name}
                         className="color-swatch"
                         style={{
-                            backgroundColor: c.color
+                            backgroundColor: c.color,
+                            width: '28px',
+                            height: '28px',
+                            borderRadius: '50%',
+                            border: '3px solid #fff',
+                            cursor: 'pointer',
+                            boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                            transition: 'transform 0.2s'
                         }}
                     />
                 ))}

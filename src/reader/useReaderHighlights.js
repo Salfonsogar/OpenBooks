@@ -97,6 +97,9 @@ export function useReaderHighlights(bookId, iframeRef, currentIndex) {
         try {
             const span = document.createElement('span');
             span.style.backgroundColor = color;
+            span.style.opacity = '0.7';
+            span.style.borderRadius = '2px';
+            span.style.padding = '0 2px';
             span.dataset.highlightId = newHighlight.id;
             selectionMenu.range.surroundContents(span);
         } catch (e) {

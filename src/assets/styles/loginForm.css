@@ -1,12 +1,12 @@
 .forgot-password-link {
-    color: #5c5c5c !important;
+    color: var(--text-secondary) !important;
     font-weight: 500;
     transition: all 0.3s ease;
 }
 
 .forgot-password-link:hover {
     text-decoration: underline;
-    color: #6e3b3b !important;
+    color: var(--primary) !important;
     letter-spacing: 0.5px;
     cursor: pointer;
     background-color: transparent !important;

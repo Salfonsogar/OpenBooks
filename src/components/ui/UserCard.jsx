@@ -10,8 +10,8 @@ export default function UserCard({ showSettingsButton = false }) {
 
   const getRoleBadgeColor = (role) => {
     const colors = {
-      'Administrador': '#6e3b3b',
-      'Usuario': '#1a5f90',
+      'Administrador': '#1a5f90',
+      'Usuario': '#3073dfff',
     };
     return colors[role] || '#777';
   };

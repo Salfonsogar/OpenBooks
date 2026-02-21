@@ -5,7 +5,7 @@
 }
 
 .input-busqueda {
-  border: 2px solid #6e3b3b;
+  border: 2px solid var(--primary);
   border-radius: 20px;
   padding: 0.5rem 1rem;
   transition: all 0.3s ease;
@@ -17,8 +17,8 @@
 .input-busqueda:focus-visible,
 .form-control:focus,
 input.input-busqueda:focus {
-  border-color: #6e3b3b !important;
-  box-shadow: 0 0 5px #6e3b3b !important;
+  border-color: var(--primary) !important;
+  box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.15) !important;
   outline: none !important;
   outline-width: 0 !important;
   outline-offset: 0 !important;
@@ -35,7 +35,7 @@ input.input-busqueda:focus {
 .btn-buscar,
 .btn.btn-buscar,
 button.btn-buscar {
-  background-color: #6e3b3b !important;
+  background-color: var(--primary) !important;
   color: white !important;
   font-weight: 600;
   border: none !important;
@@ -48,7 +48,7 @@ button.btn-buscar {
 .btn-buscar:hover,
 .btn.btn-buscar:hover,
 button.btn-buscar:hover {
-  background-color: #8b5e3c !important;
+  background-color: var(--primary-dark) !important;
   color: white !important;
   transform: scale(1.05);
 }
@@ -61,15 +61,15 @@ button.btn-buscar:focus {
 }
 
 .btn-paginacion {
-  color: #6e3b3b;
-  border: 2px solid #6e3b3b;
+  color: var(--primary);
+  border: 2px solid var(--primary);
   background: transparent;
   padding: 0.4rem 1rem;
   transition: all 0.3s ease;
 }
 
 .btn-paginacion:hover {
-  background: #6e3b3b;
+  background: var(--primary);
   border: #fff;
   color: #fff;
 }
@@ -80,8 +80,8 @@ button.btn-buscar:focus {
 }
 
 .btn-paginacion:disabled {
-  background: #cccccc;
-  color: #666666;
+  background: #E2E8F0;
+  color: #94A3B8;
   cursor: not-allowed;
   transform: none;
   outline: none !important;
@@ -90,7 +90,7 @@ button.btn-buscar:focus {
 
 .text-paginacion {
   font-weight: 500;
-  color: #333333;
+  color: var(--text-secondary);
 }
 
 /* FIX: Contenedor del historial - ALINEACIÓN PERFECTA */
@@ -104,14 +104,13 @@ button.btn-buscar:focus {
   margin-right: 0;
   padding: 0;
   background: white;
-  border: 2px solid #6e3b3b;
+  border: 2px solid var(--primary);
   border-radius: 0 0 20px 20px;
   border-top: none;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   max-height: 300px;
   overflow-y: auto;
   width: 100%;
-  /* width: 100%; */
 }
 
 .search-wrapper #historial-busquedas .list-group-item {
@@ -131,7 +130,7 @@ button.btn-buscar:focus {
 }
 
 .search-wrapper #historial-busquedas .list-group-item:hover {
-  background-color: #f8f9fa !important;
+  background-color: #F1F5F9 !important;
   cursor: pointer;
 }
 
