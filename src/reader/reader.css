@@ -1,13 +1,42 @@
-button {
-    background-color: transparent !important;
+/* Scope button styles to reader UI specific containers to avoid overriding button styles globally */
+.reader-header button,
+.settings-panel button,
+.toc-sidebar button,
+.bookmarks-sidebar button,
+.reader-footer button {
+    background-color: transparent;
     transition: all 0.3s ease;
     animation: alternate 0.3s ease-in-out;
 }
 
-button:hover {
-    background-color: #6e3b3b !important;
+.reader-header button:hover,
+.settings-panel button:hover,
+.toc-sidebar button:hover,
+.bookmarks-sidebar button:hover,
+.reader-footer button:hover {
+    background-color: #6e3b3b;
 }
 
-button:active {
-    background-color: #6e3b3b !important;
+.reader-header button:active,
+.settings-panel button:active,
+.toc-sidebar button:active,
+.bookmarks-sidebar button:active,
+.reader-footer button:active {
+    background-color: #6e3b3b;
+}
+
+/* Specific styles for the highlight color swatches in the selection menu. Inline backgroundColor set in React will apply now. */
+.highlight-menu button.color-swatch {
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+    cursor: pointer;
+    padding: 0;
+    transition: transform 0.2s;
+}
+
+.highlight-menu button.color-swatch:hover {
+    transform: scale(1.2);
 }

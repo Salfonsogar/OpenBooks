@@ -133,53 +133,25 @@ export default function Catalog() {
           handleCategoriaToggle={handleCategoriaToggle}
         />
 
-        {!query && !autor && categorias.length === 0 && (
-          <>
-            <TopSection
-              title="Más Vistos"
-              icon="bi-eye"
-              books={topViewed}
-              libraryBooks={libraryBooks}
-              isAuthenticated={isAuthenticated}
-              onAdd={onAdd}
-              onRemove={onRemove}
-              onRead={(libro) => dispatch(fetchManifest(libro.id))}
-            />
-            <TopSection
-              title="Más valorados"
-              icon="bi-star"
-              books={topRated}
-              libraryBooks={libraryBooks}
-              isAuthenticated={isAuthenticated}
-              onAdd={onAdd}
-              onRemove={onRemove}
-              onRead={(libro) => dispatch(fetchManifest(libro.id))}
-            />
-          </>
-        )}
+        {/* Always show the catalog grid (paginated). If filters/search are active it will show filtered results. */}
+        <CatalogGrid
+          loading={loading}
+          books={books}
+          activeFiltersCount={activeFiltersCount}
+          clearFilters={clearFilters}
+          libraryBooks={libraryBooks}
+          isAuthenticated={isAuthenticated}
+          onAdd={onAdd}
+          onRemove={onRemove}
+          onRead={(libro) => dispatch(fetchManifest(libro.id))}
+        />
 
-        {(query || autor || categorias.length > 0) && (
-          <>
-            <CatalogGrid
-              loading={loading}
-              books={books}
-              activeFiltersCount={activeFiltersCount}
-              clearFilters={clearFilters}
-              libraryBooks={libraryBooks}
-              isAuthenticated={isAuthenticated}
-              onAdd={onAdd}
-              onRemove={onRemove}
-              onRead={(libro) => dispatch(fetchManifest(libro.id))}
-            />
-
-            {totalPages > 1 && (
-              <Pagination
-                page={page}
-                totalPages={totalPages}
-                onPageChange={setPage}
-              />
-            )}
-          </>
+        {totalPages > 1 && (
+          <Pagination
+            page={page}
+            totalPages={totalPages}
+            onPageChange={setPage}
+          />
         )}
 
         <div className="toast-container">

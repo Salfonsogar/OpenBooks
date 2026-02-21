@@ -35,22 +35,14 @@ export default function ReaderHighlightMenu({ position, onSelectColor, onClose }
             >
                 {colors.map((c) => (
                     <button
+                        type="button"
                         key={c.color}
                         onClick={() => onSelectColor(c.color)}
                         title={c.name}
+                        className="color-swatch"
                         style={{
-                            width: '24px',
-                            height: '24px',
-                            borderRadius: '50%',
-                            backgroundColor: c.color,
-                            border: '2px solid #fff',
-                            boxShadow: '0 1px 3px rgba(0,0,0,0.2)',
-                            cursor: 'pointer',
-                            padding: 0,
-                            transition: 'transform 0.2s'
+                            backgroundColor: c.color
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.2)'}
-                        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
                     />
                 ))}
             </div>
