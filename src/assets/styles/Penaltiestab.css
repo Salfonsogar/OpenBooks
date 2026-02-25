@@ -1,0 +1,278 @@
+/* ============================================================
+   PenaltiesTab — Aesthetic Refactor
+   Scope: VISUAL ONLY — no logic, no structure modified
+   ============================================================ */
+
+/* ── Section Heading ────────────────────────────────────────── */
+.penalties-tab>div>h6:first-child,
+.penalties-tab h6.mb-3 {
+    font-family: 'DM Sans', system-ui, sans-serif !important;
+    font-size: .8125rem !important;
+    font-weight: 700 !important;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #94a3b8 !important;
+    margin-bottom: 16px !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.penalties-tab h6 i.bi-exclamation-triangle {
+    color: #ef4444;
+    font-size: .9375rem;
+}
+
+.penalties-tab h6 i.bi-chat-left-text {
+    color: #2563eb;
+    font-size: .9375rem;
+}
+
+/* ── Empty State ────────────────────────────────────────────── */
+.penalties-tab .text-center.py-5 {
+    padding: 40px 20px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.penalties-tab .text-center.py-5 i.bi-check-circle {
+    font-size: 2.5rem !important;
+    color: #10b981 !important;
+    background: #ecfdf5;
+    padding: 16px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 6px #d1fae5;
+    animation: pulse-green 2s ease-in-out infinite;
+}
+
+@keyframes pulse-green {
+
+    0%,
+    100% {
+        box-shadow: 0 0 0 6px #d1fae5;
+    }
+
+    50% {
+        box-shadow: 0 0 0 10px #a7f3d0;
+    }
+}
+
+.penalties-tab .text-center.py-5 h5 {
+    font-family: 'DM Sans', system-ui, sans-serif !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+    color: #0f172a !important;
+    margin: 8px 0 0 !important;
+}
+
+.penalties-tab .text-center.py-5 p.text-muted {
+    font-family: 'DM Sans', system-ui, sans-serif !important;
+    font-size: .875rem !important;
+    color: #64748b !important;
+    margin: 0 !important;
+}
+
+/* ── Table Wrapper ──────────────────────────────────────────── */
+.penalties-tab .table-responsive {
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid #e8ebf2;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, .04);
+}
+
+/* ── Table ──────────────────────────────────────────────────── */
+.penalties-tab .table {
+    font-family: 'DM Sans', system-ui, sans-serif !important;
+    font-size: .8125rem !important;
+    margin-bottom: 0 !important;
+    border-collapse: separate !important;
+    border-spacing: 0;
+}
+
+.penalties-tab .table thead th {
+    font-size: .6875rem !important;
+    font-weight: 700 !important;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #94a3b8 !important;
+    background: #f8fafc !important;
+    border-bottom: 1px solid #e8ebf2 !important;
+    padding: 10px 14px !important;
+    white-space: nowrap;
+}
+
+.penalties-tab .table tbody tr {
+    transition: background .15s ease;
+}
+
+.penalties-tab .table-hover tbody tr:hover {
+    background: #f8fafc !important;
+}
+
+.penalties-tab .table tbody td {
+    font-size: .8125rem !important;
+    color: #374151 !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+    padding: 12px 14px !important;
+    vertical-align: middle;
+}
+
+.penalties-tab .table tbody tr:last-child td {
+    border-bottom: none !important;
+}
+
+/* ── Motivo cell ────────────────────────────────────────────── */
+.penalties-tab .table tbody td:first-child {
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+}
+
+.penalties-tab .table tbody td i.bi-exclamation-circle {
+    color: #ef4444 !important;
+    font-size: .875rem;
+}
+
+/* ── Date cell ──────────────────────────────────────────────── */
+.penalties-tab .table tbody td small.text-muted {
+    font-family: 'DM Mono', monospace !important;
+    font-size: .75rem !important;
+    color: #94a3b8 !important;
+}
+
+/* ── Badge (estado) ─────────────────────────────────────────── */
+.penalties-tab .badge.bg-danger {
+    background: #fef2f2 !important;
+    color: #dc2626 !important;
+    border: 1px solid #fecaca;
+    font-size: .6875rem !important;
+    font-weight: 600 !important;
+    letter-spacing: .05em;
+    padding: 4px 10px !important;
+    border-radius: 999px !important;
+}
+
+.penalties-tab .badge.bg-secondary {
+    background: #f1f5f9 !important;
+    color: #64748b !important;
+    border: 1px solid #e2e8f0;
+    font-size: .6875rem !important;
+    font-weight: 600 !important;
+    letter-spacing: .05em;
+    padding: 4px 10px !important;
+    border-radius: 999px !important;
+}
+
+/* ── Apelar Button ──────────────────────────────────────────── */
+.penalties-tab .btn.btn-outline-dark.btn-sm {
+    font-family: 'DM Sans', system-ui, sans-serif !important;
+    font-size: .75rem !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    background: #f8fafc !important;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 8px !important;
+    padding: 5px 12px !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background .2s, border-color .2s, color .2s, transform .15s !important;
+}
+
+.penalties-tab .btn.btn-outline-dark.btn-sm:hover {
+    background: #fff !important;
+    border-color: #2563eb !important;
+    color: #2563eb !important;
+    transform: translateY(-1px);
+}
+
+/* ── Appeal Form Panel ──────────────────────────────────────── */
+.penalties-tab .mt-4.p-3.bg-light.rounded {
+    background: #f8fafc !important;
+    border: 1px solid #e8ebf2 !important;
+    border-radius: 16px !important;
+    padding: 20px !important;
+    margin-top: 20px !important;
+}
+
+/* ── Form Label ─────────────────────────────────────────────── */
+.penalties-tab .form-label {
+    font-family: 'DM Sans', system-ui, sans-serif !important;
+    font-size: .8125rem !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    margin-bottom: 8px !important;
+}
+
+/* ── Textarea ───────────────────────────────────────────────── */
+.penalties-tab .form-control {
+    font-family: 'DM Sans', system-ui, sans-serif !important;
+    font-size: .875rem !important;
+    color: #0f172a !important;
+    background: #ffffff !important;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 12px 14px !important;
+    transition: border-color .2s ease, box-shadow .2s ease !important;
+    resize: vertical;
+}
+
+.penalties-tab .form-control::placeholder {
+    color: #94a3b8 !important;
+}
+
+.penalties-tab .form-control:focus {
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .12) !important;
+    outline: none !important;
+}
+
+/* ── Submit Button ──────────────────────────────────────────── */
+.penalties-tab .btn-buscar {
+    font-family: 'DM Sans', system-ui, sans-serif !important;
+    font-size: .875rem !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 10px 20px !important;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    width: 100%;
+    transition: background .2s ease, transform .15s ease, box-shadow .2s ease !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, .25) !important;
+}
+
+.penalties-tab .btn-buscar:hover {
+    background: linear-gradient(135deg, #1d4ed8, #2563eb) !important;
+    box-shadow: 0 4px 16px rgba(37, 99, 235, .40) !important;
+    transform: translateY(-1px);
+}
+
+.penalties-tab .btn-buscar:active {
+    transform: translateY(0) !important;
+}
+
+.penalties-tab .btn-buscar i {
+    font-size: .875rem;
+    transition: transform .2s ease;
+}
+
+.penalties-tab .btn-buscar:hover i {
+    transform: translateX(2px);
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 480px) {
+
+    .penalties-tab .table thead th,
+    .penalties-tab .table tbody td {
+        padding: 10px 10px !important;
+    }
+}

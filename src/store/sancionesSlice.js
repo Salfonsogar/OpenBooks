@@ -79,6 +79,30 @@ export const deleteSancionAsync = createAsyncThunk(
     }
 );
 
+export const fetchAllSancionesAsync = createAsyncThunk(
+    'sanciones/fetchAll',
+    async (_, { rejectWithValue, getState }) => {
+        try {
+            const token = getState().auth.token;
+            const response = await fetch('https://localhost:7080/api/Sancion', {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Error al obtener todas las sanciones');
+            }
+
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
 const initialState = {
     sanciones: [],
     status: 'idle',
@@ -136,6 +160,18 @@ const sancionesSlice = createSlice({
             .addCase(deleteSancionAsync.rejected, (state, action) => {
                 state.deleteStatus = 'failed';
                 state.error = action.payload;
+            })
+            // fetchAllSanciones
+            .addCase(fetchAllSancionesAsync.pending, (state) => {
+                state.status = 'loading';
+            })
+            .addCase(fetchAllSancionesAsync.fulfilled, (state, action) => {
+                state.status = 'succeeded';
+                state.sanciones = action.payload;
+            })
+            .addCase(fetchAllSancionesAsync.rejected, (state, action) => {
+                state.status = 'failed';
+                state.error = action.payload;
             });
     }
 });
@@ -145,6 +181,7 @@ export default sancionesSlice.reducer;
 
 // Selectors
 export const selectSanciones = (state) => state.sanciones.sanciones;
+export const selectAllSanciones = (state) => state.sanciones.sanciones;
 export const selectSancionesStatus = (state) => state.sanciones.status;
 export const selectSancionesCreateStatus = (state) => state.sanciones.createStatus;
 export const selectSancionesDeleteStatus = (state) => state.sanciones.deleteStatus;

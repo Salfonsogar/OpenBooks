@@ -1,3 +1,5 @@
+import '../../assets/styles/PenaltiesTab.css';
+
 export default function PenaltiesTab({ penalties }) {
   const activePenaltiesCount = penalties.filter(p => p.estado === 'Activa').length;
 
@@ -44,11 +46,10 @@ export default function PenaltiesTab({ penalties }) {
                     </td>
                     <td>
                       <span
-                        className={`badge ${
-                          penalty.estado === "Activa"
+                        className={`badge ${penalty.estado === "Activa"
                             ? "bg-danger"
                             : "bg-secondary"
-                        }`}
+                          }`}
                       >
                         {penalty.estado}
                       </span>

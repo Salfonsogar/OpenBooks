@@ -48,19 +48,27 @@ export const fetchBookDetail = createAsyncThunk(
     'books/fetchBookDetail',
     async (id, { rejectWithValue, getState }) => {
         try {
-            const token = getState().auth.token;
+            const token = getState().auth?.token;
             const headers = {};
-            if (token) headers['Authorization'] = `Bearer ${token}`;
-
-            const response = await fetch(`https://localhost:7080/api/Libros/${id}/detalle`, {
-                headers,
-            });
-            if (!response.ok) {
-                throw new Error('Error fetching book details');
+            if (token) {
+                headers['Authorization'] = `Bearer ${token}`;
             }
+
+            console.log('[fetchBookDetail] Fetching book:', id, 'token:', token ? 'yes' : 'no');
+
+            const response = await fetch(`https://localhost:7080/api/Libros/${id}/detalle`, { headers });
+            
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                console.error('[fetchBookDetail] Error response:', response.status, errorData);
+                throw new Error(errorData.message || 'Error fetching book details');
+            }
+            
             const data = await response.json();
+            console.log('[fetchBookDetail] Success:', data);
             return data;
         } catch (error) {
+            console.error('[fetchBookDetail] Catch error:', error);
             return rejectWithValue(error.message);
         }
     }
@@ -237,6 +245,28 @@ export const fetchBookForManagement = createAsyncThunk(
     }
 );
 
+export const fetchAllBooksAsync = createAsyncThunk(
+    'books/fetchAllBooks',
+    async (_, { rejectWithValue, getState }) => {
+        try {
+            const token = getState().auth.token;
+            const headers = {};
+            if (token) headers['Authorization'] = `Bearer ${token}`;
+
+            const response = await fetch('https://localhost:7080/api/Libros', {
+                headers,
+            });
+            if (!response.ok) {
+                throw new Error('Error fetching all books');
+            }
+            const result = await response.json();
+            return result.data || result;
+        } catch (error) {
+            return rejectWithValue(error.message);
+        }
+    }
+);
+
 const booksSlice = createSlice({
     name: 'books',
     initialState: {
@@ -244,6 +274,11 @@ const booksSlice = createSlice({
         catalog: {
             items: [],
             totalPages: 1,
+            status: 'idle',
+            error: null,
+        },
+        allBooks: {
+            items: [],
             status: 'idle',
             error: null,
         },
@@ -335,6 +370,18 @@ const booksSlice = createSlice({
                 state.topRated.status = 'failed';
                 state.topRated.error = action.payload;
             })
+            // fetchAllBooks
+            .addCase(fetchAllBooksAsync.pending, (state) => {
+                state.allBooks.status = 'loading';
+            })
+            .addCase(fetchAllBooksAsync.fulfilled, (state, action) => {
+                state.allBooks.status = 'succeeded';
+                state.allBooks.items = action.payload;
+            })
+            .addCase(fetchAllBooksAsync.rejected, (state, action) => {
+                state.allBooks.status = 'failed';
+                state.allBooks.error = action.payload;
+            })
             // uploadBookAsync
             .addCase(uploadBookAsync.fulfilled, (state, action) => {
                 // Optionally add to catalog if the response is the book object
@@ -367,3 +414,6 @@ export const selectCatalogStatus = (state) => state.books.catalog.status;
 export const selectTopViewedBooks = (state) => state.books.topViewed.items;
 export const selectReports = (state) => state.books.reports.items;
 export const selectTopRatedBooks = (state) => state.books.topRated.items;
+
+export const selectAllBooks = (state) => state.books.allBooks.items;
+export const selectAllBooksStatus = (state) => state.books.allBooks.status;

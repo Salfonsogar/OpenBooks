@@ -58,10 +58,10 @@ export default function PenalizacionesPage() {
   };
 
   return (
-    <div className="min-vh-100 py-5" style={{ background: 'linear-gradient(135deg, #f3e9e0 0%, #fff 100%)' }}>
+    <>
       <div className="container" style={{ maxWidth: '1200px' }}>
         <div className="mb-5">
-          <h1 className="display-5 fw-bold mb-2" style={{ color: '#6e3b3b' }}>
+          <h1 className="display-5 fw-bold mb-2" style={{ color: '#6366F1' }}>
             Gestión de Sanciones
           </h1>
           <p className="text-muted">
@@ -73,7 +73,7 @@ export default function PenalizacionesPage() {
           <div className="col-md-4">
             <div className="card shadow-sm border-0 h-100">
               <div className="card-body">
-                <h5 className="card-title mb-3" style={{ color: '#6e3b3b' }}>Buscar Usuario</h5>
+                <h5 className="card-title mb-3" style={{ color: '#6366F1' }}>Buscar Usuario</h5>
                 <div className="position-relative mb-3">
                   <Search size={18} className="position-absolute text-muted" style={{ left: '12px', top: '12px' }} />
                   <input
@@ -138,7 +138,7 @@ export default function PenalizacionesPage() {
               <div className="d-flex flex-column gap-4">
                 <div className="card shadow-sm border-0">
                   <div className="card-header bg-white border-bottom-0 pt-4 px-4">
-                    <h5 className="card-title m-0" style={{ color: '#6e3b3b' }}>Nueva Sanción</h5>
+                    <h5 className="card-title m-0" style={{ color: '#6366F1' }}>Nueva Sanción</h5>
                   </div>
                   <div className="card-body px-4 pb-4">
                     <form onSubmit={handleCreateSancion}>
@@ -183,7 +183,7 @@ export default function PenalizacionesPage() {
 
                 <div className="card shadow-sm border-0">
                   <div className="card-header bg-white border-bottom-0 pt-4 px-4 d-flex justify-content-between align-items-center">
-                    <h5 className="card-title m-0" style={{ color: '#6e3b3b' }}>Historial de Sanciones</h5>
+                    <h5 className="card-title m-0" style={{ color: '#6366F1' }}>Historial de Sanciones</h5>
                     <span className="badge bg-light text-dark border">
                       Total: {sanciones.length}
                     </span>
@@ -254,6 +254,6 @@ export default function PenalizacionesPage() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

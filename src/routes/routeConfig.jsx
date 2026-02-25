@@ -1,6 +1,10 @@
 import { lazy } from 'react';
+import { Navigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
+import { selectAuthUser, selectIsAuthenticated } from '../store/authSlice';
+import { selectAllRoles } from '../store/rolesSlice';
 
-const Home = lazy(() => import('../pages/Home'));
+const Home = lazy(() => import('../pages/HomePage/Home'));
 const Catalog = lazy(() => import('../pages/Catalog'));
 const BookPage = lazy(() => import('../pages/BookPage'));
 const Library = lazy(() => import('../pages/Library'));
@@ -12,11 +16,10 @@ const AuthModal = lazy(() => import('../components/auth/AuthModal'));
 const ForgotPassword = lazy(() => import('../pages/ForgotPassword'));
 const VerifyCode = lazy(() => import('../pages/VerifyCode'));
 const ResetPassword = lazy(() => import('../pages/ResetPassword'));
-const AdminPage = lazy(() => import('../pages/Admin'));
+const AdminPage = lazy(() => import('../pages/AdminPage/Admin'));
 const UploadBooks = lazy(() => import('../pages/UploadBooks'));
 const Users = lazy(() => import('../pages/Users'));
 const CategoriesPage = lazy(() => import('../pages/CategoriasPage'));
-const ReportesPage = lazy(() => import('../pages/ReportesPage'));
 const DenunciasPage = lazy(() => import('../pages/DenunciasPage'));
 const SugerenciasPage = lazy(() => import('../pages/SugerenciasPage'));
 const PenalizacionesPage = lazy(() => import('../pages/PenalizacionesPage'));
@@ -24,10 +27,36 @@ const MonitoreoLibrosPage = lazy(() => import('../pages/MonitoreoLibrosPage'));
 const EditBook = lazy(() => import('../pages/EditBook'));
 const NotFoundPage = lazy(() => import('../pages/NotFoundPage'));
 
+function HomeRedirect() {
+  const user = useSelector(selectAuthUser);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const roles = useSelector(selectAllRoles);
+
+  const isAdmin = () => {
+    if (!user || !user.rolId || !roles.length) return false;
+    const userRole = roles.find(r => r.id === user.rolId);
+    return userRole && (userRole.name === 'Administrador' || userRole.name === 'Admin');
+  };
+
+  if (!isAuthenticated) {
+    return <Navigate to="/catalog" replace />;
+  }
+
+  if (isAdmin()) {
+    return <Navigate to="/Admin" replace />;
+  }
+
+  return <Navigate to="/home" replace />;
+}
+
 export const publicRoutes = [
   {
     path: '/',
-    element: <Catalog />,
+    element: <HomeRedirect />,
+  },
+  {
+    path: '/home',
+    element: <Home />,
   },
   {
     path: 'catalog',
@@ -98,10 +127,6 @@ export const adminRoutes = [
   {
     path: 'categorias',
     element: <CategoriesPage />,
-  },
-  {
-    path: 'reportes',
-    element: <ReportesPage />,
   },
   {
     path: 'denuncias',

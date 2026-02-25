@@ -4,6 +4,7 @@ import { createSugerenciaAsync, selectSugerenciasCreateStatus, selectSugerencias
 import { selectAuthUser } from '../../store/authSlice';
 import NotificationModal from '../ui/NotificationModal';
 import useNotification from '../../hooks/useNotification';
+import '../../assets/styles/SuggestionsTab.css';
 
 export default function SuggestionsTab() {
   const dispatch = useDispatch();
@@ -41,8 +42,8 @@ export default function SuggestionsTab() {
   };
 
   return (
-    <>
-      <div className="card-body">
+    <div className="suggestions-tab">
+      <div className="card-body ">
         <h6 className="mb-3">
           <i className="bi bi-lightbulb-fill me-2"></i>
           Sugerencias de mejoras
@@ -81,6 +82,6 @@ export default function SuggestionsTab() {
         isOpen={notification.isOpen}
         onClose={closeNotification}
       />
-    </>
+    </div>
   );
 }

@@ -1,0 +1,183 @@
+/* ============================================================
+   ActivityTab — Aesthetic Refactor
+   Scope: VISUAL ONLY — no logic, no structure modified
+   ============================================================ */
+
+/* ── Stat Card Shell ────────────────────────────────────────── */
+.activity-tab .card.bg-light {
+    background: transparent !important;
+    border: none !important;
+}
+
+.activity-tab .card-body {
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+/* ── Section Heading ────────────────────────────────────────── */
+.activity-tab .card-title {
+    font-family: 'DM Sans', system-ui, sans-serif !important;
+    font-size: .8125rem !important;
+    font-weight: 700 !important;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #94a3b8 !important;
+    margin-bottom: 20px !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.activity-tab .card-title i {
+    color: #2563eb;
+    font-size: 1rem;
+}
+
+/* ── Stats Row ──────────────────────────────────────────────── */
+.activity-tab .row.text-center {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+    margin: 0 !important;
+}
+
+/* ── Individual Stat Card ───────────────────────────────────── */
+.activity-tab .col-4 {
+    background: #ffffff;
+    border: 1px solid #e8ebf2;
+    border-radius: 16px;
+    padding: 20px 12px !important;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    position: relative;
+    overflow: hidden;
+    transition: transform .2s ease, box-shadow .2s ease;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, .05), 0 2px 8px rgba(15, 23, 42, .06);
+    animation: statIn .4s ease both;
+}
+
+.activity-tab .col-4:nth-child(1) {
+    animation-delay: .05s;
+}
+
+.activity-tab .col-4:nth-child(2) {
+    animation-delay: .12s;
+}
+
+.activity-tab .col-4:nth-child(3) {
+    animation-delay: .19s;
+}
+
+@keyframes statIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.activity-tab .col-4:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 8px rgba(15, 23, 42, .06), 0 10px 24px rgba(15, 23, 42, .10);
+}
+
+/* Colored top accent per card */
+.activity-tab .col-4:nth-child(1)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #2563eb, #60a5fa);
+    border-radius: 16px 16px 0 0;
+}
+
+.activity-tab .col-4:nth-child(2)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #f59e0b, #fcd34d);
+    border-radius: 16px 16px 0 0;
+}
+
+.activity-tab .col-4:nth-child(3)::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #10b981, #6ee7b7);
+    border-radius: 16px 16px 0 0;
+}
+
+/* ── Icon Pill ──────────────────────────────────────────────── */
+.activity-tab .col-4 i.display-4 {
+    font-size: 1.5rem !important;
+    padding: 10px;
+    border-radius: 12px;
+    margin-bottom: 0 !important;
+}
+
+.activity-tab .col-4:nth-child(1) i.display-4 {
+    color: #2563eb !important;
+    background: #eff6ff;
+}
+
+.activity-tab .col-4:nth-child(2) i.display-4 {
+    color: #d97706 !important;
+    background: #fffbeb;
+}
+
+.activity-tab .col-4:nth-child(3) i.display-4 {
+    color: #059669 !important;
+    background: #ecfdf5;
+}
+
+/* ── Number ─────────────────────────────────────────────────── */
+.activity-tab .col-4 h3.fw-bold {
+    font-family: 'DM Sans', system-ui, sans-serif !important;
+    font-size: 1.875rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -.04em;
+    color: #0f172a !important;
+    line-height: 1;
+    margin: 0 !important;
+}
+
+/* ── Label ──────────────────────────────────────────────────── */
+.activity-tab .col-4 small.text-muted {
+    font-family: 'DM Sans', system-ui, sans-serif !important;
+    font-size: .75rem !important;
+    font-weight: 500;
+    color: #94a3b8 !important;
+    letter-spacing: .02em;
+}
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .activity-tab .row.text-center {
+        grid-template-columns: 1fr !important;
+    }
+
+    .activity-tab .col-4::before {
+        height: 0;
+        width: 3px;
+        height: 100%;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: auto;
+        border-radius: 16px 0 0 16px;
+    }
+}

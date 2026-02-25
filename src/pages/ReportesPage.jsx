@@ -34,10 +34,10 @@ export default function ReportesPage() {
   };
 
   return (
-    <div className="min-vh-100 py-5" style={{ background: 'linear-gradient(135deg, #f3e9e0 0%, #fff 100%)' }}>
+    <>
       <div className="container" style={{ maxWidth: '1200px' }}>
         <div className="mb-5">
-          <h1 className="display-5 fw-bold mb-2" style={{ color: '#6e3b3b' }}>
+          <h1 className="display-5 fw-bold mb-2" style={{ color: '#6366F1' }}>
             Gestión de Reportes
           </h1>
           <p className="text-muted">
@@ -47,7 +47,7 @@ export default function ReportesPage() {
 
         <div className="card shadow-sm border-0">
           <div className="card-header bg-white border-bottom-0 pt-4 px-4 d-flex justify-content-between align-items-center">
-            <h5 className="card-title m-0" style={{ color: '#6e3b3b' }}>Denuncias Recientes</h5>
+            <h5 className="card-title m-0" style={{ color: '#6366F1' }}>Denuncias Recientes</h5>
             <span className="badge bg-light text-dark border">
               Total: {denuncias.length} (Página {pagina})
             </span>
@@ -147,6 +147,6 @@ export default function ReportesPage() {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }

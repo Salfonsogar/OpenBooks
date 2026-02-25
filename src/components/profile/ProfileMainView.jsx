@@ -1,16 +1,17 @@
+import '../../assets/styles/ProfileMainView.css';
+
 export default function ProfileMainView() {
   return (
-    <div className="card-body d-flex flex-column justify-content-center align-items-center text-center min-vh-100">
-      <div className="mb-4">
-        <i
-          className="bi bi-gear-wide-connected text-muted"
-          style={{ fontSize: "5rem", opacity: 0.3 }}
-        ></i>
+    <div className="profile-main">
+      <div className="profile-main__empty">
+        <div className="profile-main__icon">
+          <i className="bi bi-gear-wide-connected"></i>
+        </div>
+        <h4 className="profile-main__title">Configuración de Cuenta</h4>
+        <p className="profile-main__subtitle">
+          Selecciona una opción del menú lateral para comenzar
+        </p>
       </div>
-      <h4 className="text-muted mb-3">Configuración de Cuenta</h4>
-      <p className="text-muted">
-        Selecciona una opción del menú lateral para comenzar
-      </p>
     </div>
   );
 }

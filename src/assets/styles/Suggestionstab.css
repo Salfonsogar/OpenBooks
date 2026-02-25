@@ -1,0 +1,113 @@
+/* ── Tab Wrapper ────────────────────────────────────────────── */
+.suggestions-tab .card-body {
+    padding: 0 !important;
+    background: transparent !important;
+}
+
+/* ── Section Heading ────────────────────────────────────────── */
+.suggestions-tab h6 {
+    font-family: 'DM Sans', system-ui, sans-serif !important;
+    font-size: .8125rem !important;
+    font-weight: 700 !important;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: #94a3b8 !important;
+    margin-bottom: 8px !important;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.suggestions-tab h6 i {
+    color: #f59e0b;
+    font-size: .9375rem;
+}
+
+/* ── Subtitle ───────────────────────────────────────────────── */
+.suggestions-tab p.text-muted {
+    font-family: 'DM Sans', system-ui, sans-serif !important;
+    font-size: .875rem !important;
+    color: #64748b !important;
+    margin-bottom: 20px !important;
+    line-height: 1.6;
+}
+
+/* ── Form Label ─────────────────────────────────────────────── */
+.suggestions-tab .form-label {
+    font-family: 'DM Sans', system-ui, sans-serif !important;
+    font-size: .8125rem !important;
+    font-weight: 600 !important;
+    color: #374151 !important;
+    margin-bottom: 8px !important;
+}
+
+/* ── Textarea ───────────────────────────────────────────────── */
+.suggestions-tab .form-control {
+    font-family: 'DM Sans', system-ui, sans-serif !important;
+    font-size: .875rem !important;
+    color: #0f172a !important;
+    background: #f8fafc !important;
+    border: 1.5px solid #e2e8f0 !important;
+    border-radius: 12px !important;
+    padding: 12px 14px !important;
+    transition: border-color .2s ease, box-shadow .2s ease, background .2s ease !important;
+    resize: vertical;
+    min-height: 110px;
+}
+
+.suggestions-tab .form-control::placeholder {
+    color: #94a3b8 !important;
+}
+
+.suggestions-tab .form-control:focus {
+    background: #ffffff !important;
+    border-color: #2563eb !important;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .12) !important;
+    outline: none !important;
+}
+
+/* ── Submit Button ──────────────────────────────────────────── */
+.suggestions-tab .btn-buscar {
+    font-family: 'DM Sans', system-ui, sans-serif !important;
+    font-size: .875rem !important;
+    font-weight: 600 !important;
+    color: #ffffff !important;
+    background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 10px 20px !important;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background .2s ease, transform .15s ease, box-shadow .2s ease !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, .25) !important;
+    width: 100%;
+    justify-content: center;
+}
+
+.suggestions-tab .btn-buscar:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1d4ed8, #2563eb) !important;
+    box-shadow: 0 4px 16px rgba(37, 99, 235, .40) !important;
+    transform: translateY(-1px);
+}
+
+.suggestions-tab .btn-buscar:active:not(:disabled) {
+    transform: translateY(0) !important;
+    box-shadow: 0 1px 4px rgba(37, 99, 235, .20) !important;
+}
+
+.suggestions-tab .btn-buscar:disabled {
+    opacity: .65;
+    cursor: not-allowed;
+    transform: none !important;
+}
+
+.suggestions-tab .btn-buscar i {
+    font-size: .875rem;
+    transition: transform .2s ease;
+}
+
+.suggestions-tab .btn-buscar:hover:not(:disabled) i {
+    transform: translateX(2px);
+}

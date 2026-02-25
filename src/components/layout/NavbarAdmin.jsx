@@ -1,153 +1,135 @@
-
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, useEffect, useRef } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { logout } from "../../store/authSlice";
 import "../../assets/styles/Navbar.css";
+import user from "../../assets/icons/user.svg";
+import shieldUser from "../../assets/icons/shield-user.svg";
+
+const adminMenuItems = [
+  { path: "/penalizacion-page", icon: "fa-exclamation-triangle", label: "Penalizaciones" },
+  { path: "/denuncias", icon: "fa-flag", label: "Denuncias" },
+  { path: "/sugerencias", icon: "fa-lightbulb", label: "Sugerencias" },
+  { path: "/usuarios", icon: "fa-users", label: "Usuarios" },
+  { path: "/libros", icon: "fa-book-open", label: "Libros" },
+  { path: "/categorias", icon: "fa-tags", label: "Categorías" },
+];
+
+const CaretDown = ({ open }) => (
+  <svg
+    className={`dropdown-caret${open ? " open" : ""}`}
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+    aria-hidden="true"
+  >
+    <path
+      fillRule="evenodd"
+      d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
 
 export default function NavbarAdmin() {
   const [showAccount, setShowAccount] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const location = useLocation();
+  const dropdownRef = useRef(null);
 
   const handleLogout = () => {
     dispatch(logout());
-    navigate('/');
+    navigate("/");
     setShowAccount(false);
   };
 
+  // Close dropdown on outside click
+  useEffect(() => {
+    const handler = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target))
+        setShowAccount(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, []);
+
   return (
-    <nav className="navbar navbar-expand-lg navbar-admin" >
+    <nav className="navbar navbar-expand-lg navbar-admin">
       <div className="container-fluid">
-        <Link
-          className="navbar-brand"
-          to="/Admin"
-          style={{ color: '#fff', cursor: 'pointer', display: 'flex', alignItems: 'center' }}
-        >
-          <img
-            src="https://cdn-icons-png.flaticon.com/512/29/29302.png"
-            alt="Logo"
-            width="30"
-            height="24"
-            className="d-inline-block align-text-top me-2"
-            style={{ filter: 'brightness(0) invert(1)' }}
-          />
-          <span style={{ color: '#fff', fontWeight: 600 }}>OpenBooks</span>
+
+        {/* ── Brand ── */}
+        <Link className="navbar-brand" to="/Admin">
+          <span className="navbar-brand-icon">
+            <img src="https://cdn-icons-png.flaticon.com/512/29/29302.png" alt="Logo" />
+          </span>
+          OpenBooks
+          <span className="admin-badge">Admin</span>
         </Link>
 
-        <button
-          className="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarContent"
-          aria-controls="navbarContent"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-        >
-          <span className="navbar-toggler-icon"></span>
-        </button>
+        {/*
+          RIGHT SIDE: always visible — Mi Cuenta dropdown + hamburger
+          The hamburger only controls the nav links collapse, NOT Mi Cuenta.
+        */}
+        <div className="navbar-admin-right">
 
-        <div className="collapse navbar-collapse" id="navbarContent">
-          <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <Link
-                className="nav-link text-white"
-                to="/penalizacion-page"
-              >
-                <i className="fas fa-exclamation-triangle me-2"></i>
-                Penalizaciones
-              </Link>
-            </li>
+          {/* Mi Cuenta — always visible, never collapses */}
+          <div className="dropdown admin-account" ref={dropdownRef}>
+            <button
+              className="nav-link dropdown-toggle-btn"
+              onClick={() => setShowAccount((p) => !p)}
+              aria-haspopup="true"
+              aria-expanded={showAccount}
+            >
+              <img src={user} alt="" aria-hidden="true" />
+              <span className="admin-account-label">Mi Cuenta</span>
+              <CaretDown open={showAccount} />
+            </button>
 
-            <li className="nav-item">
-              <Link
-                className="nav-link text-white"
-                to="/denuncias"
-              >
-                <i className="fas fa-flag me-2"></i>
-                Denuncias
-              </Link>
-            </li>
-
-            <li className="nav-item">
-              <Link
-                className="nav-link text-white"
-                to="/sugerencias"
-              >
-                <i className="fas fa-lightbulb me-2"></i>
-                Sugerencias
-              </Link>
-            </li>
-
-            <li className="nav-item">
-              <Link
-                className="nav-link text-white"
-                to="/usuarios"
-              >
-                <i className="fas fa-users me-2"></i>
-                Usuarios
-              </Link>
-            </li>
-
-            <li className="nav-item">
-              <Link
-                className="nav-link text-white"
-                to="/libros"
-              >
-                <i className="fas fa-book-open me-2"></i>
-                Libros
-              </Link>
-            </li>
-
-            <li className="nav-item">
-              <Link
-                className="nav-link text-white"
-                to="/categorias"
-              >
-                <i className="fas fa-tags me-2"></i>
-                Categorías
-              </Link>
-            </li>
-
-            <li className="nav-item">
-              <span
-                className="nav-item nav-link text-white"
-                style={{ cursor: "pointer" }}
-                onClick={() => setShowAccount(!showAccount)}
-              >
-                <i className="fas fa-user-circle me-2"></i>
-                Cuenta{" "}
-                <i
-                  className={`fa fa-angle-${showAccount ? "up" : "down"} ms-1`}
-                  aria-hidden="true"
-                ></i>
-              </span>
-            </li>
-
-            {showAccount && (
-              <>
-                <li className="nav-item">
+            <ul className={`dropdown-menu dropdown-menu-end${showAccount ? " show" : ""}`}>
+              <li className="dropdown-header">Administrador</li>
+              <li>
+                <Link className="dropdown-item" to="/profile" onClick={() => setShowAccount(false)}>
+                  <img src={shieldUser} alt="" aria-hidden="true" />
+                  Mi perfil
+                </Link>
+              </li>
+              <li><hr className="dropdown-divider" /></li>
+              <li>
+                <button className="dropdown-item logout-item" onClick={handleLogout}>
+                  <i className="fas fa-sign-out-alt"></i>
+                  Cerrar sesión
+                </button>
+              </li>
+            </ul>
+          </div>
+          {/* ── Collapsible nav links ── */}
+          <div className="collapse navbar-collapse" id="adminNavLinks">
+            <ul className="navbar-nav me-auto mb-2 mb-lg-0 align-items-lg-center gap-lg-1">
+              {adminMenuItems.map((item) => (
+                <li className="nav-item" key={item.path}>
                   <Link
-                    className="nav-link text-white"
-                    to="/profile"
+                    className={`nav-link sm${location.pathname === item.path ? " active" : ""}`}
+                    to={item.path}
                   >
-                    <i className="fas fa-user-shield me-2"></i>
-                    Mi perfil
+                    {item.label}
                   </Link>
                 </li>
-                <li className="nav-item">
-                  <button
-                    className="nav-link text-white btn btn-link text-decoration-none"
-                    onClick={handleLogout}
-                    style={{ background: 'none', border: 'none' }}
-                  >
-                    <i className="fas fa-sign-out-alt me-2"></i>
-                    Cerrar sesión
-                  </button>
-                </li>
-              </>
-            )}
-          </ul>
+              ))}
+            </ul>
+          </div>
+          {/* Hamburger — only toggles the nav links */}
+          <button
+            className="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#adminNavLinks"
+            aria-controls="adminNavLinks"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span className="navbar-toggler-icon"></span>
+          </button>
         </div>
       </div>
     </nav>

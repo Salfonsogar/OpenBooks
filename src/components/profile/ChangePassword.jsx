@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useDispatch, useSelector } from 'react-redux';
 import { updateUserAsync } from '../../store/usersSlice';
 import { selectAuthUser } from '../../store/authSlice';
+import '../../assets/styles/ChangePassword.css';
 
 export default function ChangePassword() {
   const dispatch = useDispatch();
@@ -94,36 +95,43 @@ export default function ChangePassword() {
   const strength = passwordStrength(formData.newPassword);
 
   return (
-    <div className="container my-0 p-4">
-      <h2 className="fw-bold mb-2 justify-content-center d-flex">
-        <i className="bi bi-shield-lock me-2 text-warning"></i>
-        Cambiar Contraseña
-      </h2>
-      <form onSubmit={handleSubmit}>
-        {message.text && (
-          <div className={`alert alert-${message.type} alert-dismissible fade show`} role="alert">
-            <i className={`bi bi-${message.type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2`}></i>
-            {message.text}
-            <button
-              type="button"
-              className="btn-close"
-              onClick={() => setMessage({ type: "", text: "" })}
-            ></button>
-          </div>
-        )}
+    <div className="profile-password">
+      <div className="profile-password__header">
+        <div className="profile-password__icon">
+          <i className="bi bi-shield-lock"></i>
+        </div>
+        <div>
+          <h4 className="profile-password__title">Cambiar Contraseña</h4>
+          <p className="profile-password__subtitle">Actualiza tu contraseña para mantener tu cuenta segura</p>
+        </div>
+      </div>
 
-        <div className="mb-3">
-          <label htmlFor="newPassword" className="form-label fw-bold">
-            <i className="bi bi-shield-check me-2"></i>
+      {message.text && (
+        <div className={`profile-alert profile-alert--${message.type}`}>
+          <i className={`bi bi-${message.type === 'success' ? 'check-circle' : 'exclamation-triangle'}`}></i>
+          <span>{message.text}</span>
+          <button
+            className="profile-alert__close"
+            onClick={() => setMessage({ type: "", text: "" })}
+          >
+            <i className="bi bi-x"></i>
+          </button>
+        </div>
+      )}
+
+      <form onSubmit={handleSubmit} className="profile-password__body">
+        <div className="profile-password__field">
+          <label htmlFor="newPassword" className="profile-password__label">
+            <i className="bi bi-shield-check"></i>
             Nueva Contraseña
           </label>
-          <div className="input-group">
-            <span className="input-group-text">
+          <div className="profile-password__input-group">
+            <span className="profile-password__input-icon">
               <i className="bi bi-lock-fill"></i>
             </span>
             <input
               type={showPasswords.new ? "text" : "password"}
-              className="form-control"
+              className="profile-password__input"
               id="newPassword"
               name="newPassword"
               value={formData.newPassword}
@@ -134,7 +142,7 @@ export default function ChangePassword() {
             />
             <button
               type="button"
-              className="btn btn-outline-secondary"
+              className="profile-password__toggle"
               onClick={() => togglePassword("new")}
               disabled={loading}
             >
@@ -142,32 +150,32 @@ export default function ChangePassword() {
             </button>
           </div>
           {formData.newPassword && (
-            <div className="mt-2">
-              <div className="progress" style={{ height: "5px" }}>
+            <div className="profile-password__strength">
+              <div className="profile-password__strength-bar">
                 <div
-                  className={`progress-bar bg-${strength.color}`}
+                  className={`profile-password__strength-fill profile-password__strength-fill--${strength.color}`}
                   style={{ width: `${(strength.level / 3) * 100}%` }}
                 ></div>
               </div>
-              <small className={`text-${strength.color}`}>
+              <span className={`profile-password__strength-text profile-password__strength-text--${strength.color}`}>
                 Fortaleza: {strength.text}
-              </small>
+              </span>
             </div>
           )}
         </div>
 
-        <div className="mb-4">
-          <label htmlFor="confirmPassword" className="form-label fw-bold">
-            <i className="bi bi-check-circle me-2"></i>
+        <div className="profile-password__field">
+          <label htmlFor="confirmPassword" className="profile-password__label">
+            <i className="bi bi-check-circle"></i>
             Confirmar Nueva Contraseña
           </label>
-          <div className="input-group">
-            <span className="input-group-text">
+          <div className="profile-password__input-group">
+            <span className="profile-password__input-icon">
               <i className="bi bi-lock-fill"></i>
             </span>
             <input
               type={showPasswords.confirm ? "text" : "password"}
-              className="form-control"
+              className="profile-password__input"
               id="confirmPassword"
               name="confirmPassword"
               value={formData.confirmPassword}
@@ -178,7 +186,7 @@ export default function ChangePassword() {
             />
             <button
               type="button"
-              className="btn btn-outline-secondary"
+              className="profile-password__toggle"
               onClick={() => togglePassword("confirm")}
               disabled={loading}
             >
@@ -187,44 +195,44 @@ export default function ChangePassword() {
           </div>
         </div>
 
-        <div className="alert alert-info mb-4">
-          <h6 className="alert-heading">
-            <i className="bi bi-info-circle me-2"></i>
+        <div className="profile-password__requirements">
+          <h6>
+            <i className="bi bi-info-circle"></i>
             Requisitos de Contraseña:
           </h6>
-          <ul className="mb-0 small">
+          <ul>
             <li>Al menos 8 caracteres</li>
             <li>Una letra mayúscula y una minúscula</li>
             <li>Al menos un número</li>
           </ul>
         </div>
 
-        <div className="d-flex justify-content-end gap-2">
+        <div className="profile-password__actions">
           <button
             type="button"
-            className="btn btn-outline-secondary"
+            className="profile-password__cancel"
             onClick={() => setFormData({
               newPassword: "",
               confirmPassword: ""
             })}
             disabled={loading}
           >
-            <i className="bi bi-x-circle me-2"></i>
+            <i className="bi bi-x-circle"></i>
             Cancelar
           </button>
           <button
             type="submit"
-            className="btn btn-main"
+            className="profile-password__submit"
             disabled={loading}
           >
             {loading ? (
               <>
-                <span className="spinner-border spinner-border-sm me-2"></span>
+                <span className="profile-password__spinner"></span>
                 Guardando...
               </>
             ) : (
               <>
-                <i className="bi bi-save me-2"></i>
+                <i className="bi bi-save"></i>
                 Guardar Cambios
               </>
             )}

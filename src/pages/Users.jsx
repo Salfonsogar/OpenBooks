@@ -163,11 +163,11 @@ export default function Users() {
   };
 
   return (
-    <div className="min-vh-100 py-5" style={{ background: 'linear-gradient(135deg, #f3e9e0 0%, #fff 100%)' }}>
+    <>
       <div className="container" style={{ maxWidth: '1200px' }}>
         <div className="d-flex justify-content-between align-items-center mb-5">
           <div>
-            <h1 className="display-5 fw-bold mb-2" style={{ color: '#6e3b3b' }}>Gestión de Usuarios</h1>
+            <h1 className="display-5 fw-bold mb-2" style={{ color: '#6366F1' }}>Gestión de Usuarios</h1>
             <p className="text-muted">Administra los usuarios y sus roles en el sistema</p>
           </div>
           <button className="btn btn-main btn-lg" onClick={() => openModal()}>
@@ -454,6 +454,6 @@ export default function Users() {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

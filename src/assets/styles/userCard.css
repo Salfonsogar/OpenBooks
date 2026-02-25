@@ -1,9 +1,299 @@
-.account-settings-btn{
-    transition: all 0.3s ease;
+/* ============================================================
+   UserCard — Design System & Aesthetic Refactor
+   Scope: VISUAL ONLY — no logic, no structure modified
+   ============================================================ */
+
+/* ── 1. Design Tokens ───────────────────────────────────────── */
+:root {
+    /* Palette */
+    --uc-bg-card: #ffffff;
+    --uc-bg-surface: #f8f9fc;
+    --uc-border: #e8ebf2;
+    --uc-shadow-sm: 0 1px 3px rgba(15, 23, 42, .06), 0 4px 16px rgba(15, 23, 42, .08);
+    --uc-shadow-hover: 0 4px 8px rgba(15, 23, 42, .06), 0 12px 32px rgba(15, 23, 42, .12);
+
+    --uc-primary: #2563eb;
+    --uc-primary-light: #eff6ff;
+    --uc-primary-hover: #1d4ed8;
+    --uc-primary-active: #1e40af;
+
+    --uc-text-heading: #0f172a;
+    --uc-text-body: #475569;
+    --uc-text-muted: #94a3b8;
+    --uc-text-on-dark: #ffffff;
+
+    /* Avatar ring */
+    --uc-ring: #2563eb;
+    --uc-ring-gap: #ffffff;
+
+    /* Radius */
+    --uc-radius-card: 20px;
+    --uc-radius-btn: 12px;
+    --uc-radius-badge: 999px;
+    --uc-radius-avatar: 50%;
+
+    /* Spacing (4px base) */
+    --uc-space-1: 4px;
+    --uc-space-2: 8px;
+    --uc-space-3: 12px;
+    --uc-space-4: 16px;
+    --uc-space-5: 20px;
+    --uc-space-6: 24px;
+    --uc-space-8: 32px;
+    --uc-space-10: 40px;
+
+    /* Typography */
+    --uc-font: 'DM Sans', system-ui, sans-serif;
+    --uc-font-mono: 'DM Mono', monospace;
 }
-.account-settings-btn:hover{
-    color: #fff;
+
+/* ── 2. Card Shell ──────────────────────────────────────────── */
+.card {
+    font-family: var(--uc-font) !important;
+    background: var(--uc-bg-card) !important;
+    border: 1px solid var(--uc-border) !important;
+    border-radius: var(--uc-radius-card) !important;
+    box-shadow: var(--uc-shadow-sm) !important;
+    transition: box-shadow .25s ease, transform .25s ease !important;
+    overflow: hidden;
 }
-.btn-add-bookmark:hover{
-    transform: scale(1.05);
+
+.card:hover {
+    box-shadow: var(--uc-shadow-hover) !important;
+    transform: translateY(-2px);
 }
+
+/* ── 3. Card Body ───────────────────────────────────────────── */
+.card-body {
+    padding: var(--uc-space-8) var(--uc-space-6) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 0 !important;
+}
+
+/* ── 4. Decorative header strip ─────────────────────────────── */
+.card-body::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 72px;
+    background: linear-gradient(135deg, #2563eb 0%, #3b82f6 60%, #60a5fa 100%);
+    border-radius: var(--uc-radius-card) var(--uc-radius-card) 0 0;
+    z-index: 0;
+}
+
+.card {
+    position: relative;
+}
+
+/* ── 5. Avatar ──────────────────────────────────────────────── */
+.card-body img.rounded-circle {
+    position: relative;
+    z-index: 1;
+    width: 96px !important;
+    height: 96px !important;
+    border-radius: var(--uc-radius-avatar) !important;
+    border: 3px solid var(--uc-ring-gap);
+    box-shadow:
+        0 0 0 3px var(--uc-ring),
+        0 4px 16px rgba(37, 99, 235, .30) !important;
+    object-fit: cover !important;
+    margin-bottom: var(--uc-space-4) !important;
+    margin-top: 32px;
+    /* lifts avatar to straddle the strip */
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.card:hover .card-body img.rounded-circle {
+    transform: scale(1.03);
+    box-shadow:
+        0 0 0 3px var(--uc-ring),
+        0 8px 24px rgba(37, 99, 235, .40) !important;
+}
+
+/* ── 6. Name ────────────────────────────────────────────────── */
+.card-body h4.fw-bold {
+    font-family: var(--uc-font) !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    letter-spacing: -.02em;
+    color: var(--uc-text-heading) !important;
+    margin-bottom: var(--uc-space-1) !important;
+    text-align: center;
+}
+
+/* ── 7. Email ───────────────────────────────────────────────── */
+.card-body p.text-muted {
+    font-size: .8125rem !important;
+    color: var(--uc-text-muted) !important;
+    letter-spacing: .01em;
+    margin-bottom: var(--uc-space-4) !important;
+    font-family: var(--uc-font-mono, monospace) !important;
+}
+
+/* ── 8. Role Badge ──────────────────────────────────────────── */
+.card-body .badge {
+    font-family: var(--uc-font) !important;
+    font-size: .6875rem !important;
+    font-weight: 600 !important;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    padding: var(--uc-space-1) var(--uc-space-3) !important;
+    border-radius: var(--uc-radius-badge) !important;
+    margin-bottom: var(--uc-space-6) !important;
+    /* color and bg-color come from inline styles — kept as-is (no logic touch) */
+    /* We only add subtle shadow for depth */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .15) !important;
+    transition: transform .2s ease;
+}
+
+.card:hover .card-body .badge {
+    transform: scale(1.04);
+}
+
+/* ── 9. Action Zone ─────────────────────────────────────────── */
+.card-body .mt-3 {
+    width: 100%;
+    margin-top: 0 !important;
+    display: flex;
+    flex-direction: column;
+    gap: var(--uc-space-2);
+    padding-top: var(--uc-space-5);
+    border-top: 1px solid var(--uc-border);
+}
+
+/* ── 10. Primary Button ─────────────────────────────────────── */
+.btn-main,
+.card-body .btn-main {
+    font-family: var(--uc-font) !important;
+    font-size: .875rem !important;
+    font-weight: 600 !important;
+    letter-spacing: .01em;
+    color: var(--uc-text-on-dark) !important;
+    background: linear-gradient(135deg, #2563eb, #3b82f6) !important;
+    border: none !important;
+    border-radius: var(--uc-radius-btn) !important;
+    padding: 10px var(--uc-space-4) !important;
+    width: 100%;
+    cursor: pointer;
+    transition: background .2s ease, transform .15s ease, box-shadow .2s ease !important;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, .25) !important;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Ripple shine on hover */
+.btn-main::after,
+.card-body .btn-main::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(255, 255, 255, .12), transparent);
+    opacity: 0;
+    transition: opacity .2s ease;
+    border-radius: inherit;
+}
+
+.btn-main:hover,
+.card-body .btn-main:hover {
+    background: linear-gradient(135deg, var(--uc-primary-hover), #2563eb) !important;
+    box-shadow: 0 4px 16px rgba(37, 99, 235, .40) !important;
+    transform: translateY(-1px);
+}
+
+.btn-main:hover::after,
+.card-body .btn-main:hover::after {
+    opacity: 1;
+}
+
+.btn-main:active,
+.card-body .btn-main:active {
+    transform: translateY(0) !important;
+    box-shadow: 0 1px 4px rgba(37, 99, 235, .20) !important;
+}
+
+.btn-main:focus-visible,
+.card-body .btn-main:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, .45) !important;
+    outline-offset: 2px;
+}
+
+/* ── 11. Secondary / Outline Button ─────────────────────────── */
+.btn-outline-main,
+.account-settings-btn {
+    font-family: var(--uc-font) !important;
+    font-size: .875rem !important;
+    font-weight: 500 !important;
+    color: var(--uc-primary) !important;
+    background: var(--uc-primary-light) !important;
+    border: 1.5px solid transparent !important;
+    border-radius: var(--uc-radius-btn) !important;
+    padding: 10px var(--uc-space-4) !important;
+    width: 100%;
+    transition: background .2s ease, border-color .2s ease, transform .15s ease !important;
+    text-decoration: none !important;
+}
+
+.btn-outline-main:hover,
+.account-settings-btn:hover {
+    background: #dbeafe !important;
+    border-color: var(--uc-primary) !important;
+    color: var(--uc-primary-hover) !important;
+    transform: translateY(-1px);
+}
+
+.btn-outline-main:active,
+.account-settings-btn:active {
+    transform: translateY(0) !important;
+    background: #bfdbfe !important;
+}
+
+.btn-outline-main:focus-visible,
+.account-settings-btn:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, .35) !important;
+    outline-offset: 2px;
+}
+
+.btn-outline-main i,
+.account-settings-btn i {
+    font-size: .875rem;
+    opacity: .8;
+    transition: opacity .2s ease;
+}
+
+.btn-outline-main:hover i,
+.account-settings-btn:hover i {
+    opacity: 1;
+}
+
+/* ── 12. Responsive ─────────────────────────────────────────── */
+@media (max-width: 480px) {
+    .card {
+        border-radius: 16px !important;
+    }
+
+    .card-body {
+        padding: var(--uc-space-6) var(--uc-space-4) !important;
+    }
+
+    .card-body h4.fw-bold {
+        font-size: 1rem !important;
+    }
+
+    .btn-main,
+    .btn-outline-main,
+    .account-settings-btn {
+        padding: 13px var(--uc-space-4) !important;
+        /* bigger tap target */
+        font-size: .9375rem !important;
+    }
+}
+
+/* ── 13. Import DM Sans & DM Mono from Google Fonts ─────────── */
+/* Add to your index.html <head> or main.css:
+   <link rel="preconnect" href="https://fonts.googleapis.com">
+   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+*/

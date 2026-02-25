@@ -1,0 +1,124 @@
+/* ============================================================
+   ProfileMainView — Modern Visual System
+   Scope: VISUAL ONLY
+   ============================================================ */
+
+.profile-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  padding: 48px 24px;
+  text-align: center;
+  animation: mainFadeIn 0.5s ease both;
+}
+
+@keyframes mainFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.profile-main__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.profile-main__icon {
+  width: 100px;
+  height: 100px;
+  border-radius: 24px;
+  background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 8px;
+  animation: iconFloat 3s ease-in-out infinite;
+  position: relative;
+}
+
+@keyframes iconFloat {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+.profile-main__icon::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  border-radius: 28px;
+  background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(236, 72, 153, 0.1));
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.profile-main:hover .profile-main__icon::before {
+  opacity: 1;
+}
+
+.profile-main__icon i {
+  font-size: 2.5rem;
+  color: #94a3b8;
+  transition: color 0.3s ease;
+}
+
+.profile-main:hover .profile-main__icon i {
+  color: #6366f1;
+}
+
+.profile-main__title {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+
+.profile-main__subtitle {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  font-size: 0.9375rem;
+  color: #64748b;
+  margin: 0;
+  max-width: 280px;
+  line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 576px) {
+  .profile-main {
+    min-height: 300px;
+    padding: 32px 16px;
+  }
+
+  .profile-main__icon {
+    width: 80px;
+    height: 80px;
+    border-radius: 20px;
+  }
+
+  .profile-main__icon i {
+    font-size: 2rem;
+  }
+
+  .profile-main__title {
+    font-size: 1.125rem;
+  }
+
+  .profile-main__subtitle {
+    font-size: 0.875rem;
+  }
+}

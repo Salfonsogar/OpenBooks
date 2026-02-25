@@ -1,0 +1,40 @@
+// hooks/useBookRating.js
+import { useDispatch, useSelector } from "react-redux";
+import { createRating, updateRating, selectUserRating } from "../store/ratingsSlice";
+import { selectIsAuthenticated } from "../store/authSlice";
+import useNotification from "../hooks/useNotification";
+
+/**
+ * Encapsula toda la lógica de valoración de un libro:
+ * - Verificación de autenticación
+ * - Decidir entre crear o actualizar
+ * - Manejo de errores con notificación
+ *
+ * @param {string|number} libroId
+ * @returns {{ handleRate, notification, closeNotification }}
+ */
+export function useBookRating(libroId) {
+    const dispatch = useDispatch();
+    const isAuthenticated = useSelector(selectIsAuthenticated);
+    const userRating = useSelector((state) => selectUserRating(state, libroId));
+    const { notification, showNotification, closeNotification } = useNotification();
+
+    const handleRate = async (puntuacion) => {
+        if (!isAuthenticated) {
+            showNotification("Debes iniciar sesión para valorar libros");
+            return;
+        }
+
+        try {
+            const action = userRating
+                ? updateRating({ idLibro: libroId, puntuacion })
+                : createRating({ idLibro: libroId, puntuacion });
+
+            await dispatch(action).unwrap();
+        } catch {
+            showNotification("Error al guardar la valoración");
+        }
+    };
+
+    return { handleRate, notification, closeNotification };
+}

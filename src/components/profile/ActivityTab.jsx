@@ -1,3 +1,5 @@
+import '../../assets/styles/Activitytab.css';
+
 export default function ActivityTab({ user }) {
   const historial = user?.Historial || [];
   const librosLeidos = historial.length;

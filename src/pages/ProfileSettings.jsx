@@ -8,6 +8,7 @@ import ProfileSidebar from "../components/profile/ProfileSidebar.jsx";
 import ProfileMainView from "../components/profile/ProfileMainView.jsx";
 import { selectAuthUser, logout } from '../store/authSlice';
 import { deleteUserAsync } from '../store/usersSlice';
+import '../assets/styles/ProfileSettings.css';
 
 export default function ProfileSettings() {
   const [showModal, setShowModal] = useState(false);
@@ -30,24 +31,25 @@ export default function ProfileSettings() {
   };
 
   return (
-    <div className="min-vh-100 bg-light py-0">
-      <div className="container" style={{ maxWidth: "1200px" }}>
-        <nav aria-label="breadcrumb" className="mb-4">
-          <ol className="breadcrumb bg-white p-3 rounded shadow-sm">
-            <li className="breadcrumb-item">
-              <a href="/profile" className="text-decoration-none text-primary">
-                <i className="bi bi-house-door me-2"></i>
+    <div className="profile-settings">
+      <div className="profile-settings__container">
+        <nav aria-label="breadcrumb" className="profile-settings__breadcrumb">
+          <ol>
+            <li>
+              <a href="/profile" className="breadcrumb-link">
+                <i className="bi bi-house-door"></i>
                 Perfil
               </a>
             </li>
-            <li className="breadcrumb-item active">
-              <i className="bi bi-gear me-2"></i>
+            <li className="breadcrumb-active">
+              <i className="bi bi-gear"></i>
               Ajustes y privacidad
             </li>
           </ol>
         </nav>
-        <div className="row g-4">
-          <div className="col-lg-3">
+        
+        <div className="profile-settings__layout">
+          <div className="profile-settings__sidebar">
             <ProfileSidebar
               activeView={activeView}
               setActiveView={setActiveView}
@@ -55,16 +57,12 @@ export default function ProfileSettings() {
             />
           </div>
 
-          <div className="col-lg-9">
-            {activeView === "main" && <ProfileMainView user={user} />}
-            {activeView === "changePassword" && (
-              <div className="card-body">
-                <ChangePassword user={user} />
-              </div>
-            )}
-            {activeView === "profile" && (
-              <ProfileForm userData={user} />
-            )}
+          <div className="profile-settings__content">
+            <div className="profile-settings__pane">
+              {activeView === "main" && <ProfileMainView user={user} />}
+              {activeView === "changePassword" && <ChangePassword user={user} />}
+              {activeView === "profile" && <ProfileForm userData={user} />}
+            </div>
           </div>
         </div>
 

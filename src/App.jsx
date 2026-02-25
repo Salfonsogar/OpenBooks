@@ -6,7 +6,6 @@ import { selectAuthUser, selectIsAuthenticated } from './store/authSlice';
 import { selectReaderBookId } from './store/readerSlice';
 import Navbar from './components/layout/Navbar';
 import NavbarAdmin from './components/layout/NavbarAdmin';
-import Footer from './components/layout/Footer';
 import AdminNotifications from './components/admin/AdminNotifications';
 import Reader from './reader/Reader';
 import ProtectedRoute from './components/auth/ProtectedRoute';
@@ -86,7 +85,6 @@ function App() {
           </Routes>
         </main>
       </Suspense>
-      {!showAdminNavbar && <Footer />}
     </>
   );
 }

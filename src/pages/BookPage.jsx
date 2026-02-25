@@ -38,6 +38,10 @@ export default function BookPage() {
         return <div className="container mt-5">Cargando libro...</div>;
     }
 
+    if (status === 'failed') {
+        return <div className="container mt-5">Error al cargar el libro. Asegúrate de estar logueado.</div>;
+    }
+
     if (!book) {
         return <div className="container mt-5">Libro no encontrado</div>;
     }
