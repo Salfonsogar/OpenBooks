@@ -1,15 +1,15 @@
 import { Suspense, useEffect, useMemo } from 'react';
 import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchRolesAsync, selectAllRoles } from './store/rolesSlice';
-import { selectAuthUser, selectIsAuthenticated } from './store/authSlice';
-import { selectReaderBookId } from './store/readerSlice';
-import Navbar from './components/layout/Navbar';
-import NavbarAdmin from './components/layout/NavbarAdmin';
-import AdminNotifications from './components/admin/AdminNotifications';
-import Reader from './reader/Reader';
-import ProtectedRoute from './components/auth/ProtectedRoute';
-import { publicRoutes, protectedRoutes, adminRoutes } from './routes/routeConfig';
+import { fetchRolesAsync, selectAllRoles } from './features/auth/store/rolesSlice';
+import { selectAuthUser, selectIsAuthenticated } from './features/auth/store/authSlice';
+import { selectReaderBookId } from './features/reader/store/readerSlice';
+import Navbar from './app/layouts/Navbar';
+import NavbarAdmin from './app/layouts/NavbarAdmin';
+import AdminNotifications from './features/admin/components/AdminNotifications';
+import Reader from './features/reader/components/Reader';
+import ProtectedRoute from './features/auth/components/ProtectedRoute';
+import { publicRoutes, protectedRoutes, adminRoutes } from './app/routes/routeConfig';
 
 const LoadingFallback = () => (
   <div className="d-flex justify-content-center align-items-center vh-100">
