@@ -1,106 +1,18 @@
-import { useState } from "react";
-import { useDispatch, useSelector } from 'react-redux';
-import { selectAuthUser, selectAuthToken } from '../../auth/store/authSlice';
-import { updateUserAsync, selectUserUpdateStatus, selectUserUpdateError } from '../../admin/store/usersSlice';
-import { updateUserProfile } from '../../auth/store/authSlice';
 import { User, Mail, Upload, X } from 'lucide-react';
 import '../styles/ProfileForm.module.css';
 
-export default function ProfileForm({ userData }) {
-  const dispatch = useDispatch();
-  const updateStatus = useSelector(selectUserUpdateStatus);
-  const updateError = useSelector(selectUserUpdateError);
-  const token = useSelector(selectAuthToken);
-
-  const [formData, setFormData] = useState({
-    userName: userData?.userName || "",
-    nombreCompleto: userData?.nombreCompleto || "",
-    email: userData?.email || "",
-    contraseña: "",
-    estado: userData?.estado !== undefined ? userData.estado : true,
-    sancionado: userData?.sancionado || false,
-    rolId: userData?.rolId || 0,
-    fotoPerfilBase64: ""
-  });
-
-  const [previewImage, setPreviewImage] = useState(userData?.fotoPerfil ? `data:image/jpeg;base64,${userData.fotoPerfil}` : "");
-  const [message, setMessage] = useState({ type: "", text: "" });
-
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const handleImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      if (file.size > 2 * 1024 * 1024) {
-        setMessage({ type: "danger", text: "La imagen no debe superar 2MB" });
-        return;
-      }
-
-      if (!file.type.startsWith('image/')) {
-        setMessage({ type: "danger", text: "Solo se permiten archivos de imagen" });
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result.split(',')[1];
-        setFormData(prev => ({ ...prev, fotoPerfilBase64: base64String }));
-        setPreviewImage(reader.result);
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  const handleRemoveImage = () => {
-    setFormData(prev => ({ ...prev, fotoPerfilBase64: "" }));
-    setPreviewImage("");
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setMessage({ type: "", text: "" });
-
-    const dataToSend = { ...formData };
-    if (!dataToSend.contraseña) {
-      delete dataToSend.contraseña;
-    }
-
-    try {
-      const result = await dispatch(updateUserAsync({ id: userData.id, userData: dataToSend }));
-
-      if (updateUserAsync.fulfilled.match(result)) {
-        // Obtener el usuario actualizado del backend
-        const userResponse = await fetch(`https://localhost:7080/api/Usuarios/${userData.id}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (userResponse.ok) {
-          const updatedUser = await userResponse.json();
-          dispatch(updateUserProfile(updatedUser));
-        }
-
-        setMessage({
-          type: "success",
-          text: "Perfil actualizado correctamente"
-        });
-        setFormData(prev => ({ ...prev, contraseña: "" }));
-      }
-    } catch (error) {
-      setMessage({
-        type: "danger",
-        text: "Error al actualizar el perfil"
-      });
-    }
-  };
-
+export default function ProfileFormUI({ 
+  formData, 
+  previewImage, 
+  message, 
+  updateStatus, 
+  updateError,
+  onInputChange, 
+  onImageChange, 
+  onRemoveImage, 
+  onSubmit,
+  onCloseMessage
+}) {
   return (
     <div className="profile-form">
       <div className="profile-form__header">
@@ -118,7 +30,7 @@ export default function ProfileForm({ userData }) {
           <span>{message.text}</span>
           <button
             className="profile-alert__close"
-            onClick={() => setMessage({ type: "", text: "" })}
+            onClick={onCloseMessage}
           >
             <i className="bi bi-x"></i>
           </button>
@@ -135,7 +47,7 @@ export default function ProfileForm({ userData }) {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="profile-form__body">
+      <form onSubmit={onSubmit} className="profile-form__body">
         <div className="profile-form__avatar-section">
           <label className="profile-form__avatar-label">Foto de Perfil</label>
           {previewImage ? (
@@ -148,7 +60,7 @@ export default function ProfileForm({ userData }) {
               <button
                 type="button"
                 className="profile-form__avatar-remove"
-                onClick={handleRemoveImage}
+                onClick={onRemoveImage}
               >
                 <X size={14} />
               </button>
@@ -167,7 +79,7 @@ export default function ProfileForm({ userData }) {
               id="imageUpload"
               type="file"
               accept="image/*"
-              onChange={handleImageChange}
+              onChange={onImageChange}
               className="d-none"
             />
             <span className="profile-form__upload-hint">Máximo 2MB - JPG, PNG, GIF</span>
@@ -184,7 +96,7 @@ export default function ProfileForm({ userData }) {
             id="userName"
             name="userName"
             value={formData.userName}
-            onChange={handleInputChange}
+            onChange={onInputChange}
             placeholder="Tu nombre de usuario"
             disabled={updateStatus === 'loading'}
             required
@@ -201,7 +113,7 @@ export default function ProfileForm({ userData }) {
             id="nombreCompleto"
             name="nombreCompleto"
             value={formData.nombreCompleto}
-            onChange={handleInputChange}
+            onChange={onInputChange}
             placeholder="Tu nombre completo"
             disabled={updateStatus === 'loading'}
             required
@@ -219,7 +131,7 @@ export default function ProfileForm({ userData }) {
             id="email"
             name="email"
             value={formData.email}
-            onChange={handleInputChange}
+            onChange={onInputChange}
             placeholder="usuario@ejemplo.com"
             disabled={updateStatus === 'loading'}
             required
@@ -236,7 +148,7 @@ export default function ProfileForm({ userData }) {
             id="contraseña"
             name="contraseña"
             value={formData.contraseña}
-            onChange={handleInputChange}
+            onChange={onInputChange}
             placeholder="Dejar en blanco para no cambiar"
             disabled={updateStatus === 'loading'}
           />

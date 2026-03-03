@@ -133,7 +133,6 @@ export default function Catalog() {
           handleCategoriaToggle={handleCategoriaToggle}
         />
 
-        {/* Always show the catalog grid (paginated). If filters/search are active it will show filtered results. */}
         <CatalogGrid
           loading={loading}
           books={books}

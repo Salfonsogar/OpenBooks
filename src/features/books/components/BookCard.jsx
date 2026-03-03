@@ -1,16 +1,7 @@
-// BookCard.jsx
 import { Link } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchManifest } from "../../reader/store/readerSlice";
-import { selectIsAuthenticated } from "../../auth/store/authSlice";
-import usePortada from "../../../shared/hooks/usePortada";
-import useNotification from "../../auth/hooks/useNotification";
 import NotificationModal from "../../../shared/components/NotificationModal";
 import styles from "../styles/BookCard.module.css";
 
-/* ─────────────────────────────────────────
-   Sub-components
-───────────────────────────────────────── */
 function BookCover({ libro, portada }) {
   return (
     <Link to={`/book/${libro.id}`} className={styles.coverLink} tabIndex={-1}>
@@ -54,11 +45,9 @@ function ActionButton({ onClick, variant = "primary", icon, label, fullWidth }) 
   );
 }
 
-/* ─────────────────────────────────────────
-   Main component
-───────────────────────────────────────── */
 export default function BookCard({
   libro,
+  portada,
   onAdd,
   onRemove,
   onRead,
@@ -66,21 +55,9 @@ export default function BookCard({
   showAdd = true,
   showRemove = false,
   showDownload = false,
+  notification,
+  onCloseNotification,
 }) {
-  const dispatch = useDispatch();
-  const isAuthenticated = useSelector(selectIsAuthenticated);
-  const portada = usePortada(libro);
-  const { notification, showNotification, closeNotification } = useNotification();
-
-  const handleRead = () => {
-    if (!isAuthenticated) {
-      showNotification("Debes iniciar sesión para leer libros");
-      return;
-    }
-    if (onRead) onRead(libro);
-    else dispatch(fetchManifest(libro.id));
-  };
-
   return (
     <article className={styles.card}>
       <BookCover libro={libro} portada={portada} />
@@ -89,16 +66,14 @@ export default function BookCard({
         <BookInfo libro={libro} />
 
         <div className={styles.actions}>
-          {/* Primary row — always visible */}
           <ActionButton
-            onClick={handleRead}
+            onClick={onRead}
             variant="primary"
             icon="fa-book-open"
             label="Leer"
             fullWidth
           />
 
-          {/* Secondary row — contextual actions */}
           {(showAdd || showDownload || showRemove) && (
             <div className={styles.actionsSecondary}>
               {showAdd && (
@@ -130,11 +105,13 @@ export default function BookCard({
         </div>
       </div>
 
-      <NotificationModal
-        message={notification.message}
-        isOpen={notification.isOpen}
-        onClose={closeNotification}
-      />
+      {notification && (
+        <NotificationModal
+          message={notification.message}
+          isOpen={notification.isOpen}
+          onClose={onCloseNotification}
+        />
+      )}
     </article>
   );
 }
